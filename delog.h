@@ -24,6 +24,7 @@ enum class LogContainerType
    STL = 0 
 };
 
+// Data
 template <typename T, typename ...Args>
 class Loggable
 {
@@ -152,6 +153,12 @@ public:
         return "ssssss";
     }
 };
+
+
+#define LOG_STDSTRING(loggable, length) delog::LogStdString<int>().build(loggable, length)
+#define LOG_CHARARRAY(loggable, length) delog::LogCharArray<int>().build(loggable, length)
+#define LOG_INT(loggable, length) delog::LogInt<int>().build(loggable, length)
+#define LOG_FLOAT(loggable, length) delog::LogFloat<int>().build(loggable, length)
 
 
 
