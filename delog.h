@@ -193,8 +193,8 @@ public:
 //#define LOG_INT(loggable, length) delog::LogInt<int>().build(loggable, length)
 //#define LOG_FLOAT(loggable, length) delog::LogFloat<int>().build(loggable, length)
 
-#define LOG_STDSTRING(loggable, length) delog::Logger<delog::LogStdString>().dispatch(loggable, length)
-#define LOG_STLVECTOR(loggable, length) delog::Logger<delog::LogStlVector>().dispatch(loggable, length)
+#define LOG_STDSTRING(loggable, ...) delog::Logger<delog::LogStdString>().dispatch(loggable, __VA_ARGS__)
+#define LOG_STLVECTOR(loggable, ...) delog::Logger<delog::LogStlVector>().dispatch(loggable, __VA_ARGS__)
 
 
 //

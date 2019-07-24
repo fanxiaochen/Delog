@@ -7,6 +7,6 @@ int main()
 
 	std::vector<int> t;
 	t.push_back(1);
-	std::cout << LOG_STLVECTOR(t, 3) << std::endl;
+	std::cout << LOG_STLVECTOR(t, 3, 3, 1) << std::endl;
 	return 0;
 }
