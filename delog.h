@@ -7,6 +7,7 @@ namespace delog
 {
 typedef char char_t;
 typedef int int_t;
+typedef long long_t;
 typedef float float_t;
 typedef double double_t;
 
@@ -25,11 +26,33 @@ enum class LogContainerType
    STL = 1 
 };
 
+template <typename LogType>
+class Logger: public LogType
+{
+ public:
+  // Behavior method.
+  template <typename T, typename ...Args>
+  char_t* dispatch(const T& t, const Args& ...args) const
+  {
+    std::cout << build(t, args...) << std::endl; 
+    return build(t, args...);
+  }
+
+ private:
+  using LogType::build;
+};
+
 // Data
 class Loggable
 {
 public:
     virtual LogDataType type() const { return LogDataType::UNDEFINED; }
+};
+
+class LogContainer
+{
+public:
+    virtual LogContainerType type() const { return LogContainerType::UNDEFINED; }
 };
 
 class LogString: public Loggable
@@ -56,15 +79,6 @@ public:
     virtual LogDataType type() const { return LogDataType::CUSTOM; }
 };
 
-// Container
-//template <template<typename, typename> class Container, typename T, typename ...Args>
-class LogContainer
-{
-public:
-    virtual LogContainerType type() const { return LogContainerType::UNDEFINED; }
-  //  virtual char_t* build(const Container<T, std::allocator<T>>& container, const Args& ...args) = 0;
-};
-
 class LogStlContainer: public LogContainer
 {
 public:
@@ -80,40 +94,6 @@ public:
         return "container";
     }
 };
-
-template <typename LogType>
-class Logger: public LogType
-{
- public:
-  // Behavior method.
-  template <typename T, typename ...Args>
-  char_t* dispatch(const T& t, const Args& ...args) const
-  {
-    std::cout << build(t, args...) << std::endl; 
-    return build(t, args...);
-  }
-
- private:
-  using LogType::build;
-};
-
-
-
-
-
-//#define REGISTER_STRING(OBJECT)                         \
-//                                                        \
-//template <typename ...Args>                             \
-//class OBJECT: public LogString<...Args>                 \    
-//{                                                       \
-//    char_t* build(const Args& ...)                      \
-//    {                                                   \
-//                                                        \
-//    }                                                   \
-//};                                                      \
-//
-//
-
 
 // String 
 class LogStdString: public LogString
@@ -131,36 +111,56 @@ public:
     }
 };
 
-//template <typename ...Args>
-//class LogCharArray: public LogString<char_t*, Args...>
-//{
-//public:
-//    char_t* build(const char_t*& char_array, const Args& ...args)
-//    {
-//        return "sss";
-//    }
-//};
-//
-//// Variable
-//template <typename ...Args>
-//class LogInt: public LogVariable<int_t, Args...>
-//{
-//public:
-//    char_t* build(const int_t& n, const Args& ...)
-//    {
-//        return "sss";
-//    }
-//};
-//
-//template <typename ...Args>
-//class LogFloat: public LogVariable<float_t, Args...>
-//{
-//public:
-//    char_t* build(const float_t& n, const Args& ...)
-//    {
-//        return "sss";
-//    }
-//};
+class LogCharArray: public LogString
+{
+public:
+    template <typename ...Args>
+    char_t* build(const char_t*& str, const Args& ...args) const
+    {
+        return "sss";
+    }
+};
+
+// Variable
+class LogInt: public LogVariable
+{
+public:
+    template <typename ...Args>
+    char_t* build(const int_t& n, const Args& ...)
+    {
+        return "sss";
+    }
+};
+
+class LogLong: public LogVariable
+{
+public:
+    template <typename ...Args>
+    char_t* build(const long_t& n, const Args& ...)
+    {
+        return "sss";
+    }
+};
+
+class LogFloat: public LogVariable
+{
+public:
+    template <typename ...Args>
+    char_t* build(const float_t& n, const Args& ...)
+    {
+        return "sss";
+    }
+};
+
+class LogDouble: public LogVariable
+{
+public:
+    template <typename ...Args>
+    char_t* build(const double_t& n, const Args& ...)
+    {
+        return "sss";
+    }
+};
 
 // Class
 //template <typename ...Args>
@@ -193,6 +193,8 @@ public:
 //#define LOG_INT(loggable, length) delog::LogInt<int>().build(loggable, length)
 //#define LOG_FLOAT(loggable, length) delog::LogFloat<int>().build(loggable, length)
 
+#define LOG_INT(loggable, ...) delog::Logger<delog::LogInt>().dispatch(loggable, __VA_ARGS__)
+#define LOG_FLOAT(loggable, ...) delog::Logger<delog::LogFloat>().dispatch(loggable, __VA_ARGS__)
 #define LOG_STDSTRING(loggable, ...) delog::Logger<delog::LogStdString>().dispatch(loggable, __VA_ARGS__)
 #define LOG_STLVECTOR(loggable, ...) delog::Logger<delog::LogStlVector>().dispatch(loggable, __VA_ARGS__)
 
