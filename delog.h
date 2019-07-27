@@ -2,8 +2,13 @@
 #define DELOG_H
 
 #include <vector>
+#include <list>
 #include <unordered_map>
+#include <unordered_set>
 #include <typeinfo>
+#ifndef _MSC_VER
+    #include <cxxabi.h>
+#endif
 
 namespace delog
 {
@@ -270,7 +275,88 @@ char_t* logging(const Var& var, const Args&... args)
     return nullptr;
 }
 
-#define DELOG(loggable, ...) delog::logging(loggable, __VA_ARGS__)
+
+#define GET_VARIABLE_NAME(Variable) (#Variable)
+
+
+namespace basics
+{
+
+#define FORMAT_MAX_LENGTH   1000
+
+/// Basic data type
+static std::unordered_map<const char_t*, const char_t*> formats({ 
+    {typeid(char_t).name(),    "%s  %s = %c\n"},
+    {typeid(int_t).name(),     "%s  %s = %d\n"},
+    {typeid(long_t).name(),    "%s  %s = %d\n"},
+    {typeid(float_t).name(),   "%s  %s = %f\n"},
+    {typeid(double_t).name(),  "%s  %s = %f\n"},
+    {typeid(string_t).name(),  "%s  %s = %s\n"},
+});
+
+template <typename Type>
+string_t build(const char_t* name, const Type& value)
+{
+    char* type = nullptr;
+#ifndef _MSC_VER
+    int status = 0;
+    type = abi::__cxa_demangle(typeid(Type).name(), 0, 0, &status);
+    std::cout << type << std::endl;
+#else
+    type = typeid(Type).name();
+#endif
+
+    char_t str[FORMAT_MAX_LENGTH];
+    sprintf(str, formats.at(typeid(Type).name()), type, name, value);
+    std::cout << str << std::endl;
+    return str;
+}
+
+string_t build(const char_t* name, const string_t& value)
+{
+    char* type = nullptr;
+#ifndef _MSC_VER
+    int status = 0;
+    type = abi::__cxa_demangle(typeid(string_t).name(), 0, 0, &status);
+    std::cout << type << std::endl;
+#else
+    type = typeid(Type).name();
+#endif
+
+    char_t str[FORMAT_MAX_LENGTH];
+    sprintf(str, formats.at(typeid(string_t).name()), type, name, value.c_str());
+    std::cout << str << std::endl;
+    return str;
+}
+
+}
+
+#define DELOG(loggable) delog::basics::build(#loggable, loggable)
+
+namespace stl
+{
+
+template <typename Type, typename... Args>
+string_t build(const char_t* name, const std::vector<Type>& type, const Args& ...args)
+{
+    return string_t("string");
+}
+
+template <typename Type, typename... Args>
+string_t build(const char_t* name, const std::list<Type>& type, const Args& ...args)
+{
+    return string_t("string");
+}
+
+template <typename Type, typename... Args>
+string_t build(const char_t* name, const std::unordered_set<Type>& type, const Args& ...args)
+{
+    return string_t("string");
+}
+
+}
+
+#define DELOG_STL(loggable, ...) delog::stl::build(#loggable, loggable, __VA_ARGS__)
 
 //
 //template <typename ...Args>
