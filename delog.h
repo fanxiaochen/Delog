@@ -233,47 +233,47 @@ public:
 #define LOG_STLVECTOR(loggable, ...) delog::Logger<delog::LogStlVector>().dispatch(loggable, __VA_ARGS__)
 
 
-static std::unordered_map<LogDataType, string_t> data_registry;
-static std::unordered_map<LogContainerType, string_t> container_registry;
-
-template <typename T>
-void addRegistry(const T& t, const string_t& s)
-{
-    if (typeid(t) == typeid(LogDataType)) data_registry[t] = s; 
-    else container_registry[t] = s;
-}
-
-
-template <typename Var, typename... Args>
-char_t* mapping(const Var& var, const Args&... args)
-{
-    const auto var_code = typeid(Var).hash_code();
-    std::cout << var_code << std::endl;
-    std::cout << LogInt().hash_code() << std::endl;
-    std::cout << LogCharArray().name() << std::endl;
-    if (var_code == LogInt().hash_code()) return LogInt().build(static_cast<int_t>(var), args...);
-    else if (var_code == LogFloat().hash_code()) return LogFloat().build(static_cast<float_t>(var), args...);
-    else if (var_code == LogDouble().hash_code()) return LogDouble().build(static_cast<double_t>(var), args...);
-    else if (var_code == LogCharArray().hash_code()) return LogCharArray().build(static_cast<char_t*>(var), args...);
-    else if (var_code == LogStdString().hash_code()) return LogStdString().build(static_cast<std::string>(var), args...);
-//    else if (var_code == LogStlVector().hash_code()) return LogStlVector().build(static_cast<std::vector>(var), args...);
-    else return nullptr;
-  return nullptr;
-}
-
-template <typename Var, typename... Args>
-char_t* logging(const Var& var, const Args&... args)
-{
-    for (const auto& registry : data_registry)
-        if (registry.second == typeid(var).name()) return mapping(var, args...);
-
-    for (const auto& registry : container_registry)
-        if (registry.second == typeid(var).name()) return mapping(var, args...);
-
-    mapping(var, args...);
-
-    return nullptr;
-}
+//static std::unordered_map<LogDataType, string_t> data_registry;
+//static std::unordered_map<LogContainerType, string_t> container_registry;
+//
+//template <typename T>
+//void addRegistry(const T& t, const string_t& s)
+//{
+//    if (typeid(t) == typeid(LogDataType)) data_registry[t] = s; 
+//    else container_registry[t] = s;
+//}
+//
+//
+//template <typename Var, typename... Args>
+//char_t* mapping(const Var& var, const Args&... args)
+//{
+//    const auto var_code = typeid(Var).hash_code();
+//    std::cout << var_code << std::endl;
+//    std::cout << LogInt().hash_code() << std::endl;
+//    std::cout << LogCharArray().name() << std::endl;
+//    if (var_code == LogInt().hash_code()) return LogInt().build(static_cast<int_t>(var), args...);
+//    else if (var_code == LogFloat().hash_code()) return LogFloat().build(static_cast<float_t>(var), args...);
+//    else if (var_code == LogDouble().hash_code()) return LogDouble().build(static_cast<double_t>(var), args...);
+//    else if (var_code == LogCharArray().hash_code()) return LogCharArray().build(static_cast<char_t*>(var), args...);
+//    else if (var_code == LogStdString().hash_code()) return LogStdString().build(static_cast<std::string>(var), args...);
+////    else if (var_code == LogStlVector().hash_code()) return LogStlVector().build(static_cast<std::vector>(var), args...);
+//    else return nullptr;
+//  return nullptr;
+//}
+//
+//template <typename Var, typename... Args>
+//char_t* logging(const Var& var, const Args&... args)
+//{
+//    for (const auto& registry : data_registry)
+//        if (registry.second == typeid(var).name()) return mapping(var, args...);
+//
+//    for (const auto& registry : container_registry)
+//        if (registry.second == typeid(var).name()) return mapping(var, args...);
+//
+//    mapping(var, args...);
+//
+//    return nullptr;
+//}
 
 
 #define GET_VARIABLE_NAME(Variable) (#Variable)
@@ -294,44 +294,50 @@ static std::unordered_map<const char_t*, const char_t*> formats({
     {typeid(string_t).name(),  "%s  %s = %s\n"},
 });
 
-template <typename Type>
-string_t build(const char_t* name, const Type& value)
+template <typename Type, typename... Args>
+string_t build(const char_t* name, const Type& value, const Args&... args)
 {
-    char* type = nullptr;
+    char_t* type = nullptr;
 #ifndef _MSC_VER
     int status = 0;
     type = abi::__cxa_demangle(typeid(Type).name(), 0, 0, &status);
-    std::cout << type << std::endl;
+//    std::cout << type << std::endl;
 #else
     type = typeid(Type).name();
 #endif
 
     char_t str[FORMAT_MAX_LENGTH];
     sprintf(str, formats.at(typeid(Type).name()), type, name, value);
-    std::cout << str << std::endl;
+ //   std::cout << str << std::endl;
+    
+    free(type);
+
     return str;
 }
 
-string_t build(const char_t* name, const string_t& value)
+template <typename... Args>
+string_t build(const char_t* name, const string_t& value, const Args&... args)
 {
     char* type = nullptr;
 #ifndef _MSC_VER
     int status = 0;
     type = abi::__cxa_demangle(typeid(string_t).name(), 0, 0, &status);
-    std::cout << type << std::endl;
+//    std::cout << type << std::endl;
 #else
     type = typeid(Type).name();
 #endif
 
     char_t str[FORMAT_MAX_LENGTH];
     sprintf(str, formats.at(typeid(string_t).name()), type, name, value.c_str());
-    std::cout << str << std::endl;
+//    std::cout << str << std::endl;
+
+    free(type);
     return str;
 }
 
 }
 
-#define DELOG(loggable) delog::basics::build(#loggable, loggable)
+#define DELOG(loggable, ...) delog::basics::build(#loggable, loggable, __VA_ARGS__)
 
 namespace stl
 {
@@ -354,9 +360,81 @@ string_t build(const char_t* name, const std::unordered_set<Type>& type, const A
     return string_t("string");
 }
 
+template <typename Type1, typename Type2, typename... Args>
+string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type, const Args& ...args)
+{
+    return string_t("mappp");
+}
+
 }
 
 #define DELOG_STL(loggable, ...) delog::stl::build(#loggable, loggable, __VA_ARGS__)
+
+//enum class LogType
+//{
+//    TYPE_BASICS,
+//    TYPE_STL
+//};
+//
+//
+//static std::unordered_map<string_t, LogType> type_registry;
+//
+//template <typename T>
+//void addRegistry(const T& t, const LogType& type)
+//{
+//    type_registry[string_t(typeid(T).name())] = type;
+//}
+//
+//
+//template <typename T, typename... Args>
+//string_t logging(const T& t, const Args& ...args)
+//{
+//    if (type_registry[string_t(typeid(T).name())] == LogType::TYPE_BASICS)
+//    {
+//        std::cout << "HERE" << std::endl;
+//        return DELOG(t);
+//    }
+//    else 
+//    {
+//        return DELOG_STL(t, args...);
+//    }
+//}
+
+
+#define REGISTER_BASICS(Type)                                                   \
+template <typename... Args>                                                     \
+string_t message(const char_t* name, const Type& type, const Args&... args)     \
+{                                                                               \
+    return delog::basics::build(name, type, args...);                           \
+}                                                                               
+
+#define REGISTER_STL_ONE_PARAMETER(Type)                                             \
+template <typename T, typename... Args>                                              \
+string_t message(const char_t* name, const Type<T>& type, const Args&... args)       \
+{                                                                                    \
+    return delog::stl::build(name, type, args...);                                   \
+}                                                                               
+
+#define REGISTER_STL_TWO_PARAMETER(Type)                                             \
+template <typename T1, typename T2, typename... Args>                                \
+string_t message(const char_t* name, const Type<T1,T2>& type, const Args&... args)   \
+{                                                                                    \
+    return delog::stl::build(name, type, args...);                                   \
+}                                                                               
+
+REGISTER_BASICS(int_t)
+REGISTER_BASICS(long_t)
+REGISTER_BASICS(char_t)
+REGISTER_BASICS(float_t)
+REGISTER_BASICS(double_t)
+REGISTER_BASICS(string_t)
+
+REGISTER_STL_ONE_PARAMETER(std::vector)
+REGISTER_STL_ONE_PARAMETER(std::list)
+REGISTER_STL_ONE_PARAMETER(std::unordered_set)
+REGISTER_STL_TWO_PARAMETER(std::unordered_map)
+
+#define DELOG_ALL(loggable, ...) delog::message(#loggable, loggable, __VA_ARGS__)
 
 //
 //template <typename ...Args>
