@@ -29,17 +29,25 @@ int main()
 //	int a = 10;
 
 //	DELOG_ALL(a,1);
-	std::unordered_map<int,int> m;
-	std::cout << DELOG(a,1) << std::endl;
-	std::cout << DELOG(12.5f,1) << std::endl;
-	std::cout << DELOG(12.5,1) << std::endl;
-	std::cout << delog::message("test", 23) << std::endl;
-	std::cout << delog::message("test", 23.9f) << std::endl;
-	std::cout << DELOG_ALL(a, 1) << std::endl;
-	std::cout << DELOG_ALL(90.3f, 1) << std::endl;
-	std::cout << DELOG_ALL(34.0, 1) << std::endl;
-	std::cout << DELOG_ALL(std::string("ss"), 1) << std::endl;
-	std::cout << DELOG_ALL(t, 1) << std::endl;
-	std::cout << DELOG_ALL(m, 1) << std::endl;
+//	std::unordered_map<int,int> m;
+//	std::cout << DELOG(a,1) << std::endl;
+//	std::cout << DELOG(12.5f,1) << std::endl;
+//	std::cout << DELOG(12.5,1) << std::endl;
+//	std::cout << delog::message("test", 23) << std::endl;
+//	std::cout << delog::message("test", 23.9f) << std::endl;
+//	std::cout << DELOG_ALL(a,1) << std::endl;
+//	std::cout << DELOG_ALL(90.3f, 1) << std::endl;
+//	std::cout << DELOG_ALL(34.0, 1) << std::endl;
+//	std::cout << DELOG_ALL(std::string("ss"), 1) << std::endl;
+//	std::cout << DELOG_ALL(t, 1,2,3) << std::endl;
+//	std::cout << DELOG_ALL(m, 1) << std::endl;
+//	std::cout << delog::message("test", t, 3, 32) << std::endl;
+	delog::basics::Primitive_int_t tt;
+	std::cout << tt.generate("dfsd", 1) << std::endl;
+	std::cout << delog::message("test", 3) << std::endl;
+
+	delog::stl::ContainerOneParameter_stl_vector v;
+	std::cout << v.generate("dfsd", t, 0, 4) << std::endl;
+
 	return 0;
 }
