@@ -335,10 +335,11 @@ string_t build(const char_t* name, const string_t& value)
     return str;
 }
 
-template <typename Type, typename... Args>
+template <typename... Args>
 class Primitive
 {
 public:
+    template <typename Type>
     string_t generate(const char_t* name, const Type& value, const Args&... args)
     {
         return build(name, value);
@@ -346,7 +347,7 @@ public:
 };
 
 #define PRIMTIVE_TYPE(Type) delog::basics::Primitive_##Type
-#define REGISTER_BASICS(Type, ...) using Primitive_##Type = Primitive<Type, ##__VA_ARGS__> ;                                                   
+#define REGISTER_BASICS(Type, ...) using Primitive_##Type = Primitive< __VA_ARGS__> ;                                                   
 
 REGISTER_BASICS(int_t)
 REGISTER_BASICS(long_t)
@@ -361,32 +362,57 @@ REGISTER_BASICS(string_t)
 
 namespace stl
 {
+//template <typename Type, typename... TypeArgs>
+//string_t build(const char_t* name, const std::vector<Type>& type, const TypeArgs& ...args)
+//{
+////    delog::basics::Primitive_int_t tt;
+////    tt.generate("sdfdf", type[0], args...);
+//    return string_t("vector");
+//}
+//
+//template <typename Type, typename... TypeArgs>
+//string_t build(const char_t* name, const std::list<Type>& type, const TypeArgs& ...args)
+//{
+//    return string_t("list");
+//}
+//
+//template <typename Type, typename... TypeArgs>
+//string_t build(const char_t* name, const std::unordered_set<Type>& type, const TypeArgs& ...args)
+//{
+//    return string_t("default settt");
+//}
+//
+//template <typename Type1, typename Type2, typename... TypeArgs>
+//string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type, const TypeArgs& ...args)
+//{
+//    return string_t("mappp");
+//}
 
 template <typename Type, typename... TypeArgs>
 string_t build(const char_t* name, const std::vector<Type>& type, size_t start, size_t end, const TypeArgs& ...args)
 {
-    delog::basics::Primitive_int_t tt;
-    tt.generate("sdfdf", type[0], args...);
+//    delog::basics::Primitive_int_t tt;
+//    tt.generate("sdfdf", type[0], args...);
     return string_t("vector");
 }
 
-//template <typename Type, typename... Args>
-//string_t build(const char_t* name, const std::list<Type>& type, const Args& ...args)
-//{
-//    return string_t("string");
-//}
-//
-//template <typename Type, typename... Args>
-//string_t build(const char_t* name, const std::unordered_set<Type>& type, const Args& ...args)
-//{
-//    return string_t("string");
-//}
-//
-//template <typename Type1, typename Type2, typename... Args>
-//string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type, const Args& ...args)
-//{
-//    return string_t("mappp");
-//}
+template <typename Type, typename... TypeArgs>
+string_t build(const char_t* name, const std::list<Type>& type, size_t start, size_t end, const TypeArgs& ...args)
+{
+    return string_t("list");
+}
+
+template <typename Type, typename... TypeArgs>
+string_t build(const char_t* name, const std::unordered_set<Type>& type, size_t length, const TypeArgs& ...args)
+{
+    return string_t("settt");
+}
+
+template <typename Type1, typename Type2, typename... TypeArgs>
+string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type, size_t length, const TypeArgs& ...args)
+{
+    return string_t("mappp");
+}
 
 template <typename... Args>
 class ContainerOneParameter
@@ -398,36 +424,56 @@ public:
         return build(name, value, args..., targs...);
     }
 
- //   string_t generate(const char_t* name, const std::list<Type>& value, size_t start, size_t end, const Args&... args)
- //   {
- //       return build(name, value, start, end, args...);
- //   }
+//    template <typename Type, typename... TypeArgs>
+//    string_t generate(const char_t* name, const std::vector<Type>& value, const TypeArgs&...targs)
+//    {
+//        return build(name, value, targs...);
+//    }
 
- //   string_t generate(const char_t* name, const std::unordered_set<Type>& value, size_t len, const Args&... args)
- //   {
- //       return build(name, value, len, args...);
- //   }
+    template <typename Type, typename... TypeArgs>
+    string_t generate(const char_t* name, const std::list<Type>& value, const Args&... args, const TypeArgs&...targs)
+    {
+        return build(name, value, args..., targs...);
+    }
+
+    template <typename Type, typename... TypeArgs>
+    string_t generate(const char_t* name, const std::unordered_set<Type>& value, const Args&... args, const TypeArgs&...targs)
+    {
+        return build(name, value, args..., targs...);
+    }
 };
 
-//template <typename Type1, typename Type2, typename... Args>
-//class ContainerTwoParameter
-//{
-//public:
-//    string_t generate(const char_t* name, const std::unordered_map<Type1, Type2>& value, size_t len, const Args&... args)
-//    {
-//        return build(name, value, len, args...);
-//    }
-//};
+template <typename... Args>
+class ContainerTwoParameter
+{
+public:
+    template <typename Type1, typename Type2, typename... TypeArgs>
+    string_t generate(const char_t* name, const std::unordered_map<Type1, Type2>& value, const Args&... args, const TypeArgs&... targs)
+    {
+        return build(name, value, args..., targs...);
+    }
+};
 
 #define CONTAINER_TYPE_ONE_PARAMETER(Type, AliasType) delog::stl::ContainerOneParameter_##AliasType
-//#define CONTAINER_TYPE_TWO_PARAMETER(Type1, Type2) delog::stl::ContainerTwoParameter_##Type1_##Type2
+#define CONTAINER_TYPE_TWO_PARAMETER(Type, AliasType) delog::stl::ContainerTwoParameter_##AliasType
 #define REGISTER_STL_ONE_PARAMETER(Type, AliasType, ...) using ContainerOneParameter_##AliasType = ContainerOneParameter< __VA_ARGS__> ;                                                   
-//#define REGISTER_STL_TWO_PARAMETER(Type1, Type2, ...) using ContainerTwoParameter_##Type = ContainerTwoParameter<Type1, Type2, ##__VA_ARGS__> ;                                                   
+#define REGISTER_STL_TWO_PARAMETER(Type, AliasType, ...) using ContainerTwoParameter_##AliasType = ContainerTwoParameter< __VA_ARGS__> ;                                                   
 
-REGISTER_STL_ONE_PARAMETER(std::vector, stl_vector, size_t, size_t)
-//REGISTER_STL_ONE_PARAMETER(std::list)
-//REGISTER_STL_ONE_PARAMETER(std::unordered_set)
-//REGISTER_STL_TWO_PARAMETER(std::unordered_map)
+
+//#define CONTAINER_TYPE_ONE_PARAMETER_DEFAULT(Type, AliasType) delog::stl::ContainerOneParameter_##AliasType_Default
+//#define CONTAINER_TYPE_TWO_PARAMETER_DEFAULT(Type, AliasType) delog::stl::ContainerTwoParameter_##AliasType_Default
+//#define REGISTER_STL_ONE_PARAMETER_DEFAULT(Type, AliasType) using ContainerOneParameter_##AliasType_Default = ContainerOneParameter< > ;                                                   
+//#define REGISTER_STL_TWO_PARAMETER_DEFAULT(Type, AliasType) using ContainerTwoParameter_##AliasType_Default = ContainerTwoParameter< > ;                                                   
+
+REGISTER_STL_ONE_PARAMETER(std::vector, std_vector, size_t, size_t)
+REGISTER_STL_ONE_PARAMETER(std::list, std_list, size_t, size_t)
+REGISTER_STL_ONE_PARAMETER(std::unordered_set, std_unordered_set, size_t)
+REGISTER_STL_TWO_PARAMETER(std::unordered_map, std_unordered_map, size_t)
+
+//REGISTER_STL_ONE_PARAMETER_DEFAULT(std::vector, std_vector)
+//REGISTER_STL_ONE_PARAMETER_DEFAULT(std::list, std_list)
+//REGISTER_STL_ONE_PARAMETER_DEFAULT(std::unordered_set, std_unordered_set)
+//REGISTER_STL_TWO_PARAMETER_DEFAULT(std::unordered_map, std_unordered_map)
 
 
 }
@@ -473,6 +519,20 @@ string_t message(const char_t* name, const Type& type, const Args&... args)     
     return PRIMTIVE_TYPE(Type)().generate(name, type, args...);                           \
 }                                                                               
 
+#define EXPORT_STL_ONE_PARAMETER(ContainerType, ContainerAliasType)                                                   \
+template <typename Type, typename... ContainerArgs, typename... TypeArgs>                                                     \
+string_t message(const char_t* name, const ContainerType<Type>& type, const ContainerArgs&... cargs, const TypeArgs&... targs)     \
+{                                                                               \
+    return CONTAINER_TYPE_ONE_PARAMETER(ContainerType, ContainerAliasType)().generate(name, type, cargs..., targs...);                           \
+}                                                                               
+
+//#define EXPORT_STL_ONE_PARAMETER_DEFAULT(ContainerType, ContainerAliasType)                                                   \
+//template <typename Type, typename... TypeArgs>                                                     \
+//string_t message(const char_t* name, const ContainerType<Type>& type, const TypeArgs&... targs)     \
+//{                                                                               \
+//    return CONTAINER_TYPE_ONE_PARAMETER(ContainerType, ContainerAliasType)().generate(name, type, targs...);                           \
+//}                                                                               
+
 //#define REGISTER_STL_ONE_PARAMETER(Type)                                             \
 //template <typename T, typename... Args>                                              \
 //string_t message(const char_t* name, const Type<T>& type, const Args&... args)       \
@@ -500,6 +560,13 @@ EXPORT_BASICS(char_t)
 EXPORT_BASICS(float_t)
 EXPORT_BASICS(double_t)
 EXPORT_BASICS(string_t)
+
+EXPORT_STL_ONE_PARAMETER(std::vector, std_vector)
+EXPORT_STL_ONE_PARAMETER(std::unordered_set, std_unordered_set)
+
+//EXPORT_STL_ONE_PARAMETER_DEFAULT(std::vector, std_vector)
+//EXPORT_STL_ONE_PARAMETER_DEFAULT(std::unordered_set, std_unordered_set)
+
 
 //REGISTER_STL_ONE_PARAMETER(std::vector)
 //REGISTER_STL_ONE_PARAMETER(std::list)

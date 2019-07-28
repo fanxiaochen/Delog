@@ -42,12 +42,22 @@ int main()
 //	std::cout << DELOG_ALL(t, 1,2,3) << std::endl;
 //	std::cout << DELOG_ALL(m, 1) << std::endl;
 //	std::cout << delog::message("test", t, 3, 32) << std::endl;
-	delog::basics::Primitive_int_t tt;
-	std::cout << tt.generate("dfsd", 1) << std::endl;
-	std::cout << delog::message("test", 3) << std::endl;
 
-	delog::stl::ContainerOneParameter_stl_vector v;
-	std::cout << v.generate("dfsd", t, 0, 4) << std::endl;
+//	delog::basics::Primitive_int_t tt;
+//	std::cout << tt.generate("dfsd", 1) << std::endl;
+//	std::cout << delog::message("test", 3) << std::endl;
+//	std::cout << delog::message("test", std::string("dfdf")) << std::endl;
+//
+//	delog::stl::ContainerOneParameter_std_vector v;
+//	std::cout << v.generate("dfsd", t, 0, 4) << std::endl;
+	std::cout << delog::message("test", 12) << std::endl;
+	std::cout << delog::message("test", t, 4, 5) << std::endl;
+
+	std::unordered_set<int> sset;
+	sset.insert(32);
+	std::cout << delog::message("test", sset, 1) << std::endl;
+//	std::cout << delog::message("test", sset) << std::endl;
+//	std::cout << DELOG_ALL(sset, 1) << std::endl;
 
 	return 0;
 }
