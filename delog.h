@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <list>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <typeinfo>
@@ -278,6 +279,17 @@ public:
 
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 
+typedef std::initializer_list<int>  Parameters;
+
+struct ParameterVector
+{
+    std::vector<int> v;
+    ParameterVector(Parameters parameters): v(parameters){}
+
+    size_t size() const { return v.size(); }
+    int operator[](size_t index) const { return v[index]; }
+};
+
 
 namespace basics
 {
@@ -335,26 +347,39 @@ string_t build(const char_t* name, const string_t& value)
     return str;
 }
 
-template <typename... Args>
 class Primitive
 {
 public:
+    //template <typename Type, typename... Args>
+    //string_t generate(const char_t* name, const Type& value, const Args&... args)
+    //{
+    //    auto&& tuple_args = std::forward_as_tuple(args...);
+    //    std::cout << sizeof...(Args) << '\n';
+    //    return build(name, value);
+    //}
     template <typename Type>
-    string_t generate(const char_t* name, const Type& value, const Args&... args)
+    string_t generate(const char_t* name, const Type& value, const Parameters& args={})
     {
+//        auto&& tuple_args = std::forward_as_tuple(args...);
+//        std::cout << sizeof...(Args) << '\n';
+        auto parameters = ParameterVector(args);
+        for (size_t i = 0; i < parameters.size(); ++ i)
+        {
+            std::cout << parameters[i] << std::endl;
+        }
         return build(name, value);
     }
 };
 
-#define PRIMTIVE_TYPE(Type) delog::basics::Primitive_##Type
-#define REGISTER_BASICS(Type, ...) using Primitive_##Type = Primitive< __VA_ARGS__> ;                                                   
-
-REGISTER_BASICS(int_t)
-REGISTER_BASICS(long_t)
-REGISTER_BASICS(char_t)
-REGISTER_BASICS(float_t)
-REGISTER_BASICS(double_t)
-REGISTER_BASICS(string_t)
+//#define PRIMTIVE_TYPE(Type) delog::basics::Primitive_##Type
+//#define REGISTER_BASICS(Type, ...) using Primitive_##Type = Primitive< __VA_ARGS__> ;                                                   
+//
+//REGISTER_BASICS(int_t)
+//REGISTER_BASICS(long_t)
+//REGISTER_BASICS(char_t)
+//REGISTER_BASICS(float_t)
+//REGISTER_BASICS(double_t)
+//REGISTER_BASICS(string_t)
 
 }
 
@@ -388,11 +413,9 @@ namespace stl
 //    return string_t("mappp");
 //}
 
-template <typename Type, typename... TypeArgs>
-string_t build(const char_t* name, const std::vector<Type>& type, size_t start, size_t end, const TypeArgs& ...args)
+template <typename Type>
+string_t build(const char_t* name, const std::vector<Type>& type, const Parameters& container_args, const Parameters& type_args)
 {
-//    delog::basics::Primitive_int_t tt;
-//    tt.generate("sdfdf", type[0], args...);
     return string_t("vector");
 }
 
@@ -414,32 +437,56 @@ string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type,
     return string_t("mappp");
 }
 
-template <typename... Args>
+//template <typename... Args>
 class ContainerOneParameter
 {
 public:
-    template <typename Type, typename... TypeArgs>
-    string_t generate(const char_t* name, const std::vector<Type>& value, const Args&... args, const TypeArgs&...targs)
+    template <typename Type, typename... Args>
+    string_t generate(const char_t* name, const std::vector<Type>& value, const Args&... args)
     {
-        return build(name, value, args..., targs...);
+        auto&& tuple_args = std::forward_as_tuple(args...);
+        std::cout << sizeof...(Args) << '\n';
+        auto t1 = std::get<0>(tuple_args);
+        auto t2 = std::get<1>(tuple_args);
+        return build(name, value, 0, 1,std::get<0>(tuple_args) );
+    }
+    
+    template <template<typename, typename> typename Container, typename Type>
+    string_t generate(const char_t* name, const Container<Type, std::allocator<Type>>& value, const Parameters& container_args={}, const Parameters& type_args={})
+    {
+        auto parameters = ParameterVector(container_args);
+        for (size_t i = 0; i < parameters.size(); ++ i)
+        {
+            std::cout << "container" << std::endl;
+            std::cout << parameters[i] << std::endl;
+        }
+
+        parameters = ParameterVector(type_args);
+        for (size_t i = 0; i < parameters.size(); ++ i)
+        {
+            std::cout << "type" << std::endl;
+            std::cout << parameters[i] << std::endl;
+        }
+        return build(name, value, container_args, type_args);
     }
 
-//    template <typename Type, typename... TypeArgs>
-//    string_t generate(const char_t* name, const std::vector<Type>& value, const TypeArgs&...targs)
-//    {
-//        return build(name, value, targs...);
-//    }
+ //   template <typename Type, typename... TypeArgs>
+ //   string_t generate(const char_t* name, const std::vector<Type>& value, const TypeArgs&...targs)
+ //   {
+ //       std::cout <<"default" << std::endl;
+ //       return build(name, value, targs...);
+ //   }
 
-    template <typename Type, typename... TypeArgs>
-    string_t generate(const char_t* name, const std::list<Type>& value, const Args&... args, const TypeArgs&...targs)
+    template <typename Type, typename... Args>
+    string_t generate(const char_t* name, const std::list<Type>& value, const Args&... args)
     {
-        return build(name, value, args..., targs...);
+        return build(name, value, args...);
     }
 
-    template <typename Type, typename... TypeArgs>
-    string_t generate(const char_t* name, const std::unordered_set<Type>& value, const Args&... args, const TypeArgs&...targs)
+    template <typename Type, typename... Args>
+    string_t generate(const char_t* name, const std::unordered_set<Type>& value, const Args&... args)
     {
-        return build(name, value, args..., targs...);
+        return build(name, value, args...);
     }
 };
 
@@ -465,10 +512,10 @@ public:
 //#define REGISTER_STL_ONE_PARAMETER_DEFAULT(Type, AliasType) using ContainerOneParameter_##AliasType_Default = ContainerOneParameter< > ;                                                   
 //#define REGISTER_STL_TWO_PARAMETER_DEFAULT(Type, AliasType) using ContainerTwoParameter_##AliasType_Default = ContainerTwoParameter< > ;                                                   
 
-REGISTER_STL_ONE_PARAMETER(std::vector, std_vector, size_t, size_t)
-REGISTER_STL_ONE_PARAMETER(std::list, std_list, size_t, size_t)
-REGISTER_STL_ONE_PARAMETER(std::unordered_set, std_unordered_set, size_t)
-REGISTER_STL_TWO_PARAMETER(std::unordered_map, std_unordered_map, size_t)
+//REGISTER_STL_ONE_PARAMETER(std::vector, std_vector, size_t, size_t)
+//REGISTER_STL_ONE_PARAMETER(std::list, std_list, size_t, size_t)
+//REGISTER_STL_ONE_PARAMETER(std::unordered_set, std_unordered_set, size_t)
+//REGISTER_STL_TWO_PARAMETER(std::unordered_map, std_unordered_map, size_t)
 
 //REGISTER_STL_ONE_PARAMETER_DEFAULT(std::vector, std_vector)
 //REGISTER_STL_ONE_PARAMETER_DEFAULT(std::list, std_list)
@@ -513,17 +560,27 @@ REGISTER_STL_TWO_PARAMETER(std::unordered_map, std_unordered_map, size_t)
 
 
 #define EXPORT_BASICS(Type)                                                   \
-template <typename... Args>                                                     \
-string_t message(const char_t* name, const Type& type, const Args&... args)     \
+template <typename... Args>                                                        \
+string_t message(const char_t* name, const Type& type, const std::initializer_list<Args>&... args)     \
 {                                                                               \
-    return PRIMTIVE_TYPE(Type)().generate(name, type, args...);                           \
-}                                                                               
+    return delog::basics::Primitive().generate(name, type, args...);                           \
+}                                                                               \                                                                                                                                                                  
+string_t message(const char_t* name, const Type& type, const Parameters& args={})     \
+{                                                                               \
+    return delog::basics::Primitive().generate(name, type, args);                           \
+}                                                                                                                                                                  
 
-#define EXPORT_STL_ONE_PARAMETER(ContainerType, ContainerAliasType)                                                   \
-template <typename Type, typename... ContainerArgs, typename... TypeArgs>                                                     \
-string_t message(const char_t* name, const ContainerType<Type>& type, const ContainerArgs&... cargs, const TypeArgs&... targs)     \
+
+#define EXPORT_STL_ONE_PARAMETER(ContainerType)                                                   \
+template <typename Type, typename... Args>                                                     \
+string_t message(const char_t* name, const ContainerType<Type>& type, const std::initializer_list<Args>&... args)     \
 {                                                                               \
-    return CONTAINER_TYPE_ONE_PARAMETER(ContainerType, ContainerAliasType)().generate(name, type, cargs..., targs...);                           \
+    return delog::stl::ContainerOneParameter().generate(name, type, args...);                           \
+}   \                                                                               
+template <typename Type>  \
+string_t message(const char_t* name, const ContainerType<Type>& type, const Parameters& container_args={}, const Parameters& type_args={})     \
+{                                                                               \
+    return delog::stl::ContainerOneParameter().generate(name, type, container_args, type_args);                           \
 }                                                                               
 
 //#define EXPORT_STL_ONE_PARAMETER_DEFAULT(ContainerType, ContainerAliasType)                                                   \
@@ -561,8 +618,8 @@ EXPORT_BASICS(float_t)
 EXPORT_BASICS(double_t)
 EXPORT_BASICS(string_t)
 
-EXPORT_STL_ONE_PARAMETER(std::vector, std_vector)
-EXPORT_STL_ONE_PARAMETER(std::unordered_set, std_unordered_set)
+EXPORT_STL_ONE_PARAMETER(std::vector)
+EXPORT_STL_ONE_PARAMETER(std::unordered_set)
 
 //EXPORT_STL_ONE_PARAMETER_DEFAULT(std::vector, std_vector)
 //EXPORT_STL_ONE_PARAMETER_DEFAULT(std::unordered_set, std_unordered_set)

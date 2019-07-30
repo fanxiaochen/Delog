@@ -50,12 +50,27 @@ int main()
 //
 //	delog::stl::ContainerOneParameter_std_vector v;
 //	std::cout << v.generate("dfsd", t, 0, 4) << std::endl;
+	auto aa = {3, 2, 2};
+	auto bb = {3, 2, 5};
 	std::cout << delog::message("test", 12) << std::endl;
-	std::cout << delog::message("test", t, 4, 5) << std::endl;
+	std::cout << delog::message("test", 12, {}) << std::endl;
+	std::cout << delog::message("test", 12, {1,3}) << std::endl;
+	std::cout << delog::message("test", 12, aa) << std::endl;
 
-	std::unordered_set<int> sset;
-	sset.insert(32);
-	std::cout << delog::message("test", sset, 1) << std::endl;
+	int cc = 5;
+	std::cout << DELOG_ALL(cc, {}) << std::endl;
+
+	std::cout << delog::message("vector", t) << std::endl;
+	std::cout << delog::message("vector", t, {}, {1, 3}) << std::endl;
+	std::cout << delog::message("vector", t, {31}, {3}) << std::endl;
+
+	//std::cout << delog::message("test", t, std::tuple(4, 5), std::tuple(2)) << std::endl;
+//	std::cout << delog::message("test", t, {1}) << std::endl;
+
+
+//	std::unordered_set<int> sset;
+//	sset.insert(32);
+//	std::cout << delog::message("test", sset, 1) << std::endl;
 //	std::cout << delog::message("test", sset) << std::endl;
 //	std::cout << DELOG_ALL(sset, 1) << std::endl;
 

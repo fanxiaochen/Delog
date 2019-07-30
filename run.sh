@@ -1,2 +1,2 @@
-g++ -o test test.cpp
+g++ -std=c++17 -o test test.cpp
 ./test
