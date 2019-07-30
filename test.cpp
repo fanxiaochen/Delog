@@ -64,6 +64,10 @@ int main()
 	std::cout << delog::message("vector", t, {}, {1, 3}) << std::endl;
 	std::cout << delog::message("vector", t, {31}, {3}) << std::endl;
 
+	//std::unordered_set<int> set;
+	//set.insert(898);
+	//std::cout << delog::message("set", set, {31}, {3}) << std::endl;
+
 	//std::cout << delog::message("test", t, std::tuple(4, 5), std::tuple(2)) << std::endl;
 //	std::cout << delog::message("test", t, {1}) << std::endl;
 
