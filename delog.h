@@ -27,15 +27,16 @@ typedef std::string string_t;
 
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 
-typedef std::initializer_list<int>  Parameters;
+typedef std::initializer_list<int_t>  Parameters;
 
-struct ParameterVector
+struct ParameterList
 {
-    std::vector<int> v;
-    ParameterVector(Parameters parameters): v(parameters){}
+    std::vector<int_t> v;
+    ParameterList(Parameters parameters): v(parameters){}
 
     size_t size() const { return v.size(); }
-    int operator[](size_t index) const { return v[index]; }
+    int_t& operator[](size_t index) { return v[index]; }
+    int_t operator[](size_t index) const { return v[index]; }
 };
 
 
@@ -112,33 +113,56 @@ public:
 
 }
 
+#define EXPORT_BASICS(Type)                                                   \
+template <typename... Args>                                                        \
+string_t message(const char_t* name, const Type& type, const std::initializer_list<Args>&... args)     \
+{                                                                               \
+    return delog::basics::Primitive().generate(name, type, args...);                           \
+}                                                                               \                                                                                                                                                                  
+string_t message(const char_t* name, const Type& type, const Parameters& args={})     \
+{                                                                               \
+    return delog::basics::Primitive().generate(name, type, args);                           \
+}                                                                                                                                                                  
+
+EXPORT_BASICS(int_t)
+EXPORT_BASICS(long_t)
+EXPORT_BASICS(char_t)
+EXPORT_BASICS(float_t)
+EXPORT_BASICS(double_t)
+EXPORT_BASICS(string_t)
 
 namespace stl
 {
 
 template <typename Type>
-string_t build(const char_t* name, const std::vector<Type>& type, const Parameters& container_args, const Parameters& type_args)
+string_t build(const char_t* name, const std::vector<Type>& type, const ParameterList& container_args, const Parameters& type_args)
 {
+    std::cout << delog::message("Test", type[0], type_args) << std::endl;
+    for (size_t i = 0; i < container_args.size(); ++ i)
+    {
+        std::cout << "container" << std::endl;
+        std::cout << container_args[i] << std::endl;
+    }
     return string_t("vector");
 }
 
-//template <typename Type, typename... TypeArgs>
-//string_t build(const char_t* name, const std::list<Type>& type, size_t start, size_t end, const TypeArgs& ...args)
-//{
-//    return string_t("list");
-//}
-//
-//template <typename Type, typename... TypeArgs>
-//string_t build(const char_t* name, const std::unordered_set<Type>& type, size_t length, const TypeArgs& ...args)
-//{
-//    return string_t("settt");
-//}
-//
-//template <typename Type1, typename Type2, typename... TypeArgs>
-//string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type, size_t length, const TypeArgs& ...args)
-//{
-//    return string_t("mappp");
-//}
+template <typename Type, typename... TypeArgs>
+string_t build(const char_t* name, const std::list<Type>& type, size_t start, size_t end, const TypeArgs& ...args)
+{
+    return string_t("list");
+}
+
+template <typename Type, typename... TypeArgs>
+string_t build(const char_t* name, const std::unordered_set<Type>& type, size_t length, const TypeArgs& ...args)
+{
+    return string_t("settt");
+}
+
+template <typename Type1, typename Type2, typename... TypeArgs>
+string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type, size_t length, const TypeArgs& ...args)
+{
+    return string_t("mappp");
+}
 
 class Container
 {
@@ -148,20 +172,18 @@ public:
     template <template<typename> typename Container, typename Type>
     string_t generate(const char_t* name, const Container<Type>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        auto parameters = ParameterVector(container_args);
-        for (size_t i = 0; i < parameters.size(); ++ i)
+        ParameterList cargs = ParameterList(container_args);
+        ParameterList cargs_default({0, value.size()});
+        std::cout << "Length" << cargs_default.size() << std::endl;
+
+        for (size_t i = 0; i < cargs.size(); ++ i)
         {
+            cargs_default[i] = cargs[i];
             std::cout << "container" << std::endl;
-            std::cout << parameters[i] << std::endl;
+            std::cout << cargs_default[i] << std::endl;
         }
 
-        parameters = ParameterVector(type_args);
-        for (size_t i = 0; i < parameters.size(); ++ i)
-        {
-            std::cout << "type" << std::endl;
-            std::cout << parameters[i] << std::endl;
-        }
-        return build(name, value, container_args, type_args);
+        return build(name, value, cargs_default, type_args);
     }
 
  //   // Sequence containers: array 
@@ -208,14 +230,14 @@ public:
     template <template<typename, typename> typename Container, typename Key, typename T>
     string_t generate(const char_t* name, const Container<Key, T>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        auto parameters = ParameterVector(container_args);
+        auto parameters = ParameterList(container_args);
         for (size_t i = 0; i < parameters.size(); ++ i)
         {
             std::cout << "container" << std::endl;
             std::cout << parameters[i] << std::endl;
         }
 
-        parameters = ParameterVector(type_args);
+        parameters = ParameterList(type_args);
         for (size_t i = 0; i < parameters.size(); ++ i)
         {
             std::cout << "type" << std::endl;
@@ -228,17 +250,6 @@ public:
 }
 
 
-
-#define EXPORT_BASICS(Type)                                                   \
-template <typename... Args>                                                        \
-string_t message(const char_t* name, const Type& type, const std::initializer_list<Args>&... args)     \
-{                                                                               \
-    return delog::basics::Primitive().generate(name, type, args...);                           \
-}                                                                               \                                                                                                                                                                  
-string_t message(const char_t* name, const Type& type, const Parameters& args={})     \
-{                                                                               \
-    return delog::basics::Primitive().generate(name, type, args);                           \
-}                                                                                                                                                                  
 
 
 #define EXPORT_STL_ONE_PARAMETER(ContainerType)                                                   \
@@ -286,12 +297,6 @@ string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Par
 //    return delog::stl::build(name, type, args...);                                   \
 //}                                                                               
 
-EXPORT_BASICS(int_t)
-EXPORT_BASICS(long_t)
-EXPORT_BASICS(char_t)
-EXPORT_BASICS(float_t)
-EXPORT_BASICS(double_t)
-EXPORT_BASICS(string_t)
 
 EXPORT_STL_ONE_PARAMETER(std::vector)
 EXPORT_STL_ONE_PARAMETER(std::list)
