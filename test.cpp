@@ -5,8 +5,7 @@ int main()
 {
 //	std::cout << LOG_STDSTRING("SSSSSS", 3) << std::endl;
 //
-	std::vector<int> t;
-	t.push_back(1);
+	std::vector<int> t = {2,3,2,5,62,1,5,34};
 //	std::cout << LOG_STLVECTOR(t, 3, 3, 1) << std::endl;
 //	//delog::mapping(std::string("DFDS"));
 	int a = 3;
@@ -62,11 +61,11 @@ int main()
 //
 //	std::cout << delog::message("vector", t) << std::endl;
 //	std::cout << delog::message("vector", t, {}, {1, 3}) << std::endl;
-	std::cout << delog::message("vector", t, {31}, {3}) << std::endl;
+	std::cout << delog::message("vector", t, {3, 6}) << std::endl;
 
-	//std::unordered_set<int> set;
-	//set.insert(898);
-	//std::cout << delog::message("set", set, {31}, {3}) << std::endl;
+	std::unordered_set<int> set;
+	set.insert(898);
+	std::cout << delog::message("set", set, {31}, {3}) << std::endl;
 
 	//std::cout << delog::message("test", t, std::tuple(4, 5), std::tuple(2)) << std::endl;
 //	std::cout << delog::message("test", t, {1}) << std::endl;

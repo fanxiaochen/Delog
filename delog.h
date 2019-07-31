@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include <set>
 #include <map>
+#include <sstream>
 #include <typeinfo>
 #ifndef _MSC_VER
     #include <cxxabi.h>
@@ -47,12 +48,12 @@ namespace basics
 
 /// Basic data type
 static std::unordered_map<const char_t*, const char_t*> formats({ 
-    {typeid(char_t).name(),    "%s  %s = %c\n"},
-    {typeid(int_t).name(),     "%s  %s = %d\n"},
-    {typeid(long_t).name(),    "%s  %s = %d\n"},
-    {typeid(float_t).name(),   "%s  %s = %f\n"},
-    {typeid(double_t).name(),  "%s  %s = %f\n"},
-    {typeid(string_t).name(),  "%s  %s = %s\n"},
+    {typeid(char_t).name(),    "%s  %s = %c"},
+    {typeid(int_t).name(),     "%s  %s = %d"},
+    {typeid(long_t).name(),    "%s  %s = %d"},
+    {typeid(float_t).name(),   "%s  %s = %f"},
+    {typeid(double_t).name(),  "%s  %s = %f"},
+    {typeid(string_t).name(),  "%s  %s = %s"},
 });
 
 
@@ -72,9 +73,12 @@ string_t build(const char_t* name, const Type& value)
     sprintf(str, formats.at(typeid(Type).name()), type, name, value);
  //   std::cout << str << std::endl;
     
+    std::stringstream ss;
+    ss << str << "\n";
+    
     free(type);
 
-    return str;
+    return ss.str(); 
 }
 
 string_t build(const char_t* name, const string_t& value)
@@ -137,29 +141,73 @@ namespace stl
 template <typename Type>
 string_t build(const char_t* name, const std::vector<Type>& type, const ParameterList& container_args, const Parameters& type_args)
 {
-    std::cout << delog::message("Test", type[0], type_args) << std::endl;
-    for (size_t i = 0; i < container_args.size(); ++ i)
+    char_t* type_str = nullptr;
+#ifndef _MSC_VER
+    int status = 0;
+    type_str = abi::__cxa_demangle(typeid(std::vector<Type>).name(), 0, 0, &status);
+//    std::cout << type << std::endl;
+#else
+    type_str = typeid(std::vector<Type>).name();
+#endif
+
+    std::stringstream ss;
+    ss << string_t(type_str) << "\n";
+
+    size_t start = container_args[0];
+    size_t end = container_args[1];
+    for (size_t i = start; i <= end; ++ i)
     {
-        std::cout << "container" << std::endl;
-        std::cout << container_args[i] << std::endl;
+       ss << "<--[" << i << "]-->\n";
+       ss << "{" << delog::message(("type["+std::to_string(i)+"]").c_str(), type[i], type_args) << "}\n";
     }
-    return string_t("vector");
+
+    free(type_str);
+
+    return ss.str();
 }
 
-template <typename Type, typename... TypeArgs>
-string_t build(const char_t* name, const std::list<Type>& type, size_t start, size_t end, const TypeArgs& ...args)
+template <typename Type, size_t N>
+string_t build(const char_t* name, const std::array<Type, N>& type, const ParameterList& container_args, const Parameters& type_args)
+{
+    char_t* type_str = nullptr;
+#ifndef _MSC_VER
+    int status = 0;
+    type_str = abi::__cxa_demangle(typeid(std::array<Type, N>).name(), 0, 0, &status);
+//    std::cout << type << std::endl;
+#else
+    type_str = typeid(std::vector<Type>).name();
+#endif
+
+    std::stringstream ss;
+    ss << string_t(type_str) << "\n";
+
+    size_t start = container_args[0];
+    size_t end = container_args[1];
+    for (size_t i = start; i <= end; ++ i)
+    {
+       ss << "<--[" << i << "]-->\n";
+       ss << "{" << delog::message(("type["+std::to_string(i)+"]").c_str(), type[i], type_args) << "}\n";
+    }
+
+    free(type_str);
+
+    return ss.str();
+}
+
+template <typename Type>
+string_t build(const char_t* name, const std::list<Type>& type, const ParameterList& container_args, const Parameters& type_args)
 {
     return string_t("list");
 }
 
-template <typename Type, typename... TypeArgs>
-string_t build(const char_t* name, const std::unordered_set<Type>& type, size_t length, const TypeArgs& ...args)
+template <typename Type>
+string_t build(const char_t* name, const std::unordered_set<Type>& type, const ParameterList& container_args, const Parameters& type_args)
 {
     return string_t("settt");
 }
 
-template <typename Type1, typename Type2, typename... TypeArgs>
-string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type, size_t length, const TypeArgs& ...args)
+template <typename Type1, typename Type2>
+string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type, const ParameterList& container_args, const Parameters& type_args)
 {
     return string_t("mappp");
 }
@@ -169,82 +217,55 @@ class Container
 public:
 
     // Sequence containers: vector, list, deque
-    template <template<typename> typename Container, typename Type>
-    string_t generate(const char_t* name, const Container<Type>& value, const Parameters& container_args={}, const Parameters& type_args={})
+    template <template<typename, typename> typename Container, typename Type>
+    string_t generate(const char_t* name, const Container<Type, std::allocator<Type>>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
         ParameterList cargs = ParameterList(container_args);
         ParameterList cargs_default({0, value.size()});
-        std::cout << "Length" << cargs_default.size() << std::endl;
 
-        for (size_t i = 0; i < cargs.size(); ++ i)
-        {
-            cargs_default[i] = cargs[i];
-            std::cout << "container" << std::endl;
-            std::cout << cargs_default[i] << std::endl;
-        }
+        for (size_t i = 0; i < cargs.size(); ++ i) cargs_default[i] = cargs[i];
 
         return build(name, value, cargs_default, type_args);
     }
 
- //   // Sequence containers: array 
- //   template <typename Type, size_t N>
- //   string_t generate(const char_t* name, const std::array<Type, N>& value, const Parameters& container_args={}, const Parameters& type_args={})
- //   {
- //       auto parameters = ParameterVector(container_args);
- //       for (size_t i = 0; i < parameters.size(); ++ i)
- //       {
- //           std::cout << "container" << std::endl;
- //           std::cout << parameters[i] << std::endl;
- //       }
-
- //       parameters = ParameterVector(type_args);
- //       for (size_t i = 0; i < parameters.size(); ++ i)
- //       {
- //           std::cout << "type" << std::endl;
- //           std::cout << parameters[i] << std::endl;
- //       }
- //       return build(name, value, container_args, type_args);
- //   }
-//    
-//    // Associative containers: set, unordered_set
-//    template <template<typename> typename Container, typename Type>
-//    string_t generate(const char_t* name, const Container<Type>& value, const Parameters& container_args={}, const Parameters& type_args={})
-//    {
-//        auto parameters = ParameterVector(container_args);
-//        for (size_t i = 0; i < parameters.size(); ++ i)
-//        {
-//            std::cout << "container" << std::endl;
-//            std::cout << parameters[i] << std::endl;
-//        }
-//
-//        parameters = ParameterVector(type_args);
-//        for (size_t i = 0; i < parameters.size(); ++ i)
-//        {
-//            std::cout << "type" << std::endl;
-//            std::cout << parameters[i] << std::endl;
-//        }
-//        return build(name, value, container_args, type_args);
-//    }
-//
-    // Associative containers: map, unordered_map
-    template <template<typename, typename> typename Container, typename Key, typename T>
-    string_t generate(const char_t* name, const Container<Key, T>& value, const Parameters& container_args={}, const Parameters& type_args={})
+    // Sequence containers: array 
+    template <typename Type, size_t N>
+    string_t generate(const char_t* name, const std::array<Type, N>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        auto parameters = ParameterList(container_args);
-        for (size_t i = 0; i < parameters.size(); ++ i)
-        {
-            std::cout << "container" << std::endl;
-            std::cout << parameters[i] << std::endl;
-        }
+        ParameterList cargs = ParameterList(container_args);
+        ParameterList cargs_default({0, value.size()});
 
-        parameters = ParameterList(type_args);
-        for (size_t i = 0; i < parameters.size(); ++ i)
-        {
-            std::cout << "type" << std::endl;
-            std::cout << parameters[i] << std::endl;
-        }
-        return build(name, value, container_args, type_args);
+        for (size_t i = 0; i < cargs.size(); ++ i) cargs_default[i] = cargs[i];
+
+        return build(name, value, cargs_default, type_args);
     }
+
+    // Associative containers: set, unordered_set
+    template <template<typename, typename, typename> typename Container, typename Type>
+    string_t generate(const char_t* name, const Container<Type, std::less<Type>, std::allocator<Type>>& value, 
+    const Parameters& container_args={}, const Parameters& type_args={})
+    {
+        ParameterList cargs = ParameterList(container_args);
+        ParameterList cargs_default({0, value.size()});
+
+        for (size_t i = 0; i < cargs.size(); ++ i) cargs_default[i] = cargs[i];
+
+        return build(name, value, cargs_default, type_args);
+    }
+
+    // Associative containers: map, unordered_map
+    template <template<typename, typename, typename, typename> typename Container, typename Key, typename T>
+    string_t generate(const char_t* name, const Container<Key, T, std::less<Key>, std::allocator<std::pair<const Key, T>>>& value, 
+    const Parameters& container_args={}, const Parameters& type_args={})
+    {
+        ParameterList cargs = ParameterList(container_args);
+        ParameterList cargs_default({0, value.size()});
+
+        for (size_t i = 0; i < cargs.size(); ++ i) cargs_default[i] = cargs[i];
+
+        return build(name, value, cargs_default, type_args);
+    }
+
 };
 
 }
