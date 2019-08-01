@@ -10,6 +10,8 @@
 #include <unordered_set>
 #include <set>
 #include <map>
+#include <stack>
+#include <queue>
 #include <sstream>
 #include <typeinfo>
 #ifndef _MSC_VER
@@ -212,13 +214,25 @@ string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type,
     return string_t("mappp");
 }
 
+template <typename Type>
+string_t build(const char_t* name, const std::stack<Type>& type, const ParameterList& container_args, const Parameters& type_args)
+{
+    return string_t("stack");
+}
+
+template <typename Type>
+string_t build(const char_t* name, const std::queue<Type>& type, const ParameterList& container_args, const Parameters& type_args)
+{
+    return string_t("queue");
+}
+
 class Container
 {
 public:
 
-    // Sequence containers: vector, list, deque
-    template <template<typename, typename> typename Container, typename Type>
-    string_t generate(const char_t* name, const Container<Type, std::allocator<Type>>& value, const Parameters& container_args={}, const Parameters& type_args={})
+    // vector, list, deque, set, unordered_set, stack, queue
+    template <template<typename> typename Container, typename Type>
+    string_t generate(const char_t* name, const Container<Type>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
         ParameterList cargs = ParameterList(container_args);
         ParameterList cargs_default({0, value.size()});
@@ -228,7 +242,19 @@ public:
         return build(name, value, cargs_default, type_args);
     }
 
-    // Sequence containers: array 
+    // map, unordered_map
+    template <template<typename, typename> typename Container, typename Type1, typename Type2>
+    string_t generate(const char_t* name, const Container<Type1, Type2>& value, const Parameters& container_args={}, const Parameters& type_args={})
+    {
+        ParameterList cargs = ParameterList(container_args);
+        ParameterList cargs_default({0, value.size()});
+
+        for (size_t i = 0; i < cargs.size(); ++ i) cargs_default[i] = cargs[i];
+
+        return build(name, value, cargs_default, type_args);
+    }
+
+    // array 
     template <typename Type, size_t N>
     string_t generate(const char_t* name, const std::array<Type, N>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
@@ -240,31 +266,33 @@ public:
         return build(name, value, cargs_default, type_args);
     }
 
-    // Associative containers: set, unordered_set
-    template <template<typename, typename, typename> typename Container, typename Type>
-    string_t generate(const char_t* name, const Container<Type, std::less<Type>, std::allocator<Type>>& value, 
-    const Parameters& container_args={}, const Parameters& type_args={})
-    {
-        ParameterList cargs = ParameterList(container_args);
-        ParameterList cargs_default({0, value.size()});
 
-        for (size_t i = 0; i < cargs.size(); ++ i) cargs_default[i] = cargs[i];
 
-        return build(name, value, cargs_default, type_args);
-    }
+//    // Associative containers: set, unordered_set
+//    template <template<typename, typename, typename> typename Container, typename Type>
+//    string_t generate(const char_t* name, const Container<Type, std::less<Type>, std::allocator<Type>>& value, 
+//    const Parameters& container_args={}, const Parameters& type_args={})
+//    {
+//        ParameterList cargs = ParameterList(container_args);
+//        ParameterList cargs_default({0, value.size()});
+//
+//        for (size_t i = 0; i < cargs.size(); ++ i) cargs_default[i] = cargs[i];
+//
+//        return build(name, value, cargs_default, type_args);
+//    }
 
-    // Associative containers: map, unordered_map
-    template <template<typename, typename, typename, typename> typename Container, typename Key, typename T>
-    string_t generate(const char_t* name, const Container<Key, T, std::less<Key>, std::allocator<std::pair<const Key, T>>>& value, 
-    const Parameters& container_args={}, const Parameters& type_args={})
-    {
-        ParameterList cargs = ParameterList(container_args);
-        ParameterList cargs_default({0, value.size()});
+ //   // Associative containers: map, unordered_map
+ //   template <template<typename, typename, typename, typename> typename Container, typename Key, typename T>
+ //   string_t generate(const char_t* name, const Container<Key, T, std::less<Key>, std::allocator<std::pair<const Key, T>>>& value, 
+ //   const Parameters& container_args={}, const Parameters& type_args={})
+ //   {
+ //       ParameterList cargs = ParameterList(container_args);
+ //       ParameterList cargs_default({0, value.size()});
 
-        for (size_t i = 0; i < cargs.size(); ++ i) cargs_default[i] = cargs[i];
+ //       for (size_t i = 0; i < cargs.size(); ++ i) cargs_default[i] = cargs[i];
 
-        return build(name, value, cargs_default, type_args);
-    }
+ //       return build(name, value, cargs_default, type_args);
+ //   }
 
 };
 
@@ -297,6 +325,18 @@ string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Par
     return delog::stl::Container().generate(name, type, container_args, type_args);                           \
 }                                                                                  
 
+#define EXPORT_STL_TWO_PARAMETER_WITH_N(ContainerType)                                                   \
+template <typename T1, size_t N, typename... Args>                                                     \
+string_t message(const char_t* name, const ContainerType<T1,N>& type, const std::initializer_list<Args>&... args)     \
+{                                                                               \
+    return delog::stl::Container().generate(name, type, args...);                           \
+}   \                                                                               
+template <typename T1, size_t N>  \
+string_t message(const char_t* name, const ContainerType<T1,N>& type, const Parameters& container_args={}, const Parameters& type_args={})     \
+{                                                                                                                   \
+    return delog::stl::Container().generate(name, type, container_args, type_args);                           \
+}                                                                                  
+
 
 //template <typename T, typename... Args>                                              \
 //string_t message(const char_t* name, const Type<T>& type, const Args&... args)       \
@@ -324,8 +364,10 @@ EXPORT_STL_ONE_PARAMETER(std::list)
 EXPORT_STL_ONE_PARAMETER(std::deque)
 EXPORT_STL_ONE_PARAMETER(std::set)
 EXPORT_STL_ONE_PARAMETER(std::unordered_set)
+EXPORT_STL_ONE_PARAMETER(std::stack)
+EXPORT_STL_ONE_PARAMETER(std::queue)
 
-//EXPORT_STL_TWO_PARAMETER(std::array)
+EXPORT_STL_TWO_PARAMETER_WITH_N(std::array)
 EXPORT_STL_TWO_PARAMETER(std::map)
 EXPORT_STL_TWO_PARAMETER(std::unordered_map)
 
