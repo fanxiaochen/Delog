@@ -65,15 +65,15 @@ int main()
 ////	std::cout << delog::message("vector", t, {}, {1, 3}) << std::endl;
 	std::cout << delog::message("vector", t, {3, 6}) << std::endl;
 //
-//	std::list<int> list = {2,3,5};
-//	std::cout << delog::message("list", list, {3, 6}) << std::endl;
+	std::list<int> list = {2,3,5};
+	std::cout << delog::message("list", list, {3}) << std::endl;
 
 	std::deque<int> deque = {2,3,5};
 	std::cout << delog::message("deque", deque, {3,4}) << std::endl;
 //
-//	std::unordered_set<int> set;
-//	set.insert(898);
-//	std::cout << delog::message("set", set, {31}, {3}) << std::endl;
+	std::unordered_set<int> set;
+	set.insert(898);
+	std::cout << delog::message("set", set, {}, {3}) << std::endl;
 //
 //	std::unordered_map<int, int> map;
 //	map[898] = 233;
@@ -82,13 +82,16 @@ int main()
 	std::array<int, 5> array = {1};
 	std::cout << delog::message("array", array, {1}, {3}) << std::endl;
 //
-//	std::stack<int> stack;
-//	stack.push(2);
-//	std::cout << delog::message("stack", stack, {31}, {3}) << std::endl;
+	std::stack<int> stack;
+	stack.push(2);
+	std::cout << delog::message("stack", stack, {31}, {3}) << std::endl;
 //
-//	std::queue<int> queue;
-//	queue.push(2);
-//	std::cout << delog::message("queue", queue, {31}, {3}) << std::endl;
+	std::queue<int> queue;
+	queue.push(29);
+	std::cout << delog::message("queue", queue, {31}, {3}) << std::endl;
+
+	std::pair<int, int > pair = {1,2};
+	std::cout << delog::message("pair", pair, {3}) << std::endl;
 
 	//std::cout << delog::message("test", t, std::tuple(4, 5), std::tuple(2)) << std::endl;
 //	std::cout << delog::message("test", t, {1}) << std::endl;

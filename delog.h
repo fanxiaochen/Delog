@@ -135,69 +135,210 @@ EXPORT_BASICS(string_t)
 namespace stl
 {
 
-#define STL_BUILD_RANGE(name, type, cargs, targs)   \
-string_t type_str = GET_VARIABLE_TYPE(type);            \
-std::stringstream ss;                               \
-ss << string_t("Name: ") << string_t(name) << "\n";         \
-ss << string_t("Type: ") << string_t(type_str) << "\n";         \
-ss << string_t("Length: ") << type.size() << "\n";              \
-size_t start = container_args[0];                   \
-size_t end = container_args[1];                     \
-for (size_t i = start; i <= end; ++ i)              \
-{                                                   \
-    ss << "<--[" << i << "]-->\n";                  \
-    ss << "{\n" << delog::message(("var["+std::to_string(i)+"]").c_str(), type[i], type_args) << "}\n"; \
-}                                                   \
-return ss.str();                                    \
-
-
 template <typename Type>
-string_t build(const char_t* name, const std::vector<Type>& type, const ParameterList& container_args, const Parameters& type_args)
+string_t format_range(const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
 {
-    STL_BUILD_RANGE(name, type, container_args, type_args)
-}
-
-template <typename Type, size_t N>
-string_t build(const char_t* name, const std::array<Type, N>& type, const ParameterList& container_args, const Parameters& type_args)
-{
-    STL_BUILD_RANGE(name, type, container_args, type_args)
+    string_t type_str = GET_VARIABLE_TYPE(type);            
+    std::stringstream ss;                               
+    ss << string_t("Name: ") << string_t(name) << "\n";        
+    ss << string_t("Type: ") << string_t(type_str) << "\n";         
+    ss << string_t("Length: ") << type.size() << "\n";              
+    size_t start = container_args[0];                   
+    size_t end = container_args[1];                     
+    for (size_t i = start; i <= end; ++ i)              
+    {                                                   
+        ss << "<--[" << i << "]-->\n";                  
+        ss << "{\n" << delog::message(("var["+std::to_string(i)+"]").c_str(), type[i], type_args) << "}\n"; 
+    }                                                   
+    return ss.str();                                    
 }
 
 template <typename Type>
-string_t build(const char_t* name, const std::list<Type>& type, const ParameterList& container_args, const Parameters& type_args)
+string_t format_iterator(const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
 {
-    //STL_BUILD_RANGE(name, type, container_args, type_args)
-    return string_t("FFFF");
+    string_t type_str = GET_VARIABLE_TYPE(type);            
+    std::stringstream ss;                               
+    ss << string_t("Name: ") << string_t(name) << "\n";        
+    ss << string_t("Type: ") << string_t(type_str) << "\n";         
+    ss << string_t("Length: ") << type.size() << "\n";              
+    size_t length = container_args[0];                   
+
+    auto itr = type.begin();
+    size_t count = 0;
+    for (auto itr = type.begin(); itr != type.end(); ++ itr)
+    {
+        if (count == length) break;
+        ss << "<--[" << count << "]-->\n";                  
+        ss << "{\n" << delog::message(("var["+std::to_string(count)+"]").c_str(), *itr, type_args) << "}\n"; 
+        count ++;
+    }
+    return ss.str();                                    
 }
 
 template <typename Type>
-string_t build(const char_t* name, const std::deque<Type>& type, const ParameterList& container_args, const Parameters& type_args)
+string_t format_stack(const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
 {
-    STL_BUILD_RANGE(name, type, container_args, type_args)
+    string_t type_str = GET_VARIABLE_TYPE(type);            
+    std::stringstream ss;                               
+    ss << string_t("Name: ") << string_t(name) << "\n";        
+    ss << string_t("Type: ") << string_t(type_str) << "\n";         
+    ss << string_t("Length: ") << type.size() << "\n";              
+    size_t length = container_args[0];                   
+
+    Type copied = type;
+    size_t count = 0;
+    while (!copied.empty())
+    {
+        if (count == length) break;
+        ss << "<--[" << count << "]-->\n";                  
+        ss << "{\n" << delog::message(("var["+std::to_string(count)+"]").c_str(), copied.top(), type_args) << "}\n"; 
+        copied.pop();
+        count ++;
+    }
+    return ss.str();                                    
 }
 
 template <typename Type>
-string_t build(const char_t* name, const std::unordered_set<Type>& type, const ParameterList& container_args, const Parameters& type_args)
+string_t format_queue(const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
 {
-    return string_t("settt");
+    string_t type_str = GET_VARIABLE_TYPE(type);            
+    std::stringstream ss;                               
+    ss << string_t("Name: ") << string_t(name) << "\n";        
+    ss << string_t("Type: ") << string_t(type_str) << "\n";         
+    ss << string_t("Length: ") << type.size() << "\n";              
+    size_t length = container_args[0];                   
+
+    Type copied = type;
+    size_t count = 0;
+    while (!copied.empty())
+    {
+        if (count == length) break;
+        ss << "<--[" << count << "]-->\n";                  
+        ss << "{\n" << delog::message(("var["+std::to_string(count)+"]").c_str(), copied.front(), type_args) << "}\n"; 
+        copied.pop();
+        count ++;
+    }
+    return ss.str();                                    
 }
 
 template <typename Type1, typename Type2>
-string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type, const ParameterList& container_args, const Parameters& type_args)
+string_t format_pair(const char_t* name, const std::pair<Type1, Type2>& type, const Parameters& type1_args, const Parameters& type2_args)
 {
-    return string_t("mappp");
+    string_t type_str = GET_VARIABLE_TYPE(type);            
+    std::stringstream ss;                               
+    ss << string_t("Name: ") << string_t(name) << "\n";        
+    ss << string_t("Type: ") << string_t(type_str) << "\n";         
+    ss << string_t("First: \n");             
+    ss << "{\n" << delog::message("var.first", type.first, type1_args) << "}\n"; 
+    ss << string_t("Second: \n");             
+    ss << "{\n" << delog::message("var.second", type.second, type2_args) << "}\n"; 
+    return ss.str();
 }
 
 template <typename Type>
-string_t build(const char_t* name, const std::stack<Type>& type, const ParameterList& container_args, const Parameters& type_args)
+ParameterList parameters_to_range(const Type& type, const Parameters& container_args)
 {
-    return string_t("stack");
+    ParameterList cargs = ParameterList(container_args);
+    ParameterList cargs_default({0, type.size()-1});
+
+    for (size_t i = 0; i < cargs.size(); ++ i) 
+    {
+        if (cargs[i] >= 0 && cargs[i] <= type.size()-1)
+            cargs_default.set(i, cargs[i]);
+    }
+
+    return cargs_default;
 }
 
 template <typename Type>
-string_t build(const char_t* name, const std::queue<Type>& type, const ParameterList& container_args, const Parameters& type_args)
+ParameterList parameters_to_iterator(const Type& type, const Parameters& container_args)
 {
-    return string_t("queue");
+    ParameterList cargs = ParameterList(container_args);
+    ParameterList cargs_default({type.size()});
+
+    for (size_t i = 0; i < cargs.size(); ++ i) 
+    {
+        if (cargs[i] >= 0 && cargs[i] <= type.size())
+            cargs_default.set(i, cargs[i]);
+    }
+
+    return cargs_default;
+}
+
+template <typename Type>
+string_t build(const char_t* name, const std::vector<Type>& type, const Parameters& container_args, const Parameters& type_args)
+{
+    auto cargs = parameters_to_range(type, container_args);
+    return format_range(name, type, cargs, type_args);
+}
+
+template <typename Type>
+string_t build(const char_t* name, const std::deque<Type>& type, const Parameters& container_args, const Parameters& type_args)
+{
+    auto cargs = parameters_to_range(type, container_args);
+    return format_range(name, type, cargs, type_args);
+}
+
+template <typename Type, size_t N>
+string_t build(const char_t* name, const std::array<Type, N>& type, const Parameters& container_args, const Parameters& type_args)
+{
+    auto cargs = parameters_to_range(type, container_args);
+    return format_range(name, type, cargs, type_args);
+}
+
+template <typename Type>
+string_t build(const char_t* name, const std::list<Type>& type, const Parameters& container_args, const Parameters& type_args)
+{
+    auto cargs = parameters_to_iterator(type, container_args);
+    return format_iterator(name, type, cargs, type_args);
+}
+
+template <typename Type>
+string_t build(const char_t* name, const std::set<Type>& type, const Parameters& container_args, const Parameters& type_args)
+{
+    auto cargs = parameters_to_iterator(type, container_args);
+    return format_iterator(name, type, cargs, type_args);
+}
+
+template <typename Type>
+string_t build(const char_t* name, const std::unordered_set<Type>& type, const Parameters& container_args, const Parameters& type_args)
+{
+    auto cargs = parameters_to_iterator(type, container_args);
+    return format_iterator(name, type, cargs, type_args);
+}
+
+template <typename Type1, typename Type2>
+string_t build(const char_t* name, const std::map<Type1, Type2>& type, const Parameters& container_args, const Parameters& type_args)
+{
+    auto cargs = parameters_to_iterator(type, container_args);
+    return format_iterator(name, type, cargs, type_args);
+}
+
+template <typename Type1, typename Type2>
+string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type, const Parameters& container_args, const Parameters& type_args)
+{
+    auto cargs = parameters_to_iterator(type, container_args);
+    return format_iterator(name, type, cargs, type_args);
+}
+
+template <typename Type>
+string_t build(const char_t* name, const std::stack<Type>& type, const Parameters& container_args, const Parameters& type_args)
+{
+    auto cargs = parameters_to_iterator(type, container_args);
+    return format_stack(name, type, cargs, type_args);
+}
+
+template <typename Type>
+string_t build(const char_t* name, const std::queue<Type>& type, const Parameters& container_args, const Parameters& type_args)
+{
+    auto cargs = parameters_to_iterator(type, container_args);
+    return format_queue(name, type, cargs, type_args);
+}
+
+template <typename Type1, typename Type2>
+string_t build(const char_t*& name, const std::pair<Type1, Type2>& type, const Parameters& type1_args, const Parameters& type2_args)
+{
+    return format_pair(name, type, type1_args, type2_args);
 }
 
 class Container
@@ -207,48 +348,28 @@ public:
     template <template<typename> typename Container, typename Type>
     string_t generate(const char_t* name, const Container<Type>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        ParameterList cargs = ParameterList(container_args);
-        ParameterList cargs_default({0, value.size()-1});
-
-        for (size_t i = 0; i < cargs.size(); ++ i) 
-        {
-            if (cargs[i] >= 0 && cargs[i] <= value.size()-1)
-                cargs_default.set(i, cargs[i]);
-        }
-
-        return build(name, value, cargs_default, type_args);
+        return build(name, value, container_args, type_args);
     }
 
     // map, unordered_map
     template <template<typename, typename> typename Container, typename Type1, typename Type2>
     string_t generate(const char_t* name, const Container<Type1, Type2>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        ParameterList cargs = ParameterList(container_args);
-        ParameterList cargs_default({0, value.size()-1});
-
-        for (size_t i = 0; i < cargs.size(); ++ i) 
-        {
-            if (cargs[i] >= 0 && cargs[i] <= value.size()-1)
-                cargs_default.set(i, cargs[i]);
-        }
-
-        return build(name, value, cargs_default, type_args);
+        return build(name, value, container_args, type_args);
     }
 
     // array 
     template <typename Type, size_t N>
     string_t generate(const char_t* name, const std::array<Type, N>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        ParameterList cargs = ParameterList(container_args);
-        ParameterList cargs_default({0, value.size()-1});
+        return build(name, value, container_args, type_args);
+    }
 
-        for (size_t i = 0; i < cargs.size(); ++ i) 
-        {
-            if (cargs[i] >= 0 && cargs[i] <= value.size()-1)
-                cargs_default.set(i, cargs[i]);
-        }
-
-        return build(name, value, cargs_default, type_args);
+    // pair
+    template <typename Type1, typename Type2>
+    string_t generate(const char_t* name, const std::pair<Type1, Type2>& value, const Parameters& type1_args={}, const Parameters& type2_args={})
+    {
+        return build(name, value, type1_args, type2_args);
     }
 
 };
@@ -294,6 +415,18 @@ string_t message(const char_t* name, const ContainerType<T1,N>& type, const Para
     return delog::stl::Container().generate(name, type, container_args, type_args);                           \
 }                                                                                  
 
+#define EXPORT_STL_TWO_PARAMETER_WITH_PAIR(ContainerType)                                                   \
+template <typename T1, typename T2, typename... Args>                                                     \
+string_t message(const char_t* name, const ContainerType<T1,T2>& type, const std::initializer_list<Args>&... args)     \
+{                                                                               \
+    return delog::stl::Container().generate(name, type, args...);                           \
+}   \                                                                               
+template <typename T1, typename T2>  \
+string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Parameters& type1_args={}, const Parameters& type2_args={})     \
+{                                                                                                                   \
+    return delog::stl::Container().generate(name, type, type1_args, type2_args);                           \
+}                                                                                  
+
 
 //template <typename T, typename... Args>                                              \
 //string_t message(const char_t* name, const Type<T>& type, const Args&... args)       \
@@ -315,6 +448,7 @@ string_t message(const char_t* name, const ContainerType<T1,N>& type, const Para
 //    return delog::stl::build(name, type, args...);                                   \
 //}                                                                               
 
+EXPORT_STL_TWO_PARAMETER_WITH_PAIR(std::pair)
 
 EXPORT_STL_ONE_PARAMETER(std::vector)
 EXPORT_STL_ONE_PARAMETER(std::list)
