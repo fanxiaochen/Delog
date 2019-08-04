@@ -98,7 +98,7 @@ static string_t datestamp()
 string_t record_format(const char_t* file, const ulong_t line, const char_t* func)
 {
     char_t str[RECORD_MAX_LENGTH];
-    sprintf(str, "[%s][%s]][%s:%s:%d]", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
+    sprintf(str, "[%s][%s][%s:%s:%d]\n", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
                                                 file, func, line);
     return string_t(str);
 }
@@ -509,53 +509,11 @@ REGISTER_STL_CONTAINER_TWO_PARAMETER_WITH_N(std::array)
 REGISTER_STL_CONTAINER_TWO_PARAMETER(std::map)
 REGISTER_STL_CONTAINER_TWO_PARAMETER(std::unordered_map)
 
-#define DELOG_ALL(loggable, ...) delog::message(#loggable, loggable, __VA_ARGS__)
+#define DELOG_ALL(loggable, ...) \
+delog::record_format(__FILE__, __LINE__, __func__) + \
+delog::message(#loggable, loggable, ##__VA_ARGS__)
 
-
-
-//
-//template <typename ...Args>
-//class Int: public LogVariable<...Args>
-//{
-//    char_t* build(const Args& ...)
-//    {
-//
-//    }
-//};
-//
-//
-//template <typename Type>
-//class TypedValue 
-//{
-//public:
-//    char_t* build()
-//    {
-//        if (t_ != nullptr) return t_.build();
-//        else return "";
-//    }
-//private:
-//    Type*  t_;
-//};
-//
-//class LogFormat
-//{
-//public:
-//    static char_t* time(char_t* year, char_t* month, char_t* day, char_t* hour, char_t* minute, char_t* second);
-//    static char_t* file(char_t* file_name);
-//    static char_t* line(char_t* line_num);
-//    static char_t* function(char_t* function_name);
-//
-//
-//    static char_t* value();
-//};
-//
-//
-//
-//class Delogger
-//{
-//};
-
-}
+} // delog
 
 
 #endif // DELOG_H

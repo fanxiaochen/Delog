@@ -100,6 +100,9 @@ int main()
 	std::cout << __func__ << std::endl;
 	std::cout << __FILE__ << std::endl;
 	std::cout << delog::record_format(__FILE__, __LINE__, __func__) << std::endl;
+	std::cout << DELOG_ALL(pair, {3}) << std::endl;
+	std::cout << DELOG_ALL(pair) << std::endl;
+	std::cout << DELOG_ALL(t) << std::endl;
 
 	//std::cout << delog::message("test", t, std::tuple(4, 5), std::tuple(2)) << std::endl;
 //	std::cout << delog::message("test", t, {1}) << std::endl;
