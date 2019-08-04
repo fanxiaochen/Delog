@@ -93,6 +93,13 @@ int main()
 
 	std::pair<int, int > pair = {1,2};
 	std::cout << delog::message("pair", pair, {3}) << std::endl;
+	
+	std::cout << __LINE__ << std::endl;
+	std::cout << __FUNCTION__ << std::endl;
+	std::cout << __PRETTY_FUNCTION__ << std::endl;
+	std::cout << __func__ << std::endl;
+	std::cout << __FILE__ << std::endl;
+	std::cout << delog::record_format(__FILE__, __LINE__, __func__) << std::endl;
 
 	//std::cout << delog::message("test", t, std::tuple(4, 5), std::tuple(2)) << std::endl;
 //	std::cout << delog::message("test", t, {1}) << std::endl;

@@ -16,6 +16,7 @@
 #ifndef _MSC_VER
     #include <cxxabi.h>
 #endif
+#include <ctime>
 
 namespace delog
 {
@@ -58,6 +59,51 @@ string_t GET_VARIABLE_TYPE(const Type& value)
     free(type);
     return str;
 }
+
+#define RECORD_MAX_LENGTH 1000
+
+class Timer
+{
+public:
+static string_t timestamp()
+{
+	char str[9];
+
+	// get the time, and convert it to struct tm format
+	time_t a = time(0);
+	struct tm* b = localtime(&a);
+
+	// print the time to the string
+	strftime(str, 9, "%H:%M:%S", b);
+
+	return str;
+}
+
+static string_t datestamp()
+{
+	char str[11];
+
+	// get the time, and convert it to struct tm format
+	time_t a = time(0);
+	struct tm* b = localtime(&a);
+
+	// print the time to the string
+	strftime(str, 11, "%Y-%m-%d", b);
+
+	return str;
+}
+
+};
+
+string_t record_format(const char_t* file, const ulong_t line, const char_t* func)
+{
+    char_t str[RECORD_MAX_LENGTH];
+    sprintf(str, "[%s][%s]][%s:%s:%d]", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
+                                                file, func, line);
+    return string_t(str);
+}
+
+
 
 namespace basics
 {
@@ -464,6 +510,8 @@ REGISTER_STL_CONTAINER_TWO_PARAMETER(std::map)
 REGISTER_STL_CONTAINER_TWO_PARAMETER(std::unordered_map)
 
 #define DELOG_ALL(loggable, ...) delog::message(#loggable, loggable, __VA_ARGS__)
+
+
 
 //
 //template <typename ...Args>
