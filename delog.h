@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <list>
-#include <tuple>
 #include <deque>
 #include <array>
 #include <unordered_map>
@@ -111,7 +110,7 @@ public:
 
 }
 
-#define EXPORT_BASICS(Type)                                                   \
+#define REGISTER_BASICS(Type)                                                   \
 template <typename... Args>                                                        \
 string_t message(const char_t* name, const Type& type, const std::initializer_list<Args>&... args)     \
 {                                                                               \
@@ -122,15 +121,15 @@ string_t message(const char_t* name, const Type& type, const Parameters& args={}
     return delog::basics::Primitive().generate(name, type, args);                           \
 }                                                                                                                                                                  
 
-EXPORT_BASICS(int_t)
-EXPORT_BASICS(long_t)
-EXPORT_BASICS(char_t)
-EXPORT_BASICS(uint_t)
-EXPORT_BASICS(ulong_t)
-EXPORT_BASICS(uchar_t)
-EXPORT_BASICS(float_t)
-EXPORT_BASICS(double_t)
-EXPORT_BASICS(string_t)
+REGISTER_BASICS(int_t)
+REGISTER_BASICS(long_t)
+REGISTER_BASICS(char_t)
+REGISTER_BASICS(uint_t)
+REGISTER_BASICS(ulong_t)
+REGISTER_BASICS(uchar_t)
+REGISTER_BASICS(float_t)
+REGISTER_BASICS(double_t)
+REGISTER_BASICS(string_t)
 
 namespace stl
 {
@@ -146,15 +145,10 @@ string_t format_pair(const char_t* name, const std::pair<Type1, Type2>& type, co
     ss << string_t("Name: ") << string_t(name) << "\n";        
     ss << string_t("Type: ") << string_t(type_str) << "\n";         
     ss << string_t("First: \n");             
-    ss << "{\n" << delog::message("var.first", type.first, {}) << "}\n"; 
+    ss << "{\n" << delog::message("pair.first", type.first, {}) << "}\n"; 
     ss << string_t("Second: \n");             
-    ss << "{\n" << delog::message("var.second", type.second, type2_args) << "}\n"; 
+    ss << "{\n" << delog::message("pair.second", type.second, type2_args) << "}\n"; 
     return ss.str();
-}
-
-template <typename... Args>
-string_t format_tuple(const char_t* name, const std::tuple<Args...>& type, const std::vector<Parameters>& type_args)
-{
 }
 
 } // formats
@@ -163,12 +157,6 @@ template <typename Type1, typename Type2>
 string_t build(const char_t* name, const std::pair<Type1, Type2>& type, const Parameters& type2_args)
 {
     return formats::format_pair(name, type, type2_args);
-}
-
-template <typename... Args>
-string_t build(const char_t* name, const std::tuple<Args...>& type, const std::vector<Parameters>& type_args)
-{
-    return formats::format_tuple(name, type, type_args);
 }
 
 class Primitive
@@ -180,21 +168,13 @@ public:
     {
         return build(name, value, type2_args);
     }
-
-    // tuple
-//    template <typename... Args>
-//    string_t generate(const char_t* name, const std::tuple<Args...>& value, const std::vector<Parameters>& type_args={})
-//    {
-//        return build(name, value, type_args);
-//    }
-
 };
 
 } // basics 
 } // stl
 
 
-#define EXPORT_STL_TWO_PARAMETER_WITH_PAIR(ContainerType)                                                   \
+#define REGISTER_STL_BASICS_TWO_PARAMETER(ContainerType)                                                   \
 template <typename T1, typename T2, typename... Args>                                                     \
 string_t message(const char_t* name, const ContainerType<T1,T2>& type, const std::initializer_list<Args>&... args)     \
 {                                                                               \
@@ -206,7 +186,7 @@ string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Par
     return delog::stl::basics::Primitive().generate(name, type, type2_args);                           \
 }                                                                                  
 
-EXPORT_STL_TWO_PARAMETER_WITH_PAIR(std::pair)
+REGISTER_STL_BASICS_TWO_PARAMETER(std::pair)
 
 namespace stl
 {
@@ -434,7 +414,7 @@ public:
 
 
 
-#define EXPORT_STL_ONE_PARAMETER(ContainerType)                                                   \
+#define REGISTER_STL_CONTAINER_ONE_PARAMETER(ContainerType)                                                   \
 template <typename Type, typename... Args>                                                     \
 string_t message(const char_t* name, const ContainerType<Type>& type, const std::initializer_list<Args>&... args)     \
 {                                                                               \
@@ -446,7 +426,7 @@ string_t message(const char_t* name, const ContainerType<Type>& type, const Para
     return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                           \
 }                                                                                  
 
-#define EXPORT_STL_TWO_PARAMETER(ContainerType)                                                   \
+#define REGISTER_STL_CONTAINER_TWO_PARAMETER(ContainerType)                                                   \
 template <typename T1, typename T2, typename... Args>                                                     \
 string_t message(const char_t* name, const ContainerType<T1,T2>& type, const std::initializer_list<Args>&... args)     \
 {                                                                               \
@@ -458,7 +438,7 @@ string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Par
     return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                           \
 }                                                                                  
 
-#define EXPORT_STL_TWO_PARAMETER_WITH_N(ContainerType)                                                   \
+#define REGISTER_STL_CONTAINER_TWO_PARAMETER_WITH_N(ContainerType)                                                   \
 template <typename T1, size_t N, typename... Args>                                                     \
 string_t message(const char_t* name, const ContainerType<T1,N>& type, const std::initializer_list<Args>&... args)     \
 {                                                                               \
@@ -471,17 +451,17 @@ string_t message(const char_t* name, const ContainerType<T1,N>& type, const Para
 }                                                                                  
 
 
-EXPORT_STL_ONE_PARAMETER(std::vector)
-EXPORT_STL_ONE_PARAMETER(std::list)
-EXPORT_STL_ONE_PARAMETER(std::deque)
-EXPORT_STL_ONE_PARAMETER(std::set)
-EXPORT_STL_ONE_PARAMETER(std::unordered_set)
-EXPORT_STL_ONE_PARAMETER(std::stack)
-EXPORT_STL_ONE_PARAMETER(std::queue)
+REGISTER_STL_CONTAINER_ONE_PARAMETER(std::vector)
+REGISTER_STL_CONTAINER_ONE_PARAMETER(std::list)
+REGISTER_STL_CONTAINER_ONE_PARAMETER(std::deque)
+REGISTER_STL_CONTAINER_ONE_PARAMETER(std::set)
+REGISTER_STL_CONTAINER_ONE_PARAMETER(std::unordered_set)
+REGISTER_STL_CONTAINER_ONE_PARAMETER(std::stack)
+REGISTER_STL_CONTAINER_ONE_PARAMETER(std::queue)
 
-EXPORT_STL_TWO_PARAMETER_WITH_N(std::array)
-EXPORT_STL_TWO_PARAMETER(std::map)
-EXPORT_STL_TWO_PARAMETER(std::unordered_map)
+REGISTER_STL_CONTAINER_TWO_PARAMETER_WITH_N(std::array)
+REGISTER_STL_CONTAINER_TWO_PARAMETER(std::map)
+REGISTER_STL_CONTAINER_TWO_PARAMETER(std::unordered_map)
 
 #define DELOG_ALL(loggable, ...) delog::message(#loggable, loggable, __VA_ARGS__)
 

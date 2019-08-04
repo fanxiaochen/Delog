@@ -73,11 +73,12 @@ int main()
 
 	std::unordered_set<int> set;
 	set.insert(898);
-	std::cout << delog::message("set", set, {}, {3}) << std::endl;
+	//std::cout << delog::message("set", set, {}, {}) << std::endl;
+	std::cout << delog::message("set", set) << std::endl;
 
-	std::unordered_map<int, int> map;
-	map[898] = 233;
-	std::cout << delog::message("map", map, {31}, {3}) << std::endl;
+//	std::unordered_map<int, int> map;
+//	map[898] = 233;
+//	std::cout << delog::message("map", map, {31}, {3}) << std::endl;
 
 	std::array<int, 5> array = {1};
 	std::cout << delog::message("array", array, {1}, {3}) << std::endl;
