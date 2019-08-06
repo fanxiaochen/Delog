@@ -76,9 +76,9 @@ int main()
 	//std::cout << delog::message("set", set, {}, {}) << std::endl;
 	std::cout << delog::message("set", set) << std::endl;
 
-//	std::unordered_map<int, int> map;
-//	map[898] = 233;
-//	std::cout << delog::message("map", map, {31}, {3}) << std::endl;
+	std::unordered_map<int, int> map;
+	map[898] = 233;
+	std::cout << delog::message("map", map, {31}, {3}) << std::endl;
 
 	std::array<int, 5> array = {1};
 	std::cout << delog::message("array", array, {1}, {3}) << std::endl;
@@ -103,6 +103,17 @@ int main()
 	std::cout << DELOG_ALL(pair, {3}) << std::endl;
 	std::cout << DELOG_ALL(pair) << std::endl;
 	std::cout << DELOG_ALL(t) << std::endl;
+
+	std::string red("\033[0;31m");
+	std::string green("\033[0;32m");
+	std::string reset("\033[0m");
+	std::cout << red +"red" + reset  << std::endl;
+	std::cout << green + "red" + reset  << std::endl;
+	std::cout << "red" << std::endl;
+	std::cout << delog::color::red("This is red!") << std::endl;
+	std::cout << delog::color::blue("This is red!") << std::endl;
+
+
 
 	//std::cout << delog::message("test", t, std::tuple(4, 5), std::tuple(2)) << std::endl;
 //	std::cout << delog::message("test", t, {1}) << std::endl;

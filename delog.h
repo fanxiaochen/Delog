@@ -30,6 +30,75 @@ typedef float float_t;
 typedef double double_t;
 typedef std::string string_t;
 
+class color
+{
+public:
+    enum Type
+    {
+        RESET,
+        RED,
+        GREEN,
+        YELLOW,
+        BLUE,
+        MAGENTA,
+        CYAN,
+        WHITE
+    };
+
+    // Only available in linux and mac os
+    static std::unordered_map<Type, string_t> map; 
+
+    static string_t red(string_t str)
+    {
+        string_t colored_str = map[RED] + str + map[RESET];
+        return colored_str;
+    }
+
+    static string_t green(string_t str)
+    {
+        string_t colored_str = map[GREEN] + str + map[RESET];
+        return colored_str;
+    }
+
+    static string_t yellow(string_t str)
+    {
+        string_t colored_str = map[YELLOW] + str + map[RESET];
+        return colored_str;
+    }
+
+    static string_t blue(string_t str)
+    {
+        string_t colored_str = map[BLUE] + str + map[RESET];
+        return colored_str;
+    }
+    static string_t magenta(string_t str)
+    {
+        string_t colored_str = map[MAGENTA] + str + map[RESET];
+        return colored_str;
+    }
+    static string_t cyan(string_t str)
+    {
+        string_t colored_str = map[CYAN] + str + map[RESET];
+        return colored_str;
+    }
+    static string_t white(string_t str)
+    {
+        string_t colored_str = map[WHITE] + str + map[RESET];
+        return colored_str;
+    }
+};
+
+std::unordered_map<color::Type, string_t> color::map = 
+{
+    {RESET,     "\033[0m"},
+    {RED,       "\033[31m"},
+    {GREEN,     "\033[32m"},
+    {YELLOW,    "\033[33m"},
+    {BLUE,      "\033[34m"},
+    {MAGENTA,   "\033[35m"},
+    {CYAN,      "\033[36m"},
+    {WHITE,     "\033[37m"},
+};
 
 typedef std::initializer_list<int_t>  Parameters;
 
