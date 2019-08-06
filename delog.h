@@ -84,8 +84,60 @@ public:
     static string_t white(string_t str)
     {
         string_t colored_str = map[WHITE] + str + map[RESET];
+
+        #ifdef WINDOWS
+        win_change_attributes( FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
+        #endif
         return colored_str;
     }
+
+private:
+#ifdef WINDOWS
+    inline void win_change_attributes(int foreground, int background = -1)
+    {
+        // yeah, i know.. it's ugly, it's windows.
+        static WORD defaultAttributes = 0;
+
+        // get terminal handle
+        HANDLE hTerminal = INVALID_HANDLE_VALUE;
+        hTerminal = GetStdHandle(STD_OUTPUT_HANDLE);
+
+        // save default terminal attributes if it unsaved
+        if (!defaultAttributes)
+        {
+            CONSOLE_SCREEN_BUFFER_INFO info;
+            if (!GetConsoleScreenBufferInfo(hTerminal, &info))
+                return;
+            defaultAttributes = info.wAttributes;
+        }
+
+        // restore all default settings
+        if (foreground == -1 && background == -1)
+        {
+            SetConsoleTextAttribute(hTerminal, defaultAttributes);
+            return;
+        }
+
+        // get current settings
+        CONSOLE_SCREEN_BUFFER_INFO info;
+        if (!GetConsoleScreenBufferInfo(hTerminal, &info))
+            return;
+
+        if (foreground != -1)
+        {
+            info.wAttributes &= ~(info.wAttributes & 0x0F);
+            info.wAttributes |= static_cast<WORD>(foreground);
+        }
+
+        if (background != -1)
+        {
+            info.wAttributes &= ~(info.wAttributes & 0xF0);
+            info.wAttributes |= static_cast<WORD>(background);
+        }
+
+        SetConsoleTextAttribute(hTerminal, info.wAttributes);
+    }
+#endif
 };
 
 std::unordered_map<color::Type, string_t> color::map = 
