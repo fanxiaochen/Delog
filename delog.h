@@ -45,45 +45,53 @@ public:
         WHITE
     };
 
+    static Type s_default_color;
+
     // Only available in linux and mac os
     static std::unordered_map<Type, string_t> map; 
 
+    static string_t default_color(string_t str)
+    {
+        string_t colored_str = map[s_default_color] + str + map[s_default_color];
+        return colored_str;
+    }
+
     static string_t red(string_t str)
     {
-        string_t colored_str = map[RED] + str + map[RESET];
+        string_t colored_str = map[RED] + str + map[s_default_color];
         return colored_str;
     }
 
     static string_t green(string_t str)
     {
-        string_t colored_str = map[GREEN] + str + map[RESET];
+        string_t colored_str = map[GREEN] + str + map[s_default_color];
         return colored_str;
     }
 
     static string_t yellow(string_t str)
     {
-        string_t colored_str = map[YELLOW] + str + map[RESET];
+        string_t colored_str = map[YELLOW] + str + map[s_default_color];
         return colored_str;
     }
 
     static string_t blue(string_t str)
     {
-        string_t colored_str = map[BLUE] + str + map[RESET];
+        string_t colored_str = map[BLUE] + str + map[s_default_color];
         return colored_str;
     }
     static string_t magenta(string_t str)
     {
-        string_t colored_str = map[MAGENTA] + str + map[RESET];
+        string_t colored_str = map[MAGENTA] + str + map[s_default_color];
         return colored_str;
     }
     static string_t cyan(string_t str)
     {
-        string_t colored_str = map[CYAN] + str + map[RESET];
+        string_t colored_str = map[CYAN] + str + map[s_default_color];
         return colored_str;
     }
     static string_t white(string_t str)
     {
-        string_t colored_str = map[WHITE] + str + map[RESET];
+        string_t colored_str = map[WHITE] + str + map[s_default_color];
 
         #ifdef WINDOWS
         win_change_attributes( FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
@@ -140,6 +148,8 @@ private:
 #endif
 };
 
+color::Type color::s_default_color = color::Type::CYAN;
+
 std::unordered_map<color::Type, string_t> color::map = 
 {
     {RESET,     "\033[0m"},
@@ -151,6 +161,15 @@ std::unordered_map<color::Type, string_t> color::map =
     {CYAN,      "\033[36m"},
     {WHITE,     "\033[37m"},
 };
+
+#define RED(string) delog::color::red(string)
+#define GREEN(string) delog::color::green(string)
+#define YELLOW(string) delog::color::yellow(string)
+#define BLUE(string) delog::color::blue(string)
+#define MAGENTA(string) delog::color::magenta(string)
+#define CYAN(string) delog::color::cyan(string)
+#define WHITE(string) delog::color::white(string)
+#define DEFAULT_COLOR(string) delog::color::default_color(string)
 
 typedef std::initializer_list<int_t>  Parameters;
 

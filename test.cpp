@@ -112,6 +112,15 @@ int main()
 	std::cout << "red" << std::endl;
 	std::cout << delog::color::red("This is red!") << std::endl;
 	std::cout << delog::color::blue("This is red!") << std::endl;
+	std::cout << delog::color::cyan("This is red!") << std::endl;
+	std::cout << delog::color::yellow("This is red!") << std::endl;
+	std::cout << delog::color::green("This is red!") << std::endl;
+	std::cout << delog::color::magenta("This is red!") << std::endl;
+	auto mm = delog::color::magenta("This is different!");
+	auto rr = delog::color::red("This is reddd!");
+	auto gg = delog::color::green("This is ggg!");
+	std::cout << DEFAULT_COLOR(YELLOW("yeeellooww")+"we are " +mm + gg + "is red!" + rr +"wow") << std::endl;
+
 
 
 
