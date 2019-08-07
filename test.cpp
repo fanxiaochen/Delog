@@ -119,6 +119,7 @@ int main()
 	auto mm = delog::color::magenta("This is different!");
 	auto rr = delog::color::red("This is reddd!");
 	auto gg = delog::color::green("This is ggg!");
+	PAUSE();
 	std::cout << DEFAULT_COLOR(YELLOW("yeeellooww")+"we are " +mm + gg + "is red!" + rr +"wow") << std::endl;
 
 

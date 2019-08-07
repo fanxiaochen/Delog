@@ -171,6 +171,8 @@ std::unordered_map<color::Type, string_t> color::map =
 #define WHITE(string) delog::color::white(string)
 #define DEFAULT_COLOR(string) delog::color::default_color(string)
 
+
+
 typedef std::initializer_list<int_t>  Parameters;
 
 struct ParameterList
@@ -649,9 +651,22 @@ REGISTER_STL_CONTAINER_TWO_PARAMETER_WITH_N(std::array)
 REGISTER_STL_CONTAINER_TWO_PARAMETER(std::map)
 REGISTER_STL_CONTAINER_TWO_PARAMETER(std::unordered_map)
 
+
+inline string_t console_pause(const char_t* file, const ulong_t line, const char_t* func)
+{
+    std::cout << delog::record_format(file, line, func); 
+    std::cout << "[PAUSED] Press ENTER to continue";
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
 #define DELOG_ALL(loggable, ...) \
 delog::record_format(__FILE__, __LINE__, __func__) + \
 delog::message(#loggable, loggable, ##__VA_ARGS__)
+
+
+#define PAUSE(...) \
+delog::console_pause(__FILE__, __LINE__, __func__)
 
 } // delog
 
