@@ -58,6 +58,8 @@ int main()
 //
 //	int test = 3;
 //	std::cout << delog::GET_VARIABLE_TYPE(test) << std::endl;
+//	delog::start_timer(0, __FILE__, __func__, __LINE__);
+	START_TIMER(1, MICROSECOND);
 	int cc = 5;
 	std::cout << DELOG_ALL(cc, {}) << std::endl;
 ////
@@ -119,8 +121,12 @@ int main()
 	auto mm = delog::color::magenta("This is different!");
 	auto rr = delog::color::red("This is reddd!");
 	auto gg = delog::color::green("This is ggg!");
+	STOP_TIMER(1);
+//	delog::end_timer(0, __FILE__, __func__, __LINE__);
 	PAUSE();
 	std::cout << DEFAULT_COLOR(YELLOW("yeeellooww")+"we are " +mm + gg + "is red!" + rr +"wow") << std::endl;
+
+	
 
 
 

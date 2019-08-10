@@ -12,7 +12,9 @@
 #include <stack>
 #include <queue>
 #include <sstream>
+#include <chrono>
 #include <typeinfo>
+#include <memory>
 #ifndef _MSC_VER
     #include <cxxabi.h>
 #endif
@@ -207,35 +209,172 @@ string_t GET_VARIABLE_TYPE(const Type& value)
 class Timer
 {
 public:
-static string_t timestamp()
-{
-	char str[9];
+    enum Measurement
+    {
+        HOUR,
+        MINUTE,
+        SECOND,
+        MILLISECOND,
+        MICROSECOND
+    };
 
-	// get the time, and convert it to struct tm format
-	time_t a = time(0);
-	struct tm* b = localtime(&a);
+    Timer(const char* file, const char* func, size_t index, Measurement mt = MILLISECOND): 
+        file_(file), func_(func), timer_idx_(index), mt_(mt){}
 
-	// print the time to the string
-	strftime(str, 9, "%H:%M:%S", b);
+    void set_start_line(ulong_t line_num)
+    {
+        start_line_ = line_num;
+    }
 
-	return str;
-}
+    void set_end_line(ulong_t line_num)
+    {
+        end_line_ = line_num;
+    }
 
-static string_t datestamp()
-{
-	char str[11];
+    string_t name()
+    {
+        return file_ + "-" + func_ + "-" + std::to_string(timer_idx_);
+    }
 
-	// get the time, and convert it to struct tm format
-	time_t a = time(0);
-	struct tm* b = localtime(&a);
+    static string_t name(string_t file, string_t func, size_t index)
+    {
+        return file + "-" + func + "-" + std::to_string(index);
+    }
 
-	// print the time to the string
-	strftime(str, 11, "%Y-%m-%d", b);
+    void start()
+    {
+        start_ = std::chrono::high_resolution_clock::now();
+    }
 
-	return str;
-}
+    string_t elapse()
+    {
+        auto cur = std::chrono::high_resolution_clock::now();
+        ulong_t c;
+        string_t t;
+        switch (mt_)
+        {
+        case HOUR:
+            c = std::chrono::duration_cast<std::chrono::hours>(cur-start_).count();
+            t = std::to_string(c) + "h";
+            break;
+        case MINUTE:
+            c = std::chrono::duration_cast<std::chrono::minutes>(cur-start_).count();
+            t = std::to_string(c) + "min";
+            break;
+        case SECOND:
+            c = std::chrono::duration_cast<std::chrono::seconds>(cur-start_).count();
+            t = std::to_string(c) + "s";
+            break;
+        case MILLISECOND:
+            c = std::chrono::duration_cast<std::chrono::milliseconds>(cur-start_).count();
+            t = std::to_string(c) + "ms";
+            break;
+        case MICROSECOND:
+            c = std::chrono::duration_cast<std::chrono::microseconds>(cur-start_).count();
+            t = std::to_string(c) + "us";
+            break;
+        default:
+            c = std::chrono::duration_cast<std::chrono::milliseconds>(cur-start_).count();
+            t = std::to_string(c) + "ms";
+        }
+        return t;
+    }
 
+    string_t record()
+    {
+        string_t time = elapse(); 
+        char_t str[RECORD_MAX_LENGTH];
+        sprintf(str, "[%s][%s][%s:%s:%d-%d]Timer: %d, Time-Cost: %s\n", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
+                                                    file_.c_str(), func_.c_str(), start_line_, end_line_, timer_idx_, time.c_str());
+        return string_t(str);
+    }
+
+    static string_t timestamp()
+    {
+        char str[9];
+
+        // get the time, and convert it to struct tm format
+        time_t a = time(0);
+        struct tm* b = localtime(&a);
+
+        // print the time to the string
+        strftime(str, 9, "%H:%M:%S", b);
+
+        return str;
+    }
+
+    static string_t datestamp()
+    {
+        char str[11];
+
+        // get the time, and convert it to struct tm format
+        time_t a = time(0);
+        struct tm* b = localtime(&a);
+
+        // print the time to the string
+        strftime(str, 11, "%Y-%m-%d", b);
+
+        return str;
+    }
+private:
+    string_t file_;
+    string_t func_;
+    size_t timer_idx_;
+    ulong_t start_line_;
+    ulong_t end_line_;
+    Measurement mt_;
+    std::chrono::high_resolution_clock::time_point start_;
 };
+
+
+#define HOUR delog::Timer::Measurement::HOUR
+#define MINUTE delog::Timer::Measurement::MINUTE
+#define SECOND delog::Timer::Measurement::SECOND
+#define MILLISECOND delog::Timer::Measurement::MILLISECOND
+#define MICROSECOND delog::Timer::Measurement::MICROSECOND
+
+class TimerPool
+{
+public:
+    bool add(Timer* timer)
+    {
+        string_t timer_name = timer->name();
+        if (pool_.find(timer_name) == pool_.end())
+        {
+            pool_[timer_name] = std::shared_ptr<Timer>(timer);
+            return true;
+        }
+        else return false;
+    }
+
+    Timer* get(string_t name)
+    {
+        return pool_[name].get();
+    }
+
+private:
+    std::unordered_map<string_t, std::shared_ptr<Timer>> pool_;
+};
+
+TimerPool timer_pool;
+
+void start_timer(size_t index, Timer::Measurement m, const char_t* file, const char_t* func_name, ulong_t line_num)
+{
+    Timer* new_timer = new Timer(file, func_name, index, m);
+    new_timer->set_start_line(line_num);
+    timer_pool.add(new_timer);
+    new_timer->start();
+}
+
+void stop_timer(size_t index, const char_t* file, const char_t* func_name, ulong_t line_num)
+{
+    string_t name = Timer::name(file, func_name, index);
+    Timer* timer = timer_pool.get(name);
+    timer->set_end_line(line_num);
+    string_t record = timer->record();
+    std::cout << record << std::endl;
+}
+
 
 string_t record_format(const char_t* file, const ulong_t line, const char_t* func)
 {
@@ -667,6 +806,12 @@ delog::message(#loggable, loggable, ##__VA_ARGS__)
 
 #define PAUSE(...) \
 delog::console_pause(__FILE__, __LINE__, __func__)
+
+#define START_TIMER(idx, measurement) \
+delog::start_timer(idx, measurement,  __FILE__, __func__, __LINE__)
+
+#define STOP_TIMER(idx) \
+delog::stop_timer(idx, __FILE__, __func__, __LINE__)
 
 } // delog
 
