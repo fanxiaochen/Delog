@@ -1,6 +1,50 @@
 #ifndef DELOG_H
 #define DELOG_H
 
+#if (defined(_MSC_VER))
+#  define DELOG_COMPILER_MSVC 1
+#else
+#  define DELOG_COMPILER_MSVC 0
+#endif
+
+#if (defined(__GNUC__))
+#  define DELOG_COMPILER_GCC 1
+#else
+#  define DELOG_COMPILER_GCC 0
+#endif
+
+#if (defined(__clang__) && (__clang__ == 1))
+#  define DELOG_COMPILER_CLANG 1
+#else
+#  define DELOG_COMPILER_CLANG 0
+#endif
+
+
+#if (defined(_WIN32) || defined(_WIN64))
+#  define DELOG_OS_WINDOWS 1
+#else
+#  define DELOG_OS_WINDOWS 0
+#endif
+
+#if (defined(__linux) || defined(__linux__))
+#  define DELOG_OS_LINUX 1
+#else
+#  define DELOG_OS_LINUX 0
+#endif
+
+#if (defined(__APPLE__))
+#  define DELOG_OS_MAC 1
+#else
+#  define DELOG_OS_MAC 0
+#endif
+
+#include <typeinfo>
+#include <memory>
+#include <ctime>
+#include <sstream>
+#include <chrono>
+
+
 #include <vector>
 #include <list>
 #include <deque>
@@ -11,14 +55,10 @@
 #include <map>
 #include <stack>
 #include <queue>
-#include <sstream>
-#include <chrono>
-#include <typeinfo>
-#include <memory>
-#ifndef _MSC_VER
+
+#if DELOG_OS_LINUX || DELOG_OS_MAC
     #include <cxxabi.h>
 #endif
-#include <ctime>
 
 namespace delog
 {
@@ -93,19 +133,19 @@ public:
     }
     static string_t white(string_t str)
     {
+#if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[WHITE] + str + map[s_default_color];
-
-        #ifdef WINDOWS
+        return colored_str;
+#elif DELOG_OS_WINDOWS
         win_change_attributes( FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-        #endif
+#endif // DELOG_OS_WINDOWS
         return colored_str;
     }
 
 private:
-#ifdef WINDOWS
+#if DELOG_OS_WINDOWS
     inline void win_change_attributes(int foreground, int background = -1)
     {
-        // yeah, i know.. it's ugly, it's windows.
         static WORD defaultAttributes = 0;
 
         // get terminal handle
@@ -147,7 +187,7 @@ private:
 
         SetConsoleTextAttribute(hTerminal, info.wAttributes);
     }
-#endif
+#endif // DELOG_OS_WINDOWS
 };
 
 color::Type color::s_default_color = color::Type::CYAN;
@@ -799,13 +839,19 @@ inline string_t console_pause(const char_t* file, const ulong_t line, const char
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-#define DELOG_ALL(loggable, ...) \
-delog::record_format(__FILE__, __LINE__, __func__) + \
-delog::message(#loggable, loggable, ##__VA_ARGS__)
+
+#if (defined(DELOG_DISABLE_ALL))
+#   define DELOG_DISABLE_LOG
+#   define DELOG_DISABLE_PAUSE
+#   define DELOG_DISABLE_TIMER
+#endif // DELOG_DISABLE_ALL
 
 
-#define DELOG_DISABLE_PAUSE
-#define DELOG_DISABLE_TIMER
+#if (!defined(DELOG_DISABLE_LOG))
+#  define DELOG_ENABLE_LOG 1
+#else
+#  define DELOG_ENABLE_LOG 0
+#endif  // (!defined(DELOG_DISABLE_LOG))
 
 
 #if (!defined(DELOG_DISABLE_PAUSE))
@@ -819,6 +865,15 @@ delog::message(#loggable, loggable, ##__VA_ARGS__)
 #else
 #  define DELOG_TIMER 0
 #endif  // (!defined(DELOG_DISABLE_TIMER))
+
+
+#if DELOG_ENABLE_LOG
+#   define DELOG(loggable, ...) \
+    delog::record_format(__FILE__, __LINE__, __func__) + \
+    delog::message(#loggable, loggable, ##__VA_ARGS__)
+#else
+#   define DELOG(loggable, ...) 
+#endif // DELOG_ENABLE_LOG
 
 
 #if DELOG_PAUSE
