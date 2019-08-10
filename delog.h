@@ -804,14 +804,37 @@ delog::record_format(__FILE__, __LINE__, __func__) + \
 delog::message(#loggable, loggable, ##__VA_ARGS__)
 
 
-#define PAUSE(...) \
-delog::console_pause(__FILE__, __LINE__, __func__)
+#define DELOG_DISABLE_PAUSE
+#define DELOG_DISABLE_TIMER
 
-#define START_TIMER(idx, measurement) \
-delog::start_timer(idx, measurement,  __FILE__, __func__, __LINE__)
 
-#define STOP_TIMER(idx) \
-delog::stop_timer(idx, __FILE__, __func__, __LINE__)
+#if (!defined(DELOG_DISABLE_PAUSE))
+#  define DELOG_PAUSE 1
+#else
+#  define DELOG_PAUSE 0
+#endif  // (!defined(DELOG_DISABLE_PAUSE))
+
+#if (!defined(DELOG_DISABLE_TIMER))
+#  define DELOG_TIMER 1
+#else
+#  define DELOG_TIMER 0
+#endif  // (!defined(DELOG_DISABLE_TIMER))
+
+
+#if DELOG_PAUSE
+#   define PAUSE(...) delog::console_pause(__FILE__, __LINE__, __func__)
+#else
+#   define PAUSE(...) 
+#endif // DELOG_PAUSE
+
+#if DELOG_TIMER
+#   define START_TIMER(idx, measurement) delog::start_timer(idx, measurement,  __FILE__, __func__, __LINE__)
+#   define STOP_TIMER(idx) delog::stop_timer(idx, __FILE__, __func__, __LINE__)
+#else
+#   define START_TIMER(idx, measurement) 
+#   define STOP_TIMER(idx) 
+#endif // DELOG_TIMER
+
 
 } // delog
 
