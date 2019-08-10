@@ -233,7 +233,7 @@ template <typename Type>
 string_t GET_VARIABLE_TYPE(const Type& value)
 {
     char_t* type = nullptr;
-#ifndef _MSC_VER
+#if DELOG_COMPILER_GCC || DELOG_COMPILER_CLANG
     int status = 0;
     type = abi::__cxa_demangle(typeid(Type).name(), 0, 0, &status);
 #else
