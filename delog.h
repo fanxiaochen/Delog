@@ -38,6 +38,7 @@
 #  define DELOG_OS_MAC 0
 #endif
 
+
 #include <typeinfo>
 #include <memory>
 #include <ctime>
@@ -57,11 +58,82 @@
 #include <queue>
 
 #if DELOG_OS_LINUX || DELOG_OS_MAC
-    #include <cxxabi.h>
+#   include <cxxabi.h>
+#endif
+
+#if DELOG_OS_WINDOWS
+#   include <windows.h>
+#   include <versionhelpers.h>
+#   include <stdio.h>
+#   include <tchar.h>
 #endif
 
 namespace delog
 {
+
+#if DELOG_OS_WINDOWS
+//https://stackoverflow.com/questions/32193855/c-check-if-windows-10
+typedef void (WINAPI * RtlGetVersion_FUNC) (OSVERSIONINFOEXW *);
+BOOL GetWinVersion(OSVERSIONINFOEX * os) 
+{
+    HMODULE hMod;
+    RtlGetVersion_FUNC func;
+#ifdef UNICODE
+    OSVERSIONINFOEXW * osw = os;
+#else
+    OSVERSIONINFOEXW o;
+    OSVERSIONINFOEXW * osw = &o;
+#endif
+
+    hMod = LoadLibrary(TEXT("ntdll.dll"));
+    if (hMod) 
+    {
+        func = (RtlGetVersion_FUNC)GetProcAddress(hMod, "RtlGetVersion");
+        if (func == 0) {
+            FreeLibrary(hMod);
+            return FALSE;
+        }
+        ZeroMemory(osw, sizeof (*osw));
+        osw->dwOSVersionInfoSize = sizeof (*osw);
+        func(osw);
+#ifndef UNICODE
+        os->dwBuildNumber = osw->dwBuildNumber;
+        os->dwMajorVersion = osw->dwMajorVersion;
+        os->dwMinorVersion = osw->dwMinorVersion;
+        os->dwPlatformId = osw->dwPlatformId;
+        os->dwOSVersionInfoSize = sizeof (*os);
+        DWORD sz = sizeof (os->szCSDVersion);
+        WCHAR * src = osw->szCSDVersion;
+        unsigned char * dtc = (unsigned char *)os->szCSDVersion;
+        while (*src)
+            * dtc++ = (unsigned char)* src++;
+        *dtc = '\0';
+#endif
+
+    }
+    else return FALSE;
+    FreeLibrary(hMod);
+    return TRUE;
+}
+
+static int_t win_major_number = 0;
+static int_t win_minor_number = 0;
+static int_t win_build_number = 0;
+bool get_win_version() 
+{
+    OSVERSIONINFOEX os;
+    if (GetWinVersion(&os) == TRUE)
+    {
+        win_major_number = os.dwMajorVersion;
+        win_minor_number = os.dwMinorVersion;
+        win_build_number = os.dwBuildNumber;
+        return true;
+    }
+    else return false;
+}
+#endif // DELOG_OS_WINDOWS
+
+
 typedef char char_t;
 typedef int int_t;
 typedef long long_t;
@@ -71,6 +143,7 @@ typedef unsigned long ulong_t;
 typedef float float_t;
 typedef double double_t;
 typedef std::string string_t;
+
 
 class color
 {
@@ -94,100 +167,123 @@ public:
 
     static string_t default_color(string_t str)
     {
+#if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[s_default_color] + str + map[s_default_color];
         return colored_str;
+#elif DELOG_OS_WINDOWS
+//https://wpdev.uservoice.com/forums/266908-command-prompt-console-bash-on-ubuntu-on-windo/suggestions/6509361-provides-support-for-ansi-colors-like-in-bash
+        if (win_major_number >= 10 && win_build_number >= 14931)
+        {
+            string_t colored_str = map[s_default_color] + str + map[s_default_color];
+            return colored_str;
+        }
+#endif // DELOG_OS_WINDOWS
+        return str;
     }
 
     static string_t red(string_t str)
     {
+#if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[RED] + str + map[s_default_color];
         return colored_str;
+#elif DELOG_OS_WINDOWS
+        if (win_major_number >= 10 && win_build_number >= 14931)
+        {
+            string_t colored_str = map[RED] + str + map[s_default_color];
+            return colored_str;
+        }
+#endif // DELOG_OS_WINDOWS
+        return str;
     }
 
     static string_t green(string_t str)
     {
+#if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[GREEN] + str + map[s_default_color];
         return colored_str;
+#elif DELOG_OS_WINDOWS
+        if (win_major_number >= 10 && win_build_number >= 14931)
+        {
+            string_t colored_str = map[GREEN] + str + map[s_default_color];
+            return colored_str;
+        }
+#endif // DELOG_OS_WINDOWS
+        return str;
     }
 
     static string_t yellow(string_t str)
     {
+#if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[YELLOW] + str + map[s_default_color];
         return colored_str;
+#elif DELOG_OS_WINDOWS
+        if (win_major_number >= 10 && win_build_number >= 14931)
+        {
+            string_t colored_str = map[YELLOW] + str + map[s_default_color];
+            return colored_str;
+        }
+#endif // DELOG_OS_WINDOWS
+        return str;
     }
 
     static string_t blue(string_t str)
     {
+#if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[BLUE] + str + map[s_default_color];
         return colored_str;
+#elif DELOG_OS_WINDOWS
+        if (win_major_number >= 10 && win_build_number >= 14931)
+        {
+            string_t colored_str = map[BLUE] + str + map[s_default_color];
+            return colored_str;
+        }
+#endif // DELOG_OS_WINDOWS
+        return str;
     }
     static string_t magenta(string_t str)
     {
+#if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[MAGENTA] + str + map[s_default_color];
         return colored_str;
+#elif DELOG_OS_WINDOWS
+        if (win_major_number >= 10 && win_build_number >= 14931)
+        {
+            string_t colored_str = map[MAGENTA] + str + map[s_default_color];
+            return colored_str;
+        }
+#endif // DELOG_OS_WINDOWS
+        return str;
     }
+
     static string_t cyan(string_t str)
     {
+#if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[CYAN] + str + map[s_default_color];
         return colored_str;
+#elif DELOG_OS_WINDOWS
+        if (win_major_number >= 10 && win_build_number >= 14931)
+        {
+            string_t colored_str = map[CYAN] + str + map[s_default_color];
+            return colored_str;
+        }
+#endif // DELOG_OS_WINDOWS
+        return str;
     }
+
     static string_t white(string_t str)
     {
 #if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[WHITE] + str + map[s_default_color];
         return colored_str;
 #elif DELOG_OS_WINDOWS
-        win_change_attributes( FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
+        if (win_major_number >= 10 && win_build_number >= 14931)
+        {
+            string_t colored_str = map[WHITE] + str + map[s_default_color];
+            return colored_str;
+        }
 #endif // DELOG_OS_WINDOWS
-        return colored_str;
+        return str;
     }
-
-private:
-#if DELOG_OS_WINDOWS
-    inline void win_change_attributes(int foreground, int background = -1)
-    {
-        static WORD defaultAttributes = 0;
-
-        // get terminal handle
-        HANDLE hTerminal = INVALID_HANDLE_VALUE;
-        hTerminal = GetStdHandle(STD_OUTPUT_HANDLE);
-
-        // save default terminal attributes if it unsaved
-        if (!defaultAttributes)
-        {
-            CONSOLE_SCREEN_BUFFER_INFO info;
-            if (!GetConsoleScreenBufferInfo(hTerminal, &info))
-                return;
-            defaultAttributes = info.wAttributes;
-        }
-
-        // restore all default settings
-        if (foreground == -1 && background == -1)
-        {
-            SetConsoleTextAttribute(hTerminal, defaultAttributes);
-            return;
-        }
-
-        // get current settings
-        CONSOLE_SCREEN_BUFFER_INFO info;
-        if (!GetConsoleScreenBufferInfo(hTerminal, &info))
-            return;
-
-        if (foreground != -1)
-        {
-            info.wAttributes &= ~(info.wAttributes & 0x0F);
-            info.wAttributes |= static_cast<WORD>(foreground);
-        }
-
-        if (background != -1)
-        {
-            info.wAttributes &= ~(info.wAttributes & 0xF0);
-            info.wAttributes |= static_cast<WORD>(background);
-        }
-
-        SetConsoleTextAttribute(hTerminal, info.wAttributes);
-    }
-#endif // DELOG_OS_WINDOWS
 };
 
 color::Type color::s_default_color = color::Type::CYAN;
