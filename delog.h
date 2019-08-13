@@ -420,7 +420,7 @@ public:
     {
         string_t time = elapse(); 
         char_t str[RECORD_MAX_LENGTH];
-        sprintf(str, "[%s][%s][%s:%s:%d-%d]Timer: %d, Time-Cost: %s\n", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
+        sprintf(str, "[%s][%s][%s:%s:%ld-%ld]Timer: %ld, Time-Cost: %s\n", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
                                                     file_.c_str(), func_.c_str(), start_line_, end_line_, timer_idx_, time.c_str());
         return string_t(str);
     }
@@ -515,7 +515,7 @@ void stop_timer(size_t index, const char_t* file, const char_t* func_name, ulong
 string_t record_format(const char_t* file, const ulong_t line, const char_t* func)
 {
     char_t str[RECORD_MAX_LENGTH];
-    sprintf(str, "[%s][%s][%s:%s:%d]\n", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
+    sprintf(str, "[%s][%s][%s:%s:%ld]\n", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
                                                 file, func, line);
     return string_t(str);
 }
@@ -573,16 +573,16 @@ public:
 
 }
 
-#define REGISTER_BASICS(Type)                                                   \
-template <typename... Args>                                                        \
-string_t message(const char_t* name, const Type& type, const std::initializer_list<Args>&... args)     \
-{                                                                               \
-    return delog::basics::Primitive().generate(name, type, args...);                           \
-}                                                                               \                                                                                                                                                                  
-string_t message(const char_t* name, const Type& type, const Parameters& args={})     \
-{                                                                               \
-    return delog::basics::Primitive().generate(name, type, args);                           \
-}                                                                                                                                                                  
+#define REGISTER_BASICS(Type)                                                                                   \
+template <typename... Args>                                                                                     \
+string_t message(const char_t* name, const Type& type, const std::initializer_list<Args>&... args)              \
+{                                                                                                               \
+    return delog::basics::Primitive().generate(name, type, args...);                                            \
+}                                                                                                               \
+string_t message(const char_t* name, const Type& type, const Parameters& args={})                               \
+{                                                                                                               \
+    return delog::basics::Primitive().generate(name, type, args);                                               \
+}
 
 REGISTER_BASICS(int_t)
 REGISTER_BASICS(long_t)
@@ -637,16 +637,16 @@ public:
 } // stl
 
 
-#define REGISTER_STL_BASICS_TWO_PARAMETER(ContainerType)                                                   \
-template <typename T1, typename T2, typename... Args>                                                     \
-string_t message(const char_t* name, const ContainerType<T1,T2>& type, const std::initializer_list<Args>&... args)     \
-{                                                                               \
-    return delog::stl::basics::Primitive().generate(name, type, args...);                           \
-}   \                                                                               
-template <typename T1, typename T2>  \
-string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Parameters& type2_args={})     \
-{                                                                                                                   \
-    return delog::stl::basics::Primitive().generate(name, type, type2_args);                           \
+#define REGISTER_STL_BASICS_TWO_PARAMETER(ContainerType)                                                                    \
+template <typename T1, typename T2, typename... Args>                                                                       \
+string_t message(const char_t* name, const ContainerType<T1,T2>& type, const std::initializer_list<Args>&... args)          \
+{                                                                                                                           \
+    return delog::stl::basics::Primitive().generate(name, type, args...);                                                   \
+}                                                                                                                           \
+template <typename T1, typename T2>                                                                                         \
+string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Parameters& type2_args={})                     \
+{                                                                                                                           \
+    return delog::stl::basics::Primitive().generate(name, type, type2_args);                                                \
 }                                                                                  
 
 REGISTER_STL_BASICS_TWO_PARAMETER(std::pair)
@@ -748,7 +748,7 @@ template <typename Type>
 ParameterList parameters_to_range(const Type& type, const Parameters& container_args)
 {
     ParameterList cargs = ParameterList(container_args);
-    ParameterList cargs_default({0, type.size()-1});
+    ParameterList cargs_default({0, (int)type.size()-1});
 
     for (size_t i = 0; i < cargs.size(); ++ i) 
     {
@@ -763,7 +763,7 @@ template <typename Type>
 ParameterList parameters_to_length(const Type& type, const Parameters& container_args)
 {
     ParameterList cargs = ParameterList(container_args);
-    ParameterList cargs_default({type.size()});
+    ParameterList cargs_default({(int)type.size()});
 
     for (size_t i = 0; i < cargs.size(); ++ i) 
     {
@@ -850,18 +850,32 @@ string_t build(const char_t* name, const std::queue<Type>& type, const Parameter
 class Primitive
 {
 public:
-    // vector, list, deque, set, unordered_set, stack, queue
-    template <template<typename> typename Container, typename Type>
-    string_t generate(const char_t* name, const Container<Type>& value, const Parameters& container_args={}, const Parameters& type_args={})
+    // vector, list, deque, stack, queue
+    template <template<typename, typename> typename Container, typename Type1, typename Type2>
+    string_t generate(const char_t* name, const Container<Type1, Type2>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
         return build(name, value, container_args, type_args);
     }
 
-    // map, unordered_map
-    template <template<typename, typename> typename Container, typename Type1, typename Type2>
-    string_t generate(const char_t* name, const Container<Type1, Type2>& value, const Parameters& container_args={}, const Parameters& type2_args={})
+    // set
+    template <template<typename, typename, typename> typename Container, typename Type1, typename Type2, typename Type3>
+    string_t generate(const char_t* name, const Container<Type1, Type2, Type3>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        return build(name, value, container_args, type2_args);
+        return build(name, value, container_args, type_args);
+    }
+
+    // unordered_set, map
+    template <template<typename, typename, typename, typename> typename Container, typename Type1, typename Type2, typename Type3, typename Type4>
+    string_t generate(const char_t* name, const Container<Type1, Type2, Type3, Type4>& value, const Parameters& container_args={}, const Parameters& type_args={})
+    {
+        return build(name, value, container_args, type_args);
+    }
+
+    // unordered_map
+    template <template<typename, typename, typename, typename, typename> typename Container, typename Type1, typename Type2, typename Type3, typename Type4, typename Type5>
+    string_t generate(const char_t* name, const Container<Type1, Type2, Type3, Type4, Type5>& value, const Parameters& container_args={}, const Parameters& type_args={})
+    {
+        return build(name, value, container_args, type_args);
     }
 
     // array 
@@ -877,40 +891,40 @@ public:
 
 
 
-#define REGISTER_STL_CONTAINER_ONE_PARAMETER(ContainerType)                                                   \
-template <typename Type, typename... Args>                                                     \
-string_t message(const char_t* name, const ContainerType<Type>& type, const std::initializer_list<Args>&... args)     \
-{                                                                               \
-    return delog::stl::container::Primitive().generate(name, type, args...);                           \
-}   \                                                                               
-template <typename Type>  \
-string_t message(const char_t* name, const ContainerType<Type>& type, const Parameters& container_args={}, const Parameters& type_args={})     \
-{                                                                                                                   \
-    return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                           \
-}                                                                                  
+#define REGISTER_STL_CONTAINER_ONE_PARAMETER(ContainerType)                                                                                     \
+template <typename Type, typename... Args>                                                                                                      \
+string_t message(const char_t* name, const ContainerType<Type>& type, const std::initializer_list<Args>&... args)                               \
+{                                                                                                                                               \
+    return delog::stl::container::Primitive().generate(name, type, args...);                                                                    \
+}                                                                                                                                               \
+template <typename Type>                                                                                                                        \
+string_t message(const char_t* name, const ContainerType<Type>& type, const Parameters& container_args={}, const Parameters& type_args={})      \
+{                                                                                                                                               \
+    return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                                                  \
+}
 
-#define REGISTER_STL_CONTAINER_TWO_PARAMETER(ContainerType)                                                   \
-template <typename T1, typename T2, typename... Args>                                                     \
-string_t message(const char_t* name, const ContainerType<T1,T2>& type, const std::initializer_list<Args>&... args)     \
-{                                                                               \
-    return delog::stl::container::Primitive().generate(name, type, args...);                           \
-}   \                                                                               
-template <typename T1, typename T2>  \
+#define REGISTER_STL_CONTAINER_TWO_PARAMETER(ContainerType)                                                                                     \
+template <typename T1, typename T2, typename... Args>                                                                                           \
+string_t message(const char_t* name, const ContainerType<T1,T2>& type, const std::initializer_list<Args>&... args)                              \
+{                                                                                                                                               \
+    return delog::stl::container::Primitive().generate(name, type, args...);                                                                    \
+}                                                                                                                                               \
+template <typename T1, typename T2>                                                                                                             \
 string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Parameters& container_args={}, const Parameters& type_args={})     \
-{                                                                                                                   \
-    return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                           \
+{                                                                                                                                               \
+    return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                                                  \
 }                                                                                  
 
-#define REGISTER_STL_CONTAINER_TWO_PARAMETER_WITH_N(ContainerType)                                                   \
-template <typename T1, size_t N, typename... Args>                                                     \
-string_t message(const char_t* name, const ContainerType<T1,N>& type, const std::initializer_list<Args>&... args)     \
-{                                                                               \
-    return delog::stl::container::Primitive().generate(name, type, args...);                           \
-}   \                                                                               
-template <typename T1, size_t N>  \
-string_t message(const char_t* name, const ContainerType<T1,N>& type, const Parameters& container_args={}, const Parameters& type_args={})     \
-{                                                                                                                   \
-    return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                           \
+#define REGISTER_STL_CONTAINER_TWO_PARAMETER_WITH_N(ContainerType)                                                                              \
+template <typename T1, size_t N, typename... Args>                                                                                              \
+string_t message(const char_t* name, const ContainerType<T1,N>& type, const std::initializer_list<Args>&... args)                               \
+{                                                                                                                                               \
+    return delog::stl::container::Primitive().generate(name, type, args...);                                                                    \
+}                                                                                                                                               \
+template <typename T1, size_t N>                                                                                                                \
+string_t message(const char_t* name, const ContainerType<T1,N>& type, const Parameters& container_args={}, const Parameters& type_args={})      \
+{                                                                                                                                               \
+    return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                                                  \
 }                                                                                  
 
 
