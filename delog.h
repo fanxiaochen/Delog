@@ -38,6 +38,7 @@
 #  define DELOG_OS_MAC 0
 #endif
 
+#define __STDC_WANT_LIB_EXT1__ 1
 
 #include <typeinfo>
 #include <memory>
@@ -66,10 +67,20 @@
 #   include <versionhelpers.h>
 #   include <stdio.h>
 #   include <tchar.h>
+
 #endif
 
 namespace delog
 {
+typedef char char_t;
+typedef int int_t;
+typedef long long_t;
+typedef unsigned char uchar_t;
+typedef unsigned int uint_t;
+typedef unsigned long ulong_t;
+typedef float float_t;
+typedef double double_t;
+typedef std::string string_t;
 
 #if DELOG_OS_WINDOWS
 //https://stackoverflow.com/questions/32193855/c-check-if-windows-10
@@ -134,15 +145,7 @@ bool get_win_version()
 #endif // DELOG_OS_WINDOWS
 
 
-typedef char char_t;
-typedef int int_t;
-typedef long long_t;
-typedef unsigned char uchar_t;
-typedef unsigned int uint_t;
-typedef unsigned long ulong_t;
-typedef float float_t;
-typedef double double_t;
-typedef std::string string_t;
+
 
 
 class color
@@ -333,10 +336,10 @@ string_t GET_VARIABLE_TYPE(const Type& value)
     int status = 0;
     type = abi::__cxa_demangle(typeid(Type).name(), 0, 0, &status);
 #else
-    type = typeid(Type).name();
+    type = const_cast<char_t*>(typeid(Type).name());
 #endif
-    string_t str = type;
-    free(type);
+    string_t str = string_t(type);
+ //   free(type);
     return str;
 }
 
@@ -420,7 +423,7 @@ public:
     {
         string_t time = elapse(); 
         char_t str[RECORD_MAX_LENGTH];
-        sprintf(str, "[%s][%s][%s:%s:%ld-%ld]Timer: %ld, Time-Cost: %s\n", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
+        snprintf(str, RECORD_MAX_LENGTH, "[%s][%s][%s:%s:%ld-%ld]Timer: %ld, Time-Cost: %s\n", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
                                                     file_.c_str(), func_.c_str(), start_line_, end_line_, timer_idx_, time.c_str());
         return string_t(str);
     }
@@ -431,10 +434,11 @@ public:
 
         // get the time, and convert it to struct tm format
         time_t a = time(0);
-        struct tm* b = localtime(&a);
+        struct tm b;
+        localtime_s(&b, &a);
 
         // print the time to the string
-        strftime(str, 9, "%H:%M:%S", b);
+        strftime(str, 9, "%H:%M:%S", &b);
 
         return str;
     }
@@ -445,10 +449,11 @@ public:
 
         // get the time, and convert it to struct tm format
         time_t a = time(0);
-        struct tm* b = localtime(&a);
+        struct tm b;
+        localtime_s(&b, &a);
 
         // print the time to the string
-        strftime(str, 11, "%Y-%m-%d", b);
+        strftime(str, 11, "%Y-%m-%d", &b);
 
         return str;
     }
@@ -515,7 +520,7 @@ void stop_timer(size_t index, const char_t* file, const char_t* func_name, ulong
 string_t record_format(const char_t* file, const ulong_t line, const char_t* func)
 {
     char_t str[RECORD_MAX_LENGTH];
-    sprintf(str, "[%s][%s][%s:%s:%ld]\n", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
+    snprintf(str, RECORD_MAX_LENGTH, "[%s][%s][%s:%s:%ld]\n", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
                                                 file, func, line);
     return string_t(str);
 }
@@ -546,7 +551,7 @@ string_t build(const char_t* name, const Type& value)
 {
     string_t type = GET_VARIABLE_TYPE(value);
     char_t str[FORMAT_MAX_LENGTH];
-    sprintf(str, formats.at(typeid(Type).name()), type.c_str(), name, value);
+    snprintf(str, FORMAT_MAX_LENGTH, formats.at(typeid(Type).name()), type.c_str(), name, value);
 
     return string_t(str); 
 }
@@ -555,7 +560,7 @@ string_t build(const char_t* name, const string_t& value)
 {
     string_t type = GET_VARIABLE_TYPE(value);
     char_t str[FORMAT_MAX_LENGTH];
-    sprintf(str, formats.at(typeid(string_t).name()), type.c_str(), name, value.c_str());
+    snprintf(str, FORMAT_MAX_LENGTH, formats.at(typeid(string_t).name()), type.c_str(), name, value.c_str());
 
     return string_t(str); 
 }
@@ -941,12 +946,12 @@ REGISTER_STL_CONTAINER_TWO_PARAMETER(std::map)
 REGISTER_STL_CONTAINER_TWO_PARAMETER(std::unordered_map)
 
 
-inline string_t console_pause(const char_t* file, const ulong_t line, const char_t* func)
+inline void console_pause(const char_t* file, const ulong_t line, const char_t* func)
 {
     std::cout << delog::record_format(file, line, func); 
     std::cout << "[PAUSED] Press ENTER to continue";
     std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
 }
 
 
