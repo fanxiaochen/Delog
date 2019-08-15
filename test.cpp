@@ -62,7 +62,7 @@ int main()
 //	delog::start_timer(0, __FILE__, __func__, __LINE__);
 	START_TIMER(1, MICROSECOND);
 	int cc = 5;
-	std::cout << DELOG(cc, {}) << std::endl;
+	DELOG(cc, {});
 ////
     std::cout << delog::message("vector", t) << std::endl;
     std::cout << delog::message("vector", t, {3}) << std::endl;
@@ -113,10 +113,10 @@ int main()
 //	std::cout << __PRETTY_FUNCTION__ << std::endl;
 	std::cout << __func__ << std::endl;
 	std::cout << __FILE__ << std::endl;
-	std::cout << delog::record_format(__FILE__, __LINE__, __func__) << std::endl;
-	std::cout << DELOG(pair, {3}) << std::endl;
-    std::cout << DELOG(pair, {}) << std::endl;
-    std::cout << DELOG(t) << std::endl;
+	std::cout << delog::basics_info(__FILE__, __LINE__, __func__) << std::endl;
+	DELOG(pair, {3});
+    DELOG(pair, {});
+    DELOG(t);
 
 	std::string red("\033[0;31m");
 	std::string green("\033[0;32m");
