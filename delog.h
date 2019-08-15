@@ -130,6 +130,7 @@ BOOL GetWinVersion(OSVERSIONINFOEX * os)
 static int_t win_major_number = 0;
 static int_t win_minor_number = 0;
 static int_t win_build_number = 0;
+
 bool get_win_version() 
 {
     OSVERSIONINFOEX os;
@@ -143,9 +144,6 @@ bool get_win_version()
     else return false;
 }
 #endif // DELOG_OS_WINDOWS
-
-
-
 
 
 class color
@@ -584,7 +582,7 @@ string_t message(const char_t* name, const Type& type, const std::initializer_li
 {                                                                                                               \
     return delog::basics::Primitive().generate(name, type, args...);                                            \
 }                                                                                                               \
-string_t message(const char_t* name, const Type& type, const Parameters& args={})                               \
+string_t message(const char_t* name, const Type& type, const Parameters& args)                                  \
 {                                                                                                               \
     return delog::basics::Primitive().generate(name, type, args);                                               \
 }
@@ -649,7 +647,7 @@ string_t message(const char_t* name, const ContainerType<T1,T2>& type, const std
     return delog::stl::basics::Primitive().generate(name, type, args...);                                                   \
 }                                                                                                                           \
 template <typename T1, typename T2>                                                                                         \
-string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Parameters& type2_args={})                     \
+string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Parameters& type2_args)                        \
 {                                                                                                                           \
     return delog::stl::basics::Primitive().generate(name, type, type2_args);                                                \
 }                                                                                  
@@ -903,7 +901,7 @@ string_t message(const char_t* name, const ContainerType<Type>& type, const std:
     return delog::stl::container::Primitive().generate(name, type, args...);                                                                    \
 }                                                                                                                                               \
 template <typename Type>                                                                                                                        \
-string_t message(const char_t* name, const ContainerType<Type>& type, const Parameters& container_args={}, const Parameters& type_args={})      \
+string_t message(const char_t* name, const ContainerType<Type>& type, const Parameters& container_args, const Parameters& type_args)            \
 {                                                                                                                                               \
     return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                                                  \
 }
@@ -915,7 +913,7 @@ string_t message(const char_t* name, const ContainerType<T1,T2>& type, const std
     return delog::stl::container::Primitive().generate(name, type, args...);                                                                    \
 }                                                                                                                                               \
 template <typename T1, typename T2>                                                                                                             \
-string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Parameters& container_args={}, const Parameters& type_args={})     \
+string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Parameters& container_args, const Parameters& type_args)           \
 {                                                                                                                                               \
     return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                                                  \
 }                                                                                  
@@ -927,7 +925,7 @@ string_t message(const char_t* name, const ContainerType<T1,N>& type, const std:
     return delog::stl::container::Primitive().generate(name, type, args...);                                                                    \
 }                                                                                                                                               \
 template <typename T1, size_t N>                                                                                                                \
-string_t message(const char_t* name, const ContainerType<T1,N>& type, const Parameters& container_args={}, const Parameters& type_args={})      \
+string_t message(const char_t* name, const ContainerType<T1,N>& type, const Parameters& container_args, const Parameters& type_args)            \
 {                                                                                                                                               \
     return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                                                  \
 }                                                                                  

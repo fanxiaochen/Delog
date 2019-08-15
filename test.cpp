@@ -5,6 +5,7 @@ int main()
 {
 //	std::cout << LOG_STDSTRING("SSSSSS", 3) << std::endl;
 //
+    delog::get_win_version();
 	std::vector<int> t = {2,3,2,5,62,1,5,34};
 //	std::cout << LOG_STLVECTOR(t, 3, 3, 1) << std::endl;
 //	//delog::mapping(std::string("DFDS"));
@@ -63,7 +64,8 @@ int main()
 	int cc = 5;
 	std::cout << DELOG(cc, {}) << std::endl;
 ////
-    std::cout << delog::message("vector", t, {}) << std::endl;
+    std::cout << delog::message("vector", t) << std::endl;
+    std::cout << delog::message("vector", t, {3}) << std::endl;
 	std::cout << delog::message("vector", t, {1}, {1, 3}) << std::endl;
 	std::cout << delog::message("vector", t, {}, {1, 3}) << std::endl;
 	std::cout << delog::message("vector", t, {3, 6}) << std::endl;
@@ -77,12 +79,12 @@ int main()
 	std::set<int> set;
 	set.insert(88);
 	//std::cout << delog::message("set", set, {}, {}) << std::endl;
-    std::cout << delog::message("set", set, {}) << std::endl;
+    std::cout << delog::message("set", set) << std::endl;
 
 	std::unordered_set<int> uset;
 	uset.insert(898);
 	//std::cout << delog::message("set", set, {}, {}) << std::endl;
-    std::cout << delog::message("uset", uset, {}) << std::endl;
+    std::cout << delog::message("uset", uset) << std::endl;
 
 	std::map<int, int> map;
 	map[898] = 233;
@@ -93,7 +95,7 @@ int main()
 	std::cout << delog::message("umap", umap, {31}, {3}) << std::endl;
 
 	std::array<int, 5> array = {1};
-    std::cout << delog::message("array", array, {}) << std::endl;
+    std::cout << delog::message("array", array) << std::endl;
 
 	std::stack<int> stack;
 	stack.push(2);
@@ -114,7 +116,7 @@ int main()
 	std::cout << delog::record_format(__FILE__, __LINE__, __func__) << std::endl;
 	std::cout << DELOG(pair, {3}) << std::endl;
     std::cout << DELOG(pair, {}) << std::endl;
-    std::cout << DELOG(t, {}) << std::endl;
+    std::cout << DELOG(t) << std::endl;
 
 	std::string red("\033[0;31m");
 	std::string green("\033[0;32m");
