@@ -67,7 +67,6 @@
 #   include <versionhelpers.h>
 #   include <stdio.h>
 #   include <tchar.h>
-
 #endif
 
 namespace delog
@@ -433,7 +432,11 @@ public:
         // get the time, and convert it to struct tm format
         time_t a = time(0);
         struct tm b;
+#if DELOG_COMPILER_MSVC
         localtime_s(&b, &a);
+#else
+        localtime_r(&a, &b);
+#endif
 
         // print the time to the string
         strftime(str, 9, "%H:%M:%S", &b);
@@ -448,7 +451,11 @@ public:
         // get the time, and convert it to struct tm format
         time_t a = time(0);
         struct tm b;
+#if DELOG_COMPILER_MSVC
         localtime_s(&b, &a);
+#else
+        localtime_r(&a, &b);
+#endif
 
         // print the time to the string
         strftime(str, 11, "%Y-%m-%d", &b);

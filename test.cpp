@@ -5,7 +5,7 @@ int main()
 {
 //	std::cout << LOG_STDSTRING("SSSSSS", 3) << std::endl;
 //
-    delog::get_win_version();
+//    delog::get_win_version();
 	std::vector<int> t = {2,3,2,5,62,1,5,34};
 //	std::cout << LOG_STLVECTOR(t, 3, 3, 1) << std::endl;
 //	//delog::mapping(std::string("DFDS"));
