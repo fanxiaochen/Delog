@@ -535,16 +535,16 @@ namespace basics
 {
 
 /// Basic data type
-static std::unordered_map<const char_t*, const char_t*> formats({ 
-    {typeid(char_t).name(),    "%s  %s = %c\n"},
-    {typeid(int_t).name(),     "%s  %s = %d\n"},
-    {typeid(long_t).name(),    "%s  %s = %d\n"},
-    {typeid(uchar_t).name(),   "%s  %s = %c\n"},
-    {typeid(uint_t).name(),    "%s  %s = %d\n"},
-    {typeid(ulong_t).name(),   "%s  %s = %d\n"},
-    {typeid(float_t).name(),   "%s  %s = %f\n"},
-    {typeid(double_t).name(),  "%s  %s = %f\n"},
-    {typeid(string_t).name(),  "%s  %s = %s\n"},
+static std::unordered_map<const char_t*, string_t> formats({ 
+    {typeid(char_t).name(),   (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%c") + "\n")},
+    {typeid(int_t).name(),    (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n")},
+    {typeid(long_t).name(),   (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n")},
+    {typeid(uchar_t).name(),  (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%c") + "\n")},
+    {typeid(uint_t).name(),   (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n")},
+    {typeid(ulong_t).name(),  (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n")},
+    {typeid(float_t).name(),  (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%f") + "\n")},
+    {typeid(double_t).name(), (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%f") + "\n")},
+    {typeid(string_t).name(), (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%s") + "\n")},
 });
 
 
@@ -553,7 +553,7 @@ string_t build(const char_t* name, const Type& value)
 {
     string_t type = GET_VARIABLE_TYPE(value);
     char_t str[RECORD_MAX_LENGTH];
-    snprintf(str, RECORD_MAX_LENGTH, formats.at(typeid(Type).name()), type.c_str(), name, value);
+    snprintf(str, RECORD_MAX_LENGTH, formats.at(typeid(Type).name()).c_str(), type.c_str(), name, value);
 
     return string_t(str); 
 }
@@ -562,7 +562,7 @@ string_t build(const char_t* name, const string_t& value)
 {
     string_t type = GET_VARIABLE_TYPE(value);
     char_t str[RECORD_MAX_LENGTH];
-    snprintf(str, RECORD_MAX_LENGTH, formats.at(typeid(string_t).name()), type.c_str(), name, value.c_str());
+    snprintf(str, RECORD_MAX_LENGTH, formats.at(typeid(string_t).name()).c_str(), type.c_str(), name, value.c_str());
 
     return string_t(str); 
 }
@@ -612,8 +612,8 @@ string_t format_pair(const char_t* name, const std::pair<Type1, Type2>& type, co
 {
     string_t type_str = GET_VARIABLE_TYPE(type);            
     std::stringstream ss;                               
-    ss << string_t("Name: ") << string_t(name) << "\n";        
-    ss << string_t("Type: ") << string_t(type_str) << "\n";         
+    ss << string_t("Name: ") << GREEN(name) << "\n";        
+    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
     ss << string_t("First: \n");             
     ss << "{\n" << delog::message("pair.first", type.first, {}) << "}\n"; 
     ss << string_t("Second: \n");             
@@ -669,8 +669,8 @@ string_t format_range(const char_t* name, const Type& type, const ParameterList&
 {
     string_t type_str = GET_VARIABLE_TYPE(type);            
     std::stringstream ss;                               
-    ss << string_t("Name: ") << string_t(name) << "\n";        
-    ss << string_t("Type: ") << string_t(type_str) << "\n";         
+    ss << string_t("Name: ") << GREEN(name) << "\n";        
+    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
     ss << string_t("Length: ") << type.size() << "\n";              
     size_t start = container_args[0];                   
     size_t end = container_args[1];                     
@@ -687,8 +687,8 @@ string_t format_iterator(const char_t* name, const Type& type, const ParameterLi
 {
     string_t type_str = GET_VARIABLE_TYPE(type);            
     std::stringstream ss;                               
-    ss << string_t("Name: ") << string_t(name) << "\n";        
-    ss << string_t("Type: ") << string_t(type_str) << "\n";         
+    ss << string_t("Name: ") << GREEN(name) << "\n";        
+    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
     ss << string_t("Length: ") << type.size() << "\n";              
     size_t length = container_args[0];                   
 
@@ -709,8 +709,8 @@ string_t format_stack(const char_t* name, const Type& type, const ParameterList&
 {
     string_t type_str = GET_VARIABLE_TYPE(type);            
     std::stringstream ss;                               
-    ss << string_t("Name: ") << string_t(name) << "\n";        
-    ss << string_t("Type: ") << string_t(type_str) << "\n";         
+    ss << string_t("Name: ") << GREEN(name) << "\n";        
+    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
     ss << string_t("Length: ") << type.size() << "\n";              
     size_t length = container_args[0];                   
 
@@ -732,8 +732,8 @@ string_t format_queue(const char_t* name, const Type& type, const ParameterList&
 {
     string_t type_str = GET_VARIABLE_TYPE(type);            
     std::stringstream ss;                               
-    ss << string_t("Name: ") << string_t(name) << "\n";        
-    ss << string_t("Type: ") << string_t(type_str) << "\n";         
+    ss << string_t("Name: ") << GREEN(name) << "\n";        
+    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
     ss << string_t("Length: ") << type.size() << "\n";              
     size_t length = container_args[0];                   
 
@@ -992,8 +992,8 @@ void init()
 
 #if DELOG_ENABLE_LOG
 #   define DELOG(loggable, ...) \
-    std::cout << delog::basics_info(__FILE__, __LINE__, __func__) + \
-    delog::message(#loggable, loggable, ##__VA_ARGS__)
+    std::cout << DEFAULT_COLOR(delog::basics_info(__FILE__, __LINE__, __func__) + \
+    delog::message(#loggable, loggable, ##__VA_ARGS__))
 #else
 #   define DELOG(loggable, ...) 
 #endif // DELOG_ENABLE_LOG

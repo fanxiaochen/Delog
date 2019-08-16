@@ -138,7 +138,12 @@ int main()
 	PAUSE();
 	std::cout << DEFAULT_COLOR(YELLOW("yeeellooww")+"we are " +mm + gg + "is red!" + rr +"wow") << std::endl;
 
-	
+	int ttt = 22;
+	DELOG(ttt);
+	const char* test = (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n").c_str();
+	std::string testt = (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n");
+	printf(testt.c_str(), "fff", "sss", 23);
+	printf(test, "ff", "ss", 2);
 
 
 
