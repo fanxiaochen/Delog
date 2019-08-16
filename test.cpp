@@ -5,7 +5,7 @@ int main()
 {
 //	std::cout << LOG_STDSTRING("SSSSSS", 3) << std::endl;
 //
-//    delog::get_win_version();
+ //   delog::get_win_version();
 	std::vector<int> t = {2,3,2,5,62,1,5,34};
 //	std::cout << LOG_STLVECTOR(t, 3, 3, 1) << std::endl;
 //	//delog::mapping(std::string("DFDS"));
@@ -140,11 +140,15 @@ int main()
 
 	int ttt = 22;
 	DELOG(ttt);
-	const char* test = (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n").c_str();
 	std::string testt = (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n");
 	printf(testt.c_str(), "fff", "sss", 23);
-	printf(test, "ff", "ss", 2);
 
+    DELOG(3.14);
+    DELOG(3.14f);
+    DELOG(4 == 4);
+    DELOG(4u);
+    DELOG(4l);
+    DELOG("FANXIAOCHEN");
 
 
 

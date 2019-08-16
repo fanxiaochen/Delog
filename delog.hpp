@@ -995,8 +995,7 @@ void console_pause(const char_t* file, const ulong_t line, const char_t* func)
 
 #if DELOG_ENABLE_LOG
 #   define DELOG(loggable, ...) \
-    std::cout << DEFAULT_COLOR(delog::basics_info(__FILE__, __LINE__, __func__) + \
-    delog::message(#loggable, loggable, ##__VA_ARGS__))
+    std::cout << DEFAULT_COLOR("")+(delog::basics_info(__FILE__, __LINE__, __func__) + delog::message(#loggable, loggable, ##__VA_ARGS__))
 #else
 #   define DELOG(loggable, ...) 
 #endif // DELOG_ENABLE_LOG
