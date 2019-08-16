@@ -132,6 +132,7 @@ static int_t win_build_number = 0;
 
 bool get_win_version() 
 {
+    if (win_major_number != 0) return true; 
     OSVERSIONINFOEX os;
     if (GetWinVersion(&os) == TRUE)
     {
@@ -171,6 +172,7 @@ public:
         string_t colored_str = map[s_default_color] + str + map[s_default_color];
         return colored_str;
 #elif DELOG_OS_WINDOWS
+        get_win_version();
 //https://wpdev.uservoice.com/forums/266908-command-prompt-console-bash-on-ubuntu-on-windo/suggestions/6509361-provides-support-for-ansi-colors-like-in-bash
         if (win_major_number >= 10 && win_build_number >= 14931)
         {
@@ -187,6 +189,7 @@ public:
         string_t colored_str = map[RED] + str + map[s_default_color];
         return colored_str;
 #elif DELOG_OS_WINDOWS
+        get_win_version();
         if (win_major_number >= 10 && win_build_number >= 14931)
         {
             string_t colored_str = map[RED] + str + map[s_default_color];
@@ -202,6 +205,7 @@ public:
         string_t colored_str = map[GREEN] + str + map[s_default_color];
         return colored_str;
 #elif DELOG_OS_WINDOWS
+        get_win_version();
         if (win_major_number >= 10 && win_build_number >= 14931)
         {
             string_t colored_str = map[GREEN] + str + map[s_default_color];
@@ -217,6 +221,7 @@ public:
         string_t colored_str = map[YELLOW] + str + map[s_default_color];
         return colored_str;
 #elif DELOG_OS_WINDOWS
+        get_win_version();
         if (win_major_number >= 10 && win_build_number >= 14931)
         {
             string_t colored_str = map[YELLOW] + str + map[s_default_color];
@@ -232,6 +237,7 @@ public:
         string_t colored_str = map[BLUE] + str + map[s_default_color];
         return colored_str;
 #elif DELOG_OS_WINDOWS
+        get_win_version();
         if (win_major_number >= 10 && win_build_number >= 14931)
         {
             string_t colored_str = map[BLUE] + str + map[s_default_color];
@@ -246,6 +252,7 @@ public:
         string_t colored_str = map[MAGENTA] + str + map[s_default_color];
         return colored_str;
 #elif DELOG_OS_WINDOWS
+        get_win_version();
         if (win_major_number >= 10 && win_build_number >= 14931)
         {
             string_t colored_str = map[MAGENTA] + str + map[s_default_color];
@@ -261,6 +268,7 @@ public:
         string_t colored_str = map[CYAN] + str + map[s_default_color];
         return colored_str;
 #elif DELOG_OS_WINDOWS
+        get_win_version();
         if (win_major_number >= 10 && win_build_number >= 14931)
         {
             string_t colored_str = map[CYAN] + str + map[s_default_color];
@@ -276,6 +284,7 @@ public:
         string_t colored_str = map[WHITE] + str + map[s_default_color];
         return colored_str;
 #elif DELOG_OS_WINDOWS
+        get_win_version();
         if (win_major_number >= 10 && win_build_number >= 14931)
         {
             string_t colored_str = map[WHITE] + str + map[s_default_color];
@@ -956,12 +965,6 @@ void console_pause(const char_t* file, const ulong_t line, const char_t* func)
     std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
 }
 
-void init()
-{
-#if DELOG_OS_WINDOWS
-    get_win_version();
-#endif
-}
 
 #if (defined(DELOG_DISABLE_ALL))
 #   define DELOG_DISABLE_LOG
