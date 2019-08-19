@@ -150,6 +150,10 @@ int main()
     DELOG(4l);
     DELOG("FANXIAOCHEN");
 
+	int aa[3] = {1,4,6};
+
+	DELOG(aa, {1,3});
+
 
 
 	//std::cout << delog::message("test", t, std::tuple(4, 5), std::tuple(2)) << std::endl;
