@@ -69,6 +69,10 @@
 #   include <tchar.h>
 #endif
 
+#if DELOG_ENABLE_EIGEN
+#   include <Eigen/Core>
+#endif
+
 namespace delog
 {
 typedef char char_t;
@@ -685,6 +689,94 @@ REGISTER_POINTER_TWO_DIM(uchar_t)
 REGISTER_POINTER_TWO_DIM(float_t)
 REGISTER_POINTER_TWO_DIM(double_t)
 REGISTER_POINTER_TWO_DIM(string_t)
+
+#if DELOG_ENABLE_EIGEN
+namespace eigen
+{
+namespace formats
+{
+template <typename Scalar, int Rows, int Cols>
+string_t format_matrix(const char_t* name, const Eigen::Matrix<Scalar, Rows, Cols>& type, const Parameters& type_args)
+{
+    string_t type_str = GET_VARIABLE_TYPE(type);            
+    size_t start_row = type_args[0];                   
+    size_t start_col = type_args[1];                     
+    size_t block_rows = type_args[2];                   
+    size_t block_cols = type_args[3];                     
+
+    std::stringstream ss;                               
+    ss << string_t("Name: ") << GREEN(name) << "\n";        
+    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
+    ss << string_t("Rows: ") << Rows << "\n";             
+    ss << string_t("Cols: ") << Cols << "\n";             
+    ss << string_t("Start Row: ") << start_row << "\n";             
+    ss << string_t("Start Col: ") << start_col << "\n";             
+    ss << string_t("Block Rows: ") << block_rows << "\n";             
+    ss << string_t("Block Cols: ") << block_cols << "\n";             
+
+    ss << string_t("<---------------->") << "\n";              
+
+    for (size_t i = start_row; i < block_rows; ++ i)              
+    {                                                   
+        for (size_t j = start_col; j < block_cols; ++ j)              
+        {
+            ss << type(i, j) << " "; 
+        }
+        ss << "\n"; 
+    }                                                   
+    ss << string_t("<---------------->") << "\n";              
+
+    return ss.str();                                    
+}
+} // formats
+
+class Primitive
+{
+public:
+    template <typename Scalar, int Rows, int Cols>
+    string_t generate(const char_t* name, const Eigen::Matrix<Scalar, Rows, Cols>& value, const Parameters& args={})
+    {
+        ParameterList args_list = ParameterList(args);
+        ParameterList args_default = {0, 0, value.rows, values.cols}; 
+
+        for (size_t i = 0; i < args_list.size(); ++ i) 
+        {
+            args_default.set(i, args_list[i]);
+        }
+        
+        return formats::format_matrix(name, value, args_default);
+    }
+};
+
+} // eigen
+
+#define REGISTER_EIGEN_MATRIX(Type)                                                              \
+string_t message(const char_t* name, const Type& type, const Parameters& args)                   \
+{                                                                                                \
+    return delog::eigen::Primitive().generate(name, type, args);                                 \
+}
+
+REGISTER_EIGEN_MATRIX(Eigen::Matrix2d)
+REGISTER_EIGEN_MATRIX(Eigen::Matrix3d)
+REGISTER_EIGEN_MATRIX(Eigen::Matrix4d)
+REGISTER_EIGEN_MATRIX(Eigen::Vector2d)
+REGISTER_EIGEN_MATRIX(Eigen::Vector3d)
+REGISTER_EIGEN_MATRIX(Eigen::Vector4d)
+
+REGISTER_EIGEN_MATRIX(Eigen::Matrix2f)
+REGISTER_EIGEN_MATRIX(Eigen::Matrix3f)
+REGISTER_EIGEN_MATRIX(Eigen::Matrix4f)
+REGISTER_EIGEN_MATRIX(Eigen::Vector2f)
+REGISTER_EIGEN_MATRIX(Eigen::Vector3f)
+REGISTER_EIGEN_MATRIX(Eigen::Vector4f)
+
+REGISTER_EIGEN_MATRIX(Eigen::Matrix2i)
+REGISTER_EIGEN_MATRIX(Eigen::Matrix3i)
+REGISTER_EIGEN_MATRIX(Eigen::Matrix4i)
+REGISTER_EIGEN_MATRIX(Eigen::Vector2i)
+REGISTER_EIGEN_MATRIX(Eigen::Vector3i)
+REGISTER_EIGEN_MATRIX(Eigen::Vector4i)
+#endif // DELOG_ENABLE_EIGEN
 
 namespace stl
 {
