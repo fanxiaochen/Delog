@@ -91,7 +91,7 @@ int main()
 	std::cout << delog::message("map", map, {31}, {3}) << std::endl;
 
 	std::unordered_map<int, double> umap;
-	map[8] = 23.3;
+	umap[8] = 23.3;
 	std::cout << delog::message("umap", umap, {31}, {3}) << std::endl;
 
 	std::array<int, 5> array = {1};

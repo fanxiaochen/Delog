@@ -172,7 +172,7 @@ public:
     static Type s_default_color;
 
     // Only available in linux and mac os
-    static std::unordered_map<Type, string_t> map; 
+    static std::map<Type, string_t> map; 
 
     static string_t default_color(string_t str)
     {
@@ -305,7 +305,7 @@ public:
 
 color::Type color::s_default_color = color::Type::CYAN;
 
-std::unordered_map<color::Type, string_t> color::map = 
+std::map<color::Type, string_t> color::map = 
 {
     {RESET,     "\033[0m"},
     {RED,       "\033[31m"},
@@ -1130,28 +1130,28 @@ class Primitive
 {
 public:
     // vector, list, deque, stack, queue
-    template <template<typename, typename> typename Container, typename Type1, typename Type2>
+    template <template<typename, typename> class Container, typename Type1, typename Type2>
     string_t generate(const char_t* name, const Container<Type1, Type2>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
         return build(name, value, container_args, type_args);
     }
 
     // set
-    template <template<typename, typename, typename> typename Container, typename Type1, typename Type2, typename Type3>
+    template <template<typename, typename, typename> class Container, typename Type1, typename Type2, typename Type3>
     string_t generate(const char_t* name, const Container<Type1, Type2, Type3>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
         return build(name, value, container_args, type_args);
     }
 
     // unordered_set, map
-    template <template<typename, typename, typename, typename> typename Container, typename Type1, typename Type2, typename Type3, typename Type4>
+    template <template<typename, typename, typename, typename> class Container, typename Type1, typename Type2, typename Type3, typename Type4>
     string_t generate(const char_t* name, const Container<Type1, Type2, Type3, Type4>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
         return build(name, value, container_args, type_args);
     }
 
     // unordered_map
-    template <template<typename, typename, typename, typename, typename> typename Container, typename Type1, typename Type2, typename Type3, typename Type4, typename Type5>
+    template <template<typename, typename, typename, typename, typename> class Container, typename Type1, typename Type2, typename Type3, typename Type4, typename Type5>
     string_t generate(const char_t* name, const Container<Type1, Type2, Type3, Type4, Type5>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
         return build(name, value, container_args, type_args);
