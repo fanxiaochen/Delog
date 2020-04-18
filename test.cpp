@@ -1,15 +1,107 @@
 #include <iostream>
 #include "delog.h"
 
+
+void test_basis()
+{
+	int a = 10;
+	DELOG(a);
+	DELOG(-100);
+	double b = 12.5;
+	DELOG(b);
+	DELOG('s');
+	DELOG("str");
+	DELOG(true);
+	DELOG(false);
+	bool flag = true; // convert into type 'int'
+	DELOG(flag);
+	unsigned int c = 39;
+	DELOG(c);
+}
+
+void test_vector()
+{
+	std::vector<int> vector = {2,3,2,5,62,1,5,34};
+	DELOG(vector);
+}
+
+void test_list()
+{
+	std::list<int> list = {2,3,5};
+	DELOG(list);
+}
+
+void test_deque()
+{
+	std::deque<int> deque = {1,2,3,5};
+	DELOG(deque);
+}
+
+void test_set()
+{
+	std::set<int> set;
+	set.insert(88);
+	DELOG(set);
+}
+
+void test_unordered_set()
+{
+	std::unordered_set<int> uset;
+	uset.insert(78);
+	DELOG(uset);
+}
+
+void test_map()
+{
+	std::map<int, int> map;
+	map[898] = 233;
+	DELOG(map);
+}
+
+void test_unordered_map()
+{
+	std::unordered_map<int, double> umap;
+	umap[8] = 23.3;
+	umap[18] = 13.3;
+	DELOG(umap);
+}
+
+void test_array()
+{
+	std::array<int, 5> array = {1};
+	DELOG(array);
+}
+
+void test_stack()
+{
+	std::stack<int> stack;
+	stack.push(2);
+	DELOG(stack);
+}
+
+void test_queue()
+{
+	std::queue<int> queue;
+	queue.push(29);
+	DELOG(queue);
+}
+
+void test_pair()
+{
+	std::pair<int, int > pair = {1,2};
+	DELOG(pair);
+}
+
 int main()
 {
 //	std::cout << LOG_STDSTRING("SSSSSS", 3) << std::endl;
 //
  //   delog::get_win_version();
-	std::vector<int> t = {2,3,2,5,62,1,5,34};
+//	std::vector<int> t = {2,3,2,5,62,1,5,34};
+//	DELOG(t);
 //	std::cout << LOG_STLVECTOR(t, 3, 3, 1) << std::endl;
 //	//delog::mapping(std::string("DFDS"));
-	int a = 3;
+//	int a = 3;
 //	char c = 's';
 //	std::cout << typeid(int).name() << std::endl;
 //	std::cout << typeid(a).name() << std::endl;
@@ -60,99 +152,99 @@ int main()
 //	int test = 3;
 //	std::cout << delog::GET_VARIABLE_TYPE(test) << std::endl;
 //	delog::start_timer(0, __FILE__, __func__, __LINE__);
-	START_TIMER(1, MICROSECOND);
-	int cc = 5;
-	DELOG(cc, {});
+//	START_TIMER(1, MICROSECOND);
+//	int cc = 5;
+//	DELOG(cc, {});
 ////
-    std::cout << delog::message("vector", t) << std::endl;
-    std::cout << delog::message("vector", t, {3}) << std::endl;
-	std::cout << delog::message("vector", t, {1}, {1, 3}) << std::endl;
-	std::cout << delog::message("vector", t, {}, {1, 3}) << std::endl;
-	std::cout << delog::message("vector", t, {3, 6}) << std::endl;
-
-	std::list<int> list = {2,3,5};
-	std::cout << delog::message("list", list, {3}) << std::endl;
-
-	std::deque<int> deque = {2,3,5};
-	std::cout << delog::message("deque", deque, {3,4}) << std::endl;
-
-	std::set<int> set;
-	set.insert(88);
-	//std::cout << delog::message("set", set, {}, {}) << std::endl;
-    std::cout << delog::message("set", set) << std::endl;
-
-	std::unordered_set<int> uset;
-	uset.insert(898);
-	//std::cout << delog::message("set", set, {}, {}) << std::endl;
-    std::cout << delog::message("uset", uset) << std::endl;
-
-	std::map<int, int> map;
-	map[898] = 233;
-	std::cout << delog::message("map", map, {31}, {3}) << std::endl;
-
-	std::unordered_map<int, double> umap;
-	umap[8] = 23.3;
-	std::cout << delog::message("umap", umap, {31}, {3}) << std::endl;
-
-	std::array<int, 5> array = {1};
-    std::cout << delog::message("array", array) << std::endl;
-
-	std::stack<int> stack;
-	stack.push(2);
-	std::cout << delog::message("stack", stack, {31}, {3}) << std::endl;
-
-	std::queue<int> queue;
-	queue.push(29);
-	std::cout << delog::message("queue", queue, {31}, {3}) << std::endl;
-
-	std::pair<int, int > pair = {1,2};
-	std::cout << delog::message("pair", pair, {3}) << std::endl;
+//    std::cout << delog::message("vector", t) << std::endl;
+//    std::cout << delog::message("vector", t, {3}) << std::endl;
+//	std::cout << delog::message("vector", t, {1}, {1, 3}) << std::endl;
+//	std::cout << delog::message("vector", t, {}, {1, 3}) << std::endl;
+//	std::cout << delog::message("vector", t, {3, 6}) << std::endl;
+//
+//	std::list<int> list = {2,3,5};
+//	std::cout << delog::message("list", list, {3}) << std::endl;
+//
+//	std::deque<int> deque = {2,3,5};
+//	std::cout << delog::message("deque", deque, {3,4}) << std::endl;
+//
+//	std::set<int> set;
+//	set.insert(88);
+//	//std::cout << delog::message("set", set, {}, {}) << std::endl;
+//    std::cout << delog::message("set", set) << std::endl;
+//
+//	std::unordered_set<int> uset;
+//	uset.insert(898);
+//	//std::cout << delog::message("set", set, {}, {}) << std::endl;
+//    std::cout << delog::message("uset", uset) << std::endl;
+//
+//	std::map<int, int> map;
+//	map[898] = 233;
+//	std::cout << delog::message("map", map, {31}, {3}) << std::endl;
+//
+//	std::unordered_map<int, double> umap;
+//	umap[8] = 23.3;
+//	std::cout << delog::message("umap", umap, {31}, {3}) << std::endl;
+//
+//	std::array<int, 5> array = {1};
+//    std::cout << delog::message("array", array) << std::endl;
+//
+//	std::stack<int> stack;
+//	stack.push(2);
+//	std::cout << delog::message("stack", stack, {31}, {3}) << std::endl;
+//
+//	std::queue<int> queue;
+//	queue.push(29);
+//	std::cout << delog::message("queue", queue, {31}, {3}) << std::endl;
+//
+//	std::pair<int, int > pair = {1,2};
+//	std::cout << delog::message("pair", pair, {3}) << std::endl;
 	
-	std::cout << __LINE__ << std::endl;
-	std::cout << __FUNCTION__ << std::endl;
-//	std::cout << __PRETTY_FUNCTION__ << std::endl;
-	std::cout << __func__ << std::endl;
-	std::cout << __FILE__ << std::endl;
-	std::cout << delog::basics_info(__FILE__, __LINE__, __func__) << std::endl;
-	DELOG(pair, {3});
-    DELOG(pair, {});
-    DELOG(t);
+//	std::cout << __LINE__ << std::endl;
+//	std::cout << __FUNCTION__ << std::endl;
+////	std::cout << __PRETTY_FUNCTION__ << std::endl;
+//	std::cout << __func__ << std::endl;
+//	std::cout << __FILE__ << std::endl;
+//	std::cout << delog::basics_info(__FILE__, __LINE__, __func__) << std::endl;
+//	DELOG(pair, {3});
+//    DELOG(pair, {});
+//    DELOG(t);
 
-	std::string red("\033[0;31m");
-	std::string green("\033[0;32m");
-	std::string reset("\033[0m");
-	std::cout << red +"red" + reset  << std::endl;
-	std::cout << green + "red" + reset  << std::endl;
-	std::cout << "red" << std::endl;
-	std::cout << delog::color::red("This is red!") << std::endl;
-	std::cout << delog::color::blue("This is red!") << std::endl;
-	std::cout << delog::color::cyan("This is red!") << std::endl;
-	std::cout << delog::color::yellow("This is red!") << std::endl;
-	std::cout << delog::color::green("This is red!") << std::endl;
-	std::cout << delog::color::magenta("This is red!") << std::endl;
-	auto mm = delog::color::magenta("This is different!");
-	auto rr = delog::color::red("This is reddd!");
-	auto gg = delog::color::green("This is ggg!");
-	STOP_TIMER(1);
+//	std::string red("\033[0;31m");
+//	std::string green("\033[0;32m");
+//	std::string reset("\033[0m");
+//	std::cout << red +"red" + reset  << std::endl;
+//	std::cout << green + "red" + reset  << std::endl;
+//	std::cout << "red" << std::endl;
+//	std::cout << delog::Color::red("This is red!") << std::endl;
+//	std::cout << delog::Color::blue("This is red!") << std::endl;
+//	std::cout << delog::Color::cyan("This is red!") << std::endl;
+//	std::cout << delog::Color::yellow("This is red!") << std::endl;
+//	std::cout << delog::Color::green("This is red!") << std::endl;
+//	std::cout << delog::Color::magenta("This is red!") << std::endl;
+//	auto mm = delog::Color::magenta("This is different!");
+//	auto rr = delog::Color::red("This is reddd!");
+//	auto gg = delog::Color::green("This is ggg!");
+//	STOP_TIMER(1);
 //	delog::end_timer(0, __FILE__, __func__, __LINE__);
-	PAUSE();
-	std::cout << DEFAULT_COLOR(YELLOW("yeeellooww")+"we are " +mm + gg + "is red!" + rr +"wow") << std::endl;
+//	PAUSE();
+//	std::cout << DEFAULT_COLOR(YELLOW("yeeellooww")+"we are " +mm + gg + "is red!" + rr +"wow") << std::endl;
 
-	int ttt = 22;
-	DELOG(ttt);
-	std::string testt = (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n");
-	printf(testt.c_str(), "fff", "sss", 23);
+//	int ttt = 22;
+//	DELOG(ttt);
+//	std::string testt = (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n");
+//	printf(testt.c_str(), "fff", "sss", 23);
+//
+//    DELOG(3.14);
+//    DELOG(3.14f);
+//    DELOG(4 == 4);
+//    DELOG(4u);
+//    DELOG(4l);
+//    DELOG("FANXIAOCHEN");
+//
+//	int aa[3] = {1,4,6};
 
-    DELOG(3.14);
-    DELOG(3.14f);
-    DELOG(4 == 4);
-    DELOG(4u);
-    DELOG(4l);
-    DELOG("FANXIAOCHEN");
-
-	int aa[3] = {1,4,6};
-
-	DELOG(aa, {1,3});
+//	DELOG(aa, {1,3});
 
 
 
@@ -165,6 +257,22 @@ int main()
 //	std::cout << delog::message("test", sset, 1) << std::endl;
 //	std::cout << delog::message("test", sset) << std::endl;
 //	std::cout << DELOG_ALL(sset, 1) << std::endl;
+
+//	DELOG(pair);
+
+	test_basis();
+	test_vector();
+	test_list();
+	test_map();
+	test_unordered_map();
+	test_set();
+	test_unordered_set();
+	test_stack();
+	test_queue();
+	test_deque();
+	test_array();
+	test_pair();
+
 
 	return 0;
 }

@@ -154,7 +154,7 @@ bool get_win_version()
 #endif // DELOG_OS_WINDOWS
 
 
-class color
+class Color
 {
 public:
     enum Type
@@ -187,8 +187,8 @@ public:
             string_t colored_str = map[s_default_color] + str + map[s_default_color];
             return colored_str;
         }
-#endif // DELOG_OS_WINDOWS
         return str;
+#endif // DELOG_OS_WINDOWS
     }
 
     static string_t red(string_t str)
@@ -203,8 +203,8 @@ public:
             string_t colored_str = map[RED] + str + map[s_default_color];
             return colored_str;
         }
-#endif // DELOG_OS_WINDOWS
         return str;
+#endif // DELOG_OS_WINDOWS
     }
 
     static string_t green(string_t str)
@@ -219,8 +219,8 @@ public:
             string_t colored_str = map[GREEN] + str + map[s_default_color];
             return colored_str;
         }
-#endif // DELOG_OS_WINDOWS
         return str;
+#endif // DELOG_OS_WINDOWS
     }
 
     static string_t yellow(string_t str)
@@ -235,8 +235,8 @@ public:
             string_t colored_str = map[YELLOW] + str + map[s_default_color];
             return colored_str;
         }
-#endif // DELOG_OS_WINDOWS
         return str;
+#endif // DELOG_OS_WINDOWS
     }
 
     static string_t blue(string_t str)
@@ -251,9 +251,10 @@ public:
             string_t colored_str = map[BLUE] + str + map[s_default_color];
             return colored_str;
         }
-#endif // DELOG_OS_WINDOWS
         return str;
+#endif // DELOG_OS_WINDOWS
     }
+
     static string_t magenta(string_t str)
     {
 #if DELOG_OS_LINUX || DELOG_OS_MAC
@@ -266,8 +267,8 @@ public:
             string_t colored_str = map[MAGENTA] + str + map[s_default_color];
             return colored_str;
         }
-#endif // DELOG_OS_WINDOWS
         return str;
+#endif // DELOG_OS_WINDOWS
     }
 
     static string_t cyan(string_t str)
@@ -282,8 +283,8 @@ public:
             string_t colored_str = map[CYAN] + str + map[s_default_color];
             return colored_str;
         }
-#endif // DELOG_OS_WINDOWS
         return str;
+#endif // DELOG_OS_WINDOWS
     }
 
     static string_t white(string_t str)
@@ -298,14 +299,14 @@ public:
             string_t colored_str = map[WHITE] + str + map[s_default_color];
             return colored_str;
         }
-#endif // DELOG_OS_WINDOWS
         return str;
+#endif // DELOG_OS_WINDOWS
     }
 };
 
-color::Type color::s_default_color = color::Type::CYAN;
+Color::Type Color::s_default_color = Color::Type::CYAN;
 
-std::map<color::Type, string_t> color::map = 
+std::map<Color::Type, string_t> Color::map = 
 {
     {RESET,     "\033[0m"},
     {RED,       "\033[31m"},
@@ -317,14 +318,14 @@ std::map<color::Type, string_t> color::map =
     {WHITE,     "\033[37m"},
 };
 
-#define RED(string) delog::color::red(string)
-#define GREEN(string) delog::color::green(string)
-#define YELLOW(string) delog::color::yellow(string)
-#define BLUE(string) delog::color::blue(string)
-#define MAGENTA(string) delog::color::magenta(string)
-#define CYAN(string) delog::color::cyan(string)
-#define WHITE(string) delog::color::white(string)
-#define DEFAULT_COLOR(string) delog::color::default_color(string)
+#define RED(string) delog::Color::red(string)
+#define GREEN(string) delog::Color::green(string)
+#define YELLOW(string) delog::Color::yellow(string)
+#define BLUE(string) delog::Color::blue(string)
+#define MAGENTA(string) delog::Color::magenta(string)
+#define CYAN(string) delog::Color::cyan(string)
+#define WHITE(string) delog::Color::white(string)
+#define DEFAULT_COLOR(string) delog::Color::default_color(string)
 
 
 
@@ -542,70 +543,104 @@ string_t stop_timer(size_t index, const char_t* file, const char_t* func_name, u
 string_t basics_info(const char_t* file, const ulong_t line, const char_t* func)
 {
     char_t str[RECORD_MAX_LENGTH];
-    snprintf(str, RECORD_MAX_LENGTH, "[%s][%s][%s:%s:%ld]\n", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
+    snprintf(str, RECORD_MAX_LENGTH, "[%s][%s][%s:%s:%ld]", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
                                                 file, func, line);
     return string_t(str);
 }
+
+// 0: simple 1: verbose
+static std::unordered_map<const char_t*, bool> default_log_level({
+    {typeid(char_t).name(),   0},
+    {typeid(int_t).name(),    0},
+    {typeid(long_t).name(),   0},
+    {typeid(uchar_t).name(),  0},
+    {typeid(uint_t).name(),   0},
+    {typeid(ulong_t).name(),  0},
+    {typeid(float_t).name(),  0},
+    {typeid(double_t).name(), 0},
+    {typeid(string_t).name(), 0},
+});
 
 
 namespace basics
 {
 
 /// Basic data type
-static std::unordered_map<const char_t*, string_t> formats({ 
-    {typeid(char_t).name(),   (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%c") + "\n")},
-    {typeid(int_t).name(),    (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n")},
-    {typeid(long_t).name(),   (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n")},
-    {typeid(uchar_t).name(),  (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%c") + "\n")},
-    {typeid(uint_t).name(),   (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n")},
-    {typeid(ulong_t).name(),  (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "\n")},
-    {typeid(float_t).name(),  (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%f") + "\n")},
-    {typeid(double_t).name(), (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%f") + "\n")},
-    {typeid(string_t).name(), (MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%s") + "\n")},
+static std::unordered_map<const char_t*, string_t> formats_verbose({ 
+    {typeid(char_t).name(),   "%s" + MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%c") + "%s"},
+    {typeid(int_t).name(),    "%s" + MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "%s"},
+    {typeid(long_t).name(),   "%s" + MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "%s"},
+    {typeid(uchar_t).name(),  "%s" + MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%c") + "%s"},
+    {typeid(uint_t).name(),   "%s" + MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "%s"},
+    {typeid(ulong_t).name(),  "%s" + MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%d") + "%s"},
+    {typeid(float_t).name(),  "%s" + MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%f") + "%s"},
+    {typeid(double_t).name(), "%s" + MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%f") + "%s"},
+    {typeid(string_t).name(), "%s" + MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%s") + "%s"},
+});
+
+static std::unordered_map<const char_t*, string_t> formats_simple({ 
+    {typeid(char_t).name(),   "%s" + YELLOW("%c") + "%s"},
+    {typeid(int_t).name(),    "%s" + YELLOW("%d") + "%s"},
+    {typeid(long_t).name(),   "%s" + YELLOW("%d") + "%s"},
+    {typeid(uchar_t).name(),  "%s" + YELLOW("%c") + "%s"},
+    {typeid(uint_t).name(),   "%s" + YELLOW("%d") + "%s"},
+    {typeid(ulong_t).name(),  "%s" + YELLOW("%d") + "%s"},
+    {typeid(float_t).name(),  "%s" + YELLOW("%f") + "%s"},
+    {typeid(double_t).name(), "%s" + YELLOW("%f") + "%s"},
+    {typeid(string_t).name(), "%s" + YELLOW("%s") + "%s"},
 });
 
 
 template <typename Type>
-string_t build(const char_t* name, const Type& value)
+string_t build(const char_t* log_prefix, const char_t* log_suffix, const char_t* name, const Type& value)
 {
     string_t type = GET_VARIABLE_TYPE(value);
     char_t str[RECORD_MAX_LENGTH];
-    snprintf(str, RECORD_MAX_LENGTH, formats.at(typeid(Type).name()).c_str(), type.c_str(), name, value);
-
+    if (default_log_level[typeid(Type).name()])
+        snprintf(str, RECORD_MAX_LENGTH, formats_verbose.at(typeid(Type).name()).c_str(), log_prefix, type.c_str(), name, value, log_suffix);
+    else
+        snprintf(str, RECORD_MAX_LENGTH, formats_simple.at(typeid(Type).name()).c_str(), log_prefix, value, log_suffix);
     return string_t(str); 
 }
 
-string_t build(const char_t* name, const string_t& value)
+string_t build(const char_t* log_prefix, const char_t* log_suffix, const char_t* name, const string_t& value)
 {
     string_t type = GET_VARIABLE_TYPE(value);
     char_t str[RECORD_MAX_LENGTH];
-    snprintf(str, RECORD_MAX_LENGTH, formats.at(typeid(string_t).name()).c_str(), type.c_str(), name, value.c_str());
-
+    if (default_log_level[typeid(string_t).name()])
+        snprintf(str, RECORD_MAX_LENGTH, formats_verbose.at(typeid(string_t).name()).c_str(), log_prefix, type.c_str(), name, value.c_str(), log_suffix);
+    else
+        snprintf(str, RECORD_MAX_LENGTH, formats_simple.at(typeid(string_t).name()).c_str(), log_prefix, value.c_str(), log_suffix);
     return string_t(str); 
 }
 
 class Primitive
 {
 public:
+    Primitive(const string_t& log_prefix, const string_t& log_suffix): log_prefix_(log_prefix), log_suffix_(log_suffix){}
+
     template <typename Type>
     string_t generate(const char_t* name, const Type& value, const Parameters& args={})
     {
         // No parameters for basic types
-        return build(name, value);
+        return build(log_prefix_.c_str(), log_suffix_.c_str(), name, value);
     }
+private:
+    string_t log_prefix_;
+    string_t log_suffix_;
 };
 
 }
 
 #define REGISTER_BASICS(Type)                                                                                   \
 template <typename... Args>                                                                                     \
-string_t message(const char_t* name, const Type& type, const std::initializer_list<Args>&... args)              \
+string_t message(const string_t& prefix, const string_t& suffix, const char_t* name, const Type& type, const std::initializer_list<Args>&... args)              \
 {                                                                                                               \
-    return delog::basics::Primitive().generate(name, type, args...);                                            \
+    return delog::basics::Primitive(prefix, suffix).generate(name, type, args...);                                            \
 }                                                                                                               \
-string_t message(const char_t* name, const Type& type, const Parameters& args)                                  \
+string_t message(const string_t& prefix, const string_t& suffix, const char_t* name, const Type& type, const Parameters& args)                                  \
 {                                                                                                               \
-    return delog::basics::Primitive().generate(name, type, args);                                               \
+    return delog::basics::Primitive(prefix, suffix).generate(name, type, args);                                               \
 }
 
 REGISTER_BASICS(int_t)
@@ -880,36 +915,63 @@ namespace basics
 namespace formats
 {
 template <typename Type1, typename Type2>
-string_t format_pair(const char_t* name, const std::pair<Type1, Type2>& type, const Parameters& type2_args)
+string_t format_pair(const char_t* log_prefix, const char_t* log_suffix, const char_t* name, const std::pair<Type1, Type2>& type, const Parameters& type2_args)
 {
-    string_t type_str = GET_VARIABLE_TYPE(type);            
-    std::stringstream ss;                               
-    ss << string_t("Name: ") << GREEN(name) << "\n";        
-    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
-    ss << string_t("First: \n");             
-    ss << "{\n" << delog::message("pair.first", type.first, {}) << "}\n"; 
-    ss << string_t("Second: \n");             
-    ss << "{\n" << delog::message("pair.second", type.second, type2_args) << "}\n"; 
-    return ss.str();
+    auto format_simple = [&]()
+    {
+        std::stringstream ss;                               
+        ss << log_prefix;
+        ss << "(" << delog::message("", "", "pair.first", type.first, {}) << ","; 
+        ss << delog::message("", "", "pair.second", type.second, {}) << ")"; 
+        ss << log_suffix;
+        return ss.str();
+    };
+
+    auto format_verbose = [&]()
+    {
+        string_t type_str = GET_VARIABLE_TYPE(type);            
+        std::stringstream ss;                               
+        ss << log_prefix << string_t("Name: ") << GREEN(name) << log_suffix;        
+        ss << log_prefix << string_t("Type: ") << MAGENTA(type_str) << log_suffix;         
+        ss << log_prefix << string_t("First:") << log_suffix;            
+        ss << log_prefix << "{" << log_suffix; 
+        ss << delog::message(log_prefix, log_suffix, "pair.first", type.first, {}); 
+        ss << log_prefix << "}" << log_suffix; 
+        ss << log_prefix << string_t("Second:") << log_suffix;            
+        ss << log_prefix << "{" << log_suffix; 
+        ss << delog::message(log_prefix, log_suffix, "pair.second", type.second, type2_args); 
+        ss << log_prefix << "}" << log_suffix; 
+        return ss.str();
+    };
+    
+    if (default_log_level.find(typeid(Type1).name()) != default_log_level.end() && 
+        default_log_level.find(typeid(Type2).name()) != default_log_level.end())
+        return format_simple();
+    else
+        return format_verbose();
 }
 
 } // formats
 
 template <typename Type1, typename Type2>
-string_t build(const char_t* name, const std::pair<Type1, Type2>& type, const Parameters& type2_args)
+string_t build(const char_t* log_prefix, const char_t* log_suffix, const char_t* name, const std::pair<Type1, Type2>& type, const Parameters& type2_args)
 {
-    return formats::format_pair(name, type, type2_args);
+    return formats::format_pair(log_prefix, log_suffix, name, type, type2_args);
 }
 
 class Primitive
 {
 public:
+    Primitive(const string_t& log_prefix, const string_t& log_suffix): log_prefix_(log_prefix), log_suffix_(log_suffix){}
     // pair
     template <typename Type1, typename Type2>
     string_t generate(const char_t* name, const std::pair<Type1, Type2>& value, const Parameters& type2_args={})
     {
-        return build(name, value, type2_args);
+        return build(log_prefix_.c_str(), log_suffix_.c_str(), name, value, type2_args);
     }
+private:
+    string_t log_prefix_;
+    string_t log_suffix_;
 };
 
 } // basics 
@@ -918,14 +980,14 @@ public:
 
 #define REGISTER_STL_BASICS_TWO_PARAMETER(ContainerType)                                                                    \
 template <typename T1, typename T2, typename... Args>                                                                       \
-string_t message(const char_t* name, const ContainerType<T1,T2>& type, const std::initializer_list<Args>&... args)          \
+string_t message(const string_t& prefix, const string_t& suffix, const char_t* name, const ContainerType<T1,T2>& type, const std::initializer_list<Args>&... args)          \
 {                                                                                                                           \
-    return delog::stl::basics::Primitive().generate(name, type, args...);                                                   \
+    return delog::stl::basics::Primitive(prefix, suffix).generate(name, type, args...);                                                   \
 }                                                                                                                           \
 template <typename T1, typename T2>                                                                                         \
-string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Parameters& type2_args)                        \
+string_t message(const string_t& prefix, const string_t& suffix, const char_t* name, const ContainerType<T1,T2>& type, const Parameters& type2_args)                        \
 {                                                                                                                           \
-    return delog::stl::basics::Primitive().generate(name, type, type2_args);                                                \
+    return delog::stl::basics::Primitive(prefix, suffix).generate(name, type, type2_args);                                                \
 }                                                                                  
 
 REGISTER_STL_BASICS_TWO_PARAMETER(std::pair)
@@ -937,89 +999,203 @@ namespace container
 namespace formats
 {
 template <typename Type>
-string_t format_range(const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
+string_t format_range(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
 {
-    string_t type_str = GET_VARIABLE_TYPE(type);            
-    std::stringstream ss;                               
-    ss << string_t("Name: ") << GREEN(name) << "\n";        
-    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
-    ss << string_t("Length: ") << type.size() << "\n";              
-    size_t start = container_args[0];                   
-    size_t end = container_args[1];                     
-    for (size_t i = start; i <= end; ++ i)              
-    {                                                   
-        ss << "<--[" << i << "]-->\n";                  
-        ss << "{\n" << delog::message(("var["+std::to_string(i)+"]").c_str(), type[i], type_args) << "}\n"; 
-    }                                                   
-    return ss.str();                                    
+    auto format_simple = [&]()
+    {
+        std::stringstream ss;                               
+        size_t start = container_args[0];                   
+        size_t end = container_args[1];                     
+        ss << log_prefix << "[";
+        for (size_t i = start; i <= end; ++ i)              
+        {                                                   
+            ss << delog::message("", "", ("var["+std::to_string(i)+"]").c_str(), type[i], type_args); 
+            if (i != end) ss << " ";
+        }                                                   
+        ss << "]" << log_suffix;
+        return ss.str();                                    
+    };
+
+    auto format_verbose = [&]()
+    {
+        string_t type_str = GET_VARIABLE_TYPE(type);            
+        std::stringstream ss;                               
+        ss << log_prefix << string_t("Name: ") << GREEN(name) << log_suffix;        
+        ss << log_prefix << string_t("Type: ") << MAGENTA(type_str) << log_suffix;         
+        ss << log_prefix << string_t("Length: ") << type.size() << log_suffix;              
+        size_t start = container_args[0];                   
+        size_t end = container_args[1];                     
+        for (size_t i = start; i <= end; ++ i)              
+        {                                                   
+            ss << log_prefix << "<--[" << i << "]-->" << log_suffix;                  
+            ss << log_prefix << "{" << log_suffix;
+            ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(i)+"]").c_str(), type[i], type_args); 
+            ss << log_prefix << "}" << log_suffix;
+        }                                                   
+        return ss.str();                                    
+    };
+
+    if (default_log_level.find(typeid(type[0]).name()) != default_log_level.end())
+        return format_simple();
+    else
+        return format_verbose();
 }
 
 template <typename Type>
-string_t format_iterator(const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
+string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
 {
-    string_t type_str = GET_VARIABLE_TYPE(type);            
-    std::stringstream ss;                               
-    ss << string_t("Name: ") << GREEN(name) << "\n";        
-    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
-    ss << string_t("Length: ") << type.size() << "\n";              
-    size_t length = container_args[0];                   
-
-    auto itr = type.begin();
-    size_t count = 0;
-    for (auto itr = type.begin(); itr != type.end(); ++ itr)
+    auto format_simple = [&]()
     {
-        if (count == length) break;
-        ss << "<--[" << count << "]-->\n";                  
-        ss << "{\n" << delog::message(("var["+std::to_string(count)+"]").c_str(), *itr, type_args) << "}\n"; 
-        count ++;
-    }
-    return ss.str();                                    
+        std::stringstream ss;                               
+        size_t length = container_args[0];                   
+        auto itr = type.begin();
+        size_t count = 0;
+        ss << log_prefix << "[";
+        for (auto itr = type.begin(); itr != type.end(); ++ itr)
+        {
+            ss << delog::message("", "", ("var["+std::to_string(count)+"]").c_str(), *itr, type_args); 
+            count ++;
+            if (count == length) 
+                break;
+            else ss << " ";
+        }
+        ss << "]" << log_suffix;
+        return ss.str();                                    
+    };
+
+    auto format_verbose = [&]()
+    {
+        string_t type_str = GET_VARIABLE_TYPE(type);            
+        std::stringstream ss;                               
+        ss << log_prefix << string_t("Name: ") << GREEN(name) << log_suffix;        
+        ss << log_prefix << string_t("Type: ") << MAGENTA(type_str) << log_suffix;         
+        ss << log_prefix << string_t("Length: ") << type.size() << log_suffix;              
+        size_t length = container_args[0];                   
+
+        auto itr = type.begin();
+        size_t count = 0;
+        for (auto itr = type.begin(); itr != type.end(); ++ itr)
+        {
+            if (count == length) break;
+            ss << log_prefix << "<--[" << count << "]-->" << log_suffix;                 
+            ss << log_prefix << "{" << log_suffix;
+            ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), *itr, type_args);
+            ss << log_prefix << "}" << log_suffix;
+            count ++;
+        }
+        return ss.str();                                    
+    };
+
+    if (default_log_level.find(typeid(*(type.begin())).name()) != default_log_level.end())
+        return format_simple();
+    else
+        return format_verbose();
 }
 
 template <typename Type>
-string_t format_stack(const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
+string_t format_stack(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
 {
-    string_t type_str = GET_VARIABLE_TYPE(type);            
-    std::stringstream ss;                               
-    ss << string_t("Name: ") << GREEN(name) << "\n";        
-    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
-    ss << string_t("Length: ") << type.size() << "\n";              
-    size_t length = container_args[0];                   
-
-    Type copied = type;
-    size_t count = 0;
-    while (!copied.empty())
+    auto format_simple = [&]()
     {
-        if (count == length) break;
-        ss << "<--[" << count << "]-->\n";                  
-        ss << "{\n" << delog::message(("var["+std::to_string(count)+"]").c_str(), copied.top(), type_args) << "}\n"; 
-        copied.pop();
-        count ++;
-    }
-    return ss.str();                                    
+        std::stringstream ss;                               
+        size_t length = container_args[0];                   
+
+        Type copied = type;
+        size_t count = 0;
+        ss << log_prefix << "[";
+        while (!copied.empty())
+        {
+            ss << delog::message("", "", ("var["+std::to_string(count)+"]").c_str(), copied.top(), type_args); 
+            copied.pop();
+            count ++;
+            if (count == length) break;
+            else ss << " ";
+        }
+        ss << "]" << log_suffix;
+        return ss.str();                                    
+    };
+
+    auto format_verbose = [&]()
+    {
+        string_t type_str = GET_VARIABLE_TYPE(type);            
+        std::stringstream ss;                               
+        ss << log_prefix << string_t("Name: ") << GREEN(name) << log_suffix;        
+        ss << log_prefix << string_t("Type: ") << MAGENTA(type_str) << log_suffix;         
+        ss << log_prefix << string_t("Length: ") << type.size() << log_suffix;              
+        size_t length = container_args[0];                   
+
+        Type copied = type;
+        size_t count = 0;
+        while (!copied.empty())
+        {
+            if (count == length) break;
+            ss << log_prefix << "<--[" << count << "]-->" << log_suffix;                 
+            ss << log_prefix << "{" << log_suffix;
+            ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), copied.top(), type_args); 
+            ss << log_prefix << "}" << log_suffix;
+            copied.pop();
+            count ++;
+        }
+        return ss.str();                                    
+    };
+
+    if (default_log_level.find(typeid(type.top()).name()) != default_log_level.end())
+        return format_simple();
+    else
+        return format_verbose();
 }
 
 template <typename Type>
-string_t format_queue(const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
+string_t format_queue(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const Type& type, const ParameterList& container_args, const Parameters& type_args)
 {
-    string_t type_str = GET_VARIABLE_TYPE(type);            
-    std::stringstream ss;                               
-    ss << string_t("Name: ") << GREEN(name) << "\n";        
-    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
-    ss << string_t("Length: ") << type.size() << "\n";              
-    size_t length = container_args[0];                   
-
-    Type copied = type;
-    size_t count = 0;
-    while (!copied.empty())
+    auto format_simple = [&]()
     {
-        if (count == length) break;
-        ss << "<--[" << count << "]-->\n";                  
-        ss << "{\n" << delog::message(("var["+std::to_string(count)+"]").c_str(), copied.front(), type_args) << "}\n"; 
-        copied.pop();
-        count ++;
-    }
-    return ss.str();                                    
+        std::stringstream ss;                               
+        size_t length = container_args[0];                   
+
+        Type copied = type;
+        size_t count = 0;
+        ss << log_prefix << "[";
+        while (!copied.empty())
+        {
+            ss << delog::message("", "", ("var["+std::to_string(count)+"]").c_str(), copied.front(), type_args); 
+            copied.pop();
+            count ++;
+            if (count == length) break;
+            else ss << " ";
+        }
+        ss << "]" << log_suffix;
+        return ss.str();                                    
+    };
+
+    auto format_verbose = [&]()
+    {
+        string_t type_str = GET_VARIABLE_TYPE(type);            
+        std::stringstream ss;                               
+        ss << log_prefix << string_t("Name: ") << GREEN(name) << log_suffix;        
+        ss << log_prefix << string_t("Type: ") << MAGENTA(type_str) << log_suffix;         
+        ss << log_prefix << string_t("Length: ") << type.size() << log_suffix;              
+        size_t length = container_args[0];                   
+
+        Type copied = type;
+        size_t count = 0;
+        while (!copied.empty())
+        {
+            if (count == length) break;
+            ss << log_prefix << "<--[" << count << "]-->" << log_suffix;                 
+            ss << log_prefix << "{" << log_suffix;
+            ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), copied.front(), type_args); 
+            ss << log_prefix << "}" << log_suffix;
+            copied.pop();
+            count ++;
+        }
+        return ss.str();                                    
+    };
+
+    if (default_log_level.find(typeid(type.front()).name()) != default_log_level.end())
+        return format_simple();
+    else
+        return format_verbose();
 }
 
 
@@ -1056,114 +1232,119 @@ ParameterList parameters_to_length(const Type& type, const Parameters& container
 } // formats
 
 template <typename Type>
-string_t build(const char_t* name, const std::vector<Type>& type, const Parameters& container_args, const Parameters& type_args)
+string_t build(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const std::vector<Type>& type, const Parameters& container_args, const Parameters& type_args)
 {
     auto cargs = formats::parameters_to_range(type, container_args);
-    return formats::format_range(name, type, cargs, type_args);
+    return formats::format_range(log_prefix, log_suffix, name, type, cargs, type_args);
 }
 
 template <typename Type>
-string_t build(const char_t* name, const std::deque<Type>& type, const Parameters& container_args, const Parameters& type_args)
+string_t build(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const std::deque<Type>& type, const Parameters& container_args, const Parameters& type_args)
 {
     auto cargs = formats::parameters_to_range(type, container_args);
-    return formats::format_range(name, type, cargs, type_args);
+    return formats::format_range(log_prefix, log_suffix,name, type, cargs, type_args);
 }
 
 template <typename Type, size_t N>
-string_t build(const char_t* name, const std::array<Type, N>& type, const Parameters& container_args, const Parameters& type_args)
+string_t build(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const std::array<Type, N>& type, const Parameters& container_args, const Parameters& type_args)
 {
     auto cargs = formats::parameters_to_range(type, container_args);
-    return formats::format_range(name, type, cargs, type_args);
+    return formats::format_range(log_prefix, log_suffix,name, type, cargs, type_args);
 }
 
 template <typename Type>
-string_t build(const char_t* name, const std::list<Type>& type, const Parameters& container_args, const Parameters& type_args)
+string_t build(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const std::list<Type>& type, const Parameters& container_args, const Parameters& type_args)
 {
     auto cargs = formats::parameters_to_length(type, container_args);
-    return formats::format_iterator(name, type, cargs, type_args);
+    return formats::format_iterator(log_prefix, log_suffix,name, type, cargs, type_args);
 }
 
 template <typename Type>
-string_t build(const char_t* name, const std::set<Type>& type, const Parameters& container_args, const Parameters& type_args)
+string_t build(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const std::set<Type>& type, const Parameters& container_args, const Parameters& type_args)
 {
     auto cargs = formats::parameters_to_length(type, container_args);
-    return formats::format_iterator(name, type, cargs, type_args);
+    return formats::format_iterator(log_prefix, log_suffix,name, type, cargs, type_args);
 }
 
 template <typename Type>
-string_t build(const char_t* name, const std::unordered_set<Type>& type, const Parameters& container_args, const Parameters& type_args)
+string_t build(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const std::unordered_set<Type>& type, const Parameters& container_args, const Parameters& type_args)
 {
     auto cargs = formats::parameters_to_length(type, container_args);
-    return formats::format_iterator(name, type, cargs, type_args);
+    return formats::format_iterator(log_prefix, log_suffix,name, type, cargs, type_args);
 }
 
 template <typename Type1, typename Type2>
-string_t build(const char_t* name, const std::map<Type1, Type2>& type, const Parameters& container_args, const Parameters& type_args)
+string_t build(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const std::map<Type1, Type2>& type, const Parameters& container_args, const Parameters& type_args)
 {
     auto cargs = formats::parameters_to_length(type, container_args);
-    return formats::format_iterator(name, type, cargs, type_args);
+    return formats::format_iterator(log_prefix, log_suffix,name, type, cargs, type_args);
 }
 
 template <typename Type1, typename Type2>
-string_t build(const char_t* name, const std::unordered_map<Type1, Type2>& type, const Parameters& container_args, const Parameters& type_args)
+string_t build(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const std::unordered_map<Type1, Type2>& type, const Parameters& container_args, const Parameters& type_args)
 {
     auto cargs = formats::parameters_to_length(type, container_args);
-    return formats::format_iterator(name, type, cargs, type_args);
+    return formats::format_iterator(log_prefix, log_suffix,name, type, cargs, type_args);
 }
 
 template <typename Type>
-string_t build(const char_t* name, const std::stack<Type>& type, const Parameters& container_args, const Parameters& type_args)
+string_t build(const char_t* log_prefix, const char_t* log_suffix,const char_t* name, const std::stack<Type>& type, const Parameters& container_args, const Parameters& type_args)
 {
     auto cargs = formats::parameters_to_length(type, container_args);
-    return formats::format_stack(name, type, cargs, type_args);
+    return formats::format_stack(log_prefix, log_suffix,name, type, cargs, type_args);
 }
 
 template <typename Type>
-string_t build(const char_t* name, const std::queue<Type>& type, const Parameters& container_args, const Parameters& type_args)
+string_t build(const char_t* log_prefix, const char_t* log_suffix, const char_t* name, const std::queue<Type>& type, const Parameters& container_args, const Parameters& type_args)
 {
     auto cargs = formats::parameters_to_length(type, container_args);
-    return formats::format_queue(name, type, cargs, type_args);
+    return formats::format_queue(log_prefix, log_suffix,name, type, cargs, type_args);
 }
 
 
 class Primitive
 {
 public:
+    Primitive(const string_t& log_prefix, const string_t& log_suffix): log_prefix_(log_prefix), log_suffix_(log_suffix){}
+
     // vector, list, deque, stack, queue
     template <template<typename, typename> class Container, typename Type1, typename Type2>
     string_t generate(const char_t* name, const Container<Type1, Type2>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        return build(name, value, container_args, type_args);
+        return build(log_prefix_.c_str(), log_suffix_.c_str(), name, value, container_args, type_args);
     }
 
     // set
     template <template<typename, typename, typename> class Container, typename Type1, typename Type2, typename Type3>
     string_t generate(const char_t* name, const Container<Type1, Type2, Type3>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        return build(name, value, container_args, type_args);
+        return build(log_prefix_.c_str(), log_suffix_.c_str(), name, value, container_args, type_args);
     }
 
     // unordered_set, map
     template <template<typename, typename, typename, typename> class Container, typename Type1, typename Type2, typename Type3, typename Type4>
     string_t generate(const char_t* name, const Container<Type1, Type2, Type3, Type4>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        return build(name, value, container_args, type_args);
+        return build(log_prefix_.c_str(), log_suffix_.c_str(), name, value, container_args, type_args);
     }
 
     // unordered_map
     template <template<typename, typename, typename, typename, typename> class Container, typename Type1, typename Type2, typename Type3, typename Type4, typename Type5>
     string_t generate(const char_t* name, const Container<Type1, Type2, Type3, Type4, Type5>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        return build(name, value, container_args, type_args);
+        return build(log_prefix_.c_str(), log_suffix_.c_str(), name, value, container_args, type_args);
     }
 
     // array 
     template <typename Type, size_t N>
     string_t generate(const char_t* name, const std::array<Type, N>& value, const Parameters& container_args={}, const Parameters& type_args={})
     {
-        return build(name, value, container_args, type_args);
+        return build(log_prefix_.c_str(), log_suffix_.c_str(), name, value, container_args, type_args);
     }
 
+private:
+    string_t log_prefix_;
+    string_t log_suffix_;
 };
 } // container
 } // stl
@@ -1172,38 +1353,38 @@ public:
 
 #define REGISTER_STL_CONTAINER_ONE_PARAMETER(ContainerType)                                                                                     \
 template <typename Type, typename... Args>                                                                                                      \
-string_t message(const char_t* name, const ContainerType<Type>& type, const std::initializer_list<Args>&... args)                               \
+string_t message(const string_t& prefix, const string_t& suffix, const char_t* name, const ContainerType<Type>& type, const std::initializer_list<Args>&... args)                               \
 {                                                                                                                                               \
-    return delog::stl::container::Primitive().generate(name, type, args...);                                                                    \
+    return delog::stl::container::Primitive(prefix, suffix).generate(name, type, args...);                                                                    \
 }                                                                                                                                               \
 template <typename Type>                                                                                                                        \
-string_t message(const char_t* name, const ContainerType<Type>& type, const Parameters& container_args, const Parameters& type_args)            \
+string_t message(const string_t& prefix, const string_t& suffix,const char_t* name, const ContainerType<Type>& type, const Parameters& container_args, const Parameters& type_args)            \
 {                                                                                                                                               \
-    return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                                                  \
+    return delog::stl::container::Primitive(prefix, suffix).generate(name, type, container_args, type_args);                                                  \
 }
 
 #define REGISTER_STL_CONTAINER_TWO_PARAMETER(ContainerType)                                                                                     \
 template <typename T1, typename T2, typename... Args>                                                                                           \
-string_t message(const char_t* name, const ContainerType<T1,T2>& type, const std::initializer_list<Args>&... args)                              \
+string_t message(const string_t& prefix, const string_t& suffix,const char_t* name, const ContainerType<T1,T2>& type, const std::initializer_list<Args>&... args)                              \
 {                                                                                                                                               \
-    return delog::stl::container::Primitive().generate(name, type, args...);                                                                    \
+    return delog::stl::container::Primitive(prefix, suffix).generate(name, type, args...);                                                                    \
 }                                                                                                                                               \
 template <typename T1, typename T2>                                                                                                             \
-string_t message(const char_t* name, const ContainerType<T1,T2>& type, const Parameters& container_args, const Parameters& type_args)           \
+string_t message(const string_t& prefix, const string_t& suffix,const char_t* name, const ContainerType<T1,T2>& type, const Parameters& container_args, const Parameters& type_args)           \
 {                                                                                                                                               \
-    return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                                                  \
+    return delog::stl::container::Primitive(prefix, suffix).generate(name, type, container_args, type_args);                                                  \
 }                                                                                  
 
 #define REGISTER_STL_CONTAINER_TWO_PARAMETER_WITH_N(ContainerType)                                                                              \
 template <typename T1, size_t N, typename... Args>                                                                                              \
-string_t message(const char_t* name, const ContainerType<T1,N>& type, const std::initializer_list<Args>&... args)                               \
+string_t message(const string_t& prefix, const string_t& suffix,const char_t* name, const ContainerType<T1,N>& type, const std::initializer_list<Args>&... args)                               \
 {                                                                                                                                               \
-    return delog::stl::container::Primitive().generate(name, type, args...);                                                                    \
+    return delog::stl::container::Primitive(prefix, suffix).generate(name, type, args...);                                                                    \
 }                                                                                                                                               \
 template <typename T1, size_t N>                                                                                                                \
-string_t message(const char_t* name, const ContainerType<T1,N>& type, const Parameters& container_args, const Parameters& type_args)            \
+string_t message(const string_t& prefix, const string_t& suffix,const char_t* name, const ContainerType<T1,N>& type, const Parameters& container_args, const Parameters& type_args)            \
 {                                                                                                                                               \
-    return delog::stl::container::Primitive().generate(name, type, container_args, type_args);                                                  \
+    return delog::stl::container::Primitive(prefix, suffix).generate(name, type, container_args, type_args);                                                  \
 }                                                                                  
 
 
@@ -1256,9 +1437,16 @@ void console_pause(const char_t* file, const ulong_t line, const char_t* func)
 #endif  // (!defined(DELOG_DISABLE_TIMER))
 
 
+//#if DELOG_ENABLE_LOG
+//#   define DELOG(loggable, ...) \
+//    std::cout << DEFAULT_COLOR("")+(delog::basics_info(__FILE__, __LINE__, __func__) + delog::message(#loggable, loggable, ##__VA_ARGS__))
+//#else
+//#   define DELOG(loggable, ...) 
+//#endif // DELOG_ENABLE_LOG
+
 #if DELOG_ENABLE_LOG
 #   define DELOG(loggable, ...) \
-    std::cout << DEFAULT_COLOR("")+(delog::basics_info(__FILE__, __LINE__, __func__) + delog::message(#loggable, loggable, ##__VA_ARGS__))
+    std::cout << DEFAULT_COLOR("") + delog::message(delog::basics_info(__FILE__, __LINE__, __func__), delog::string_t("\n"), #loggable, loggable, ##__VA_ARGS__)
 #else
 #   define DELOG(loggable, ...) 
 #endif // DELOG_ENABLE_LOG
