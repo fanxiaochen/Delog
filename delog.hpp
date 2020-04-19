@@ -550,21 +550,20 @@ string_t basics_info(const char_t* file, const ulong_t line, const char_t* func)
 
 // 0: simple 1: verbose
 static std::unordered_map<const char_t*, bool> default_log_level({
-    {typeid(char_t).name(),   0},
-    {typeid(int_t).name(),    0},
-    {typeid(long_t).name(),   0},
-    {typeid(uchar_t).name(),  0},
-    {typeid(uint_t).name(),   0},
-    {typeid(ulong_t).name(),  0},
-    {typeid(float_t).name(),  0},
-    {typeid(double_t).name(), 0},
-    {typeid(string_t).name(), 0},
+    {typeid(char_t).name(),   1},
+    {typeid(int_t).name(),    1},
+    {typeid(long_t).name(),   1},
+    {typeid(uchar_t).name(),  1},
+    {typeid(uint_t).name(),   1},
+    {typeid(ulong_t).name(),  1},
+    {typeid(float_t).name(),  1},
+    {typeid(double_t).name(), 1},
+    {typeid(string_t).name(), 1},
 });
 
 
 namespace basics
 {
-
 /// Basic data type
 static std::unordered_map<const char_t*, string_t> formats_verbose({ 
     {typeid(char_t).name(),   "%s" + MAGENTA("%s") + "  " + GREEN("%s") + " = " + YELLOW("%c") + "%s"},
