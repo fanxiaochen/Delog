@@ -55,6 +55,9 @@ void test_map()
 {
 	std::map<int, int> map;
 	map[898] = 233;
+	map[98] = 3;
+	map[13] = 2;
+	map[200] = 38;
 	DELOG(map);
 }
 

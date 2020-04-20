@@ -341,6 +341,12 @@ struct ParameterList
     void set(size_t index, int_t value) { v[index] = value; }
 };
 
+#if (!defined(DELOG_DISABLE_TYPE_LOG))
+#  define DELOG_ENABLE_TYPE_LOG 1
+#else
+#  define DELOG_ENABLE_TYPE_LOG 0
+#endif  // (!defined(DELOG_DISABLE_LOG))
+
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 
 template <typename Type>
@@ -355,7 +361,11 @@ string_t GET_VARIABLE_TYPE(const Type& value)
 #endif
     string_t str = string_t(type);
  //   free(type);
+ #if DELOG_ENABLE_TYPE_LOG
     return str;
+#else
+    return "";
+#endif
 }
 
 #define RECORD_MAX_LENGTH 1000
@@ -548,8 +558,7 @@ string_t basics_info(const char_t* file, const ulong_t line, const char_t* func)
     return string_t(str);
 }
 
-// 0: simple 1: verbose
-static std::unordered_map<const char_t*, bool> default_log_level({
+static std::unordered_map<const char_t*, bool> default_basic_types({
     {typeid(char_t).name(),   1},
     {typeid(int_t).name(),    1},
     {typeid(long_t).name(),   1},
@@ -608,7 +617,7 @@ private:
     {
         string_t type = GET_VARIABLE_TYPE(value);
         char_t str[RECORD_MAX_LENGTH];
-        if (default_log_level[typeid(Type).name()] && !string_t(log_prefix).empty() && !string_t(log_suffix).empty())
+        if (!string_t(log_prefix).empty() && !string_t(log_suffix).empty())
             snprintf(str, RECORD_MAX_LENGTH, formats_verbose.at(typeid(Type).name()).c_str(), log_prefix, type.c_str(), name, value, log_suffix);
         else
             snprintf(str, RECORD_MAX_LENGTH, formats_simple.at(typeid(Type).name()).c_str(), log_prefix, value, log_suffix);
@@ -619,7 +628,7 @@ private:
     {
         string_t type = GET_VARIABLE_TYPE(value);
         char_t str[RECORD_MAX_LENGTH];
-        if (default_log_level[typeid(string_t).name()] && !string_t(log_prefix).empty() && !string_t(log_suffix).empty())
+        if (!string_t(log_prefix).empty() && !string_t(log_suffix).empty())
             snprintf(str, RECORD_MAX_LENGTH, formats_verbose.at(typeid(string_t).name()).c_str(), log_prefix, type.c_str(), name, value.c_str(), log_suffix);
         else
             snprintf(str, RECORD_MAX_LENGTH, formats_simple.at(typeid(string_t).name()).c_str(), log_prefix, value.c_str(), log_suffix);
@@ -919,6 +928,14 @@ string_t format_pair(const char_t* log_prefix, const char_t* log_suffix, const c
 {
     auto format_simple = [&]()
     {
+        std::stringstream ss;                               
+        ss << "(" << delog::message("", "", "pair.first", type.first, {}) << ","; 
+        ss << delog::message("", "", "pair.second", type.second, {}) << ")"; 
+        return ss.str();
+    };
+
+    auto format_complex = [&]()
+    {
         string_t type_str = GET_VARIABLE_TYPE(type);            
         std::stringstream ss;                               
         ss << log_prefix;
@@ -946,9 +963,14 @@ string_t format_pair(const char_t* log_prefix, const char_t* log_suffix, const c
         return ss.str();
     };
     
-    if (default_log_level.find(typeid(Type1).name()) != default_log_level.end() && 
-        default_log_level.find(typeid(Type2).name()) != default_log_level.end())
-        return format_simple();
+    if (default_basic_types.find(typeid(Type1).name()) != default_basic_types.end() && 
+        default_basic_types.find(typeid(Type2).name()) != default_basic_types.end())
+        {
+            if (!string_t(log_prefix).empty() && !string_t(log_suffix).empty())
+                return format_complex();
+            else
+                return format_simple();
+        }
     else
         return format_verbose();
 }
@@ -1041,7 +1063,7 @@ string_t format_range(const char_t* log_prefix, const char_t* log_suffix,const c
         return ss.str();                                    
     };
 
-    if (default_log_level.find(typeid(type[0]).name()) != default_log_level.end())
+    if (default_basic_types.find(typeid(type[0]).name()) != default_basic_types.end())
         return format_simple();
     else
         return format_verbose();
@@ -1095,8 +1117,8 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         return ss.str();                                    
     };
 
-    if (default_log_level.find(typeid(Type1).name()) != default_log_level.end() && 
-        default_log_level.find(typeid(Type2).name()) != default_log_level.end())
+    if (default_basic_types.find(typeid(Type1).name()) != default_basic_types.end() && 
+        default_basic_types.find(typeid(Type2).name()) != default_basic_types.end())
         return format_simple();
     else
         return format_verbose();
@@ -1150,8 +1172,8 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         return ss.str();                                    
     };
 
-    if (default_log_level.find(typeid(Type1).name()) != default_log_level.end() && 
-        default_log_level.find(typeid(Type2).name()) != default_log_level.end())
+    if (default_basic_types.find(typeid(Type1).name()) != default_basic_types.end() && 
+        default_basic_types.find(typeid(Type2).name()) != default_basic_types.end())
         return format_simple();
     else
         return format_verbose();
@@ -1205,7 +1227,7 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         return ss.str();                                    
     };
 
-    if (default_log_level.find(typeid(*(type.begin())).name()) != default_log_level.end())
+    if (default_basic_types.find(typeid(*(type.begin())).name()) != default_basic_types.end())
         return format_simple();
     else
         return format_verbose();
@@ -1262,7 +1284,7 @@ string_t format_stack(const char_t* log_prefix, const char_t* log_suffix,const c
         return ss.str();                                    
     };
 
-    if (default_log_level.find(typeid(type.top()).name()) != default_log_level.end())
+    if (default_basic_types.find(typeid(type.top()).name()) != default_basic_types.end())
         return format_simple();
     else
         return format_verbose();
@@ -1318,7 +1340,7 @@ string_t format_queue(const char_t* log_prefix, const char_t* log_suffix,const c
         return ss.str();                                    
     };
 
-    if (default_log_level.find(typeid(type.front()).name()) != default_log_level.end())
+    if (default_basic_types.find(typeid(type.front()).name()) != default_basic_types.end())
         return format_simple();
     else
         return format_verbose();
