@@ -667,76 +667,76 @@ namespace pointer
 namespace formats
 {
 template <typename Type>
-string_t format_two_dims(const char_t* name, const Type* type, const ParameterList& type_args)
+string_t format(const char_t* log_prefix, const char_t* log_suffix, const char_t* name, const Type* type, const ParameterList& type_args)
 {
-    string_t type_str = GET_VARIABLE_TYPE(type);            
-    size_t start_row = type_args[0];                   
-    size_t rows = type_args[1];                   
-    size_t start_col = type_args[2];                     
-    size_t cols = type_args[3];                     
+    auto format_simple = [&]()
+    {
+        string_t type_str = GET_VARIABLE_TYPE(type);            
+        std::stringstream ss;                               
+        ss << log_prefix;
+        ss << MAGENTA(type_str) + " " + GREEN(name) + " = ";
+        ss << "[";
+        size_t start = type_args[0];                   
+        size_t end = type_args[1];                     
+        for (size_t i = start; i <= end; ++ i)              
+        {                                                   
+            ss << delog::message("", "", ("var["+std::to_string(i)+"]").c_str(), type[i], {}); 
+            if (i != end) ss << " ";
+        }                                                   
+        ss << "]" << log_suffix;
+        return ss.str();                                    
+    };
 
-    std::stringstream ss;                               
-    ss << string_t("Name: ") << GREEN(name) << "\n";        
-    ss << string_t("Type: ") << MAGENTA(type_str) << "\n";         
-    ss << string_t("Rows: ") << rows << "\n";              
-    ss << string_t("Cols: ") << cols << "\n";              
-    ss << string_t("Start Row: ") << start_row << "\n";              
-    ss << string_t("Start Col: ") << start_col << "\n";              
-    ss << string_t("<---------------->") << "\n";              
-
-    for (size_t i = start_row; i < rows; ++ i)              
-    {                                                   
-        for (size_t j = start_col; j < cols; ++ j)              
-        {
-            // delog::message need support printing value only
-            // tmp
-            ss << type[cols*i+j] << " "; 
-        }
-        ss << "\n"; 
-    }                                                   
-    ss << string_t("<---------------->") << "\n";              
-
-    return ss.str();                                    
+    return format_simple();
 }
-
 } // formats
 
 
 class Primitive
 {
 public:
+    Primitive(const string_t& log_prefix, const string_t& log_suffix): log_prefix_(log_prefix), log_suffix_(log_suffix){}
+
     template <typename Type>
     string_t generate(const char_t* name, const Type* value, const Parameters& args={})
     {
         ParameterList args_list = ParameterList(args);
-        ParameterList args_default = {0, 0, 0, 1}; 
+        ParameterList args_default = {0, 0}; 
 
         for (size_t i = 0; i < args_list.size(); ++ i) 
         {
             args_default.set(i, args_list[i]);
         }
         
-        return formats::format_two_dims(name, value, args_default);
+        return formats::format(log_prefix_.c_str(), log_suffix_.c_str(), name, value, args_default);
     }
+private:
+    string_t log_prefix_;
+    string_t log_suffix_;
 };
 
 } // pointer
 
-#define REGISTER_POINTER_TWO_DIM(Type)                                                           \
-string_t message(const char_t* name, const Type* type, const Parameters& args)                   \
+#define REGISTER_POINTERS(Type)                                                           \
+template <typename... Args>                                                                                     \
+string_t message(const string_t& prefix, const string_t& suffix, const char_t* name, const Type* type, const std::initializer_list<Args>&... args)              \
+{                                                                                                               \
+    return delog::pointer::Primitive(prefix, suffix).generate(name, type, args...);                                            \
+}                                                                                                               \
+string_t message(const string_t& prefix, const string_t& suffix,const char_t* name, const Type* type, const Parameters& args)                   \
 {                                                                                                \
-    return delog::pointer::Primitive().generate(name, type, args);                               \
+    return delog::pointer::Primitive(prefix, suffix).generate(name, type, args);                               \
 }
 
-REGISTER_POINTER_TWO_DIM(int_t)
-REGISTER_POINTER_TWO_DIM(long_t)
-REGISTER_POINTER_TWO_DIM(char_t)
-REGISTER_POINTER_TWO_DIM(uint_t)
-REGISTER_POINTER_TWO_DIM(ulong_t)
-REGISTER_POINTER_TWO_DIM(uchar_t)
-REGISTER_POINTER_TWO_DIM(float_t)
-REGISTER_POINTER_TWO_DIM(double_t)
-REGISTER_POINTER_TWO_DIM(string_t)
+REGISTER_POINTERS(int_t)
+REGISTER_POINTERS(long_t)
+REGISTER_POINTERS(char_t)
+REGISTER_POINTERS(uint_t)
+REGISTER_POINTERS(ulong_t)
+REGISTER_POINTERS(uchar_t)
+REGISTER_POINTERS(float_t)
+REGISTER_POINTERS(double_t)
+REGISTER_POINTERS(string_t)
 
 #if DELOG_ENABLE_EIGEN
 namespace eigen

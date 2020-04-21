@@ -95,6 +95,14 @@ void test_pair()
 	DELOG(pair);
 }
 
+void test_pointers()
+{
+	int pointer[5] = {3,2,56,6,8};
+	float pf[3] = {5.06f, 16.1f, 8.4f};
+	DELOG(pointer,{1,3});
+	DELOG(pf);
+}
+
 int main()
 {
 //	std::cout << LOG_STDSTRING("SSSSSS", 3) << std::endl;
@@ -275,6 +283,7 @@ int main()
 	test_deque();
 	test_array();
 	test_pair();
+	test_pointers();
 
 
 	return 0;
