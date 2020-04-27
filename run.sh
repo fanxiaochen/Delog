@@ -1,2 +1,2 @@
-g++ -std=c++11 -o test test.cpp
-#./test
+g++ -std=c++11 -o example example.cpp
+#./example

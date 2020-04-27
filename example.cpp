@@ -103,6 +103,16 @@ void test_pointers()
 	DELOG(pf);
 }
 
+void test_eigen()
+{
+	Eigen::Vector3f vec3;
+	vec3 << 1,0,0;
+	DELOG(vec3);
+	Eigen::Matrix4d mat4 = Eigen::Matrix4d::Identity();
+	DELOG(mat4);
+	//std::cout << vec3 << std::endl;
+}
+
 int main()
 {
 //	std::cout << LOG_STDSTRING("SSSSSS", 3) << std::endl;
@@ -284,7 +294,7 @@ int main()
 	test_array();
 	test_pair();
 	test_pointers();
-
+	test_eigen();
 
 	return 0;
 }
