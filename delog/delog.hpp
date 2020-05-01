@@ -76,9 +76,11 @@ namespace delog
 typedef char char_t;
 typedef int int_t;
 typedef long long_t;
+typedef short short_t;
 typedef unsigned char uchar_t;
 typedef unsigned int uint_t;
 typedef unsigned long ulong_t;
+typedef unsigned short ushort_t;
 typedef float float_t;
 typedef double double_t;
 typedef std::string string_t;

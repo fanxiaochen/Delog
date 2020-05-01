@@ -69,36 +69,51 @@ private:
 
 } // namespace eigen
 
-#define REGISTER_EIGEN_MATRIX(Type)                                                                                                                     \
-    template <typename... Args>                                                                                                                         \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type &type, const std::initializer_list<Args> &... args) \
-    {                                                                                                                                                   \
-        return delog::eigen::Primitive(prefix, suffix).generate(name, type, args...);                                                                   \
-    }                                                                                                                                                   \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type &type, const Parameters &args)                      \
-    {                                                                                                                                                   \
-        return delog::eigen::Primitive(prefix, suffix).generate(name, type, args);                                                                      \
+//#define REGISTER_EIGEN_MATRIX(Type)                                                                                                                     \
+//    template <typename... Args>                                                                                                                         \
+//    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type &type, const std::initializer_list<Args> &... args) \
+//    {                                                                                                                                                   \
+//        return delog::eigen::Primitive(prefix, suffix).generate(name, type, args...);                                                                   \
+//    }                                                                                                                                                   \
+//    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type &type, const Parameters &args)                      \
+//    {                                                                                                                                                   \
+//        return delog::eigen::Primitive(prefix, suffix).generate(name, type, args);                                                                      \
+//    }
+//
+//REGISTER_EIGEN_MATRIX(Eigen::Matrix2d)
+//REGISTER_EIGEN_MATRIX(Eigen::Matrix3d)
+//REGISTER_EIGEN_MATRIX(Eigen::Matrix4d)
+//REGISTER_EIGEN_MATRIX(Eigen::Vector2d)
+//REGISTER_EIGEN_MATRIX(Eigen::Vector3d)
+//REGISTER_EIGEN_MATRIX(Eigen::Vector4d)
+//
+//REGISTER_EIGEN_MATRIX(Eigen::Matrix2f)
+//REGISTER_EIGEN_MATRIX(Eigen::Matrix3f)
+//REGISTER_EIGEN_MATRIX(Eigen::Matrix4f)
+//REGISTER_EIGEN_MATRIX(Eigen::Vector2f)
+//REGISTER_EIGEN_MATRIX(Eigen::Vector3f)
+//REGISTER_EIGEN_MATRIX(Eigen::Vector4f)
+//
+//REGISTER_EIGEN_MATRIX(Eigen::Matrix2i)
+//REGISTER_EIGEN_MATRIX(Eigen::Matrix3i)
+//REGISTER_EIGEN_MATRIX(Eigen::Matrix4i)
+//REGISTER_EIGEN_MATRIX(Eigen::Vector2i)
+//REGISTER_EIGEN_MATRIX(Eigen::Vector3i)
+//REGISTER_EIGEN_MATRIX(Eigen::Vector4i)
+
+#define REGISTER_EIGEN_MATRIX(Matrix)                                                                                                                                         \
+    template <typename Scalar, int Rows, int Cols, typename... Args>                                                                                                          \
+    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Matrix<Scalar, Rows, Cols> &type, const std::initializer_list<Args> &... args) \
+    {                                                                                                                                                                         \
+        return delog::eigen::Primitive(prefix, suffix).generate(name, type, args...);                                                                                         \
+    }                                                                                                                                                                         \
+    template <typename Scalar, int Rows, int Cols>                                                                                                                            \
+    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Matrix<Scalar, Rows, Cols> &type, const Parameters &args)                      \
+    {                                                                                                                                                                         \
+        return delog::eigen::Primitive(prefix, suffix).generate(name, type, args);                                                                                            \
     }
 
-REGISTER_EIGEN_MATRIX(Eigen::Matrix2d)
-REGISTER_EIGEN_MATRIX(Eigen::Matrix3d)
-REGISTER_EIGEN_MATRIX(Eigen::Matrix4d)
-REGISTER_EIGEN_MATRIX(Eigen::Vector2d)
-REGISTER_EIGEN_MATRIX(Eigen::Vector3d)
-REGISTER_EIGEN_MATRIX(Eigen::Vector4d)
+REGISTER_EIGEN_MATRIX(Eigen::Matrix)
 
-REGISTER_EIGEN_MATRIX(Eigen::Matrix2f)
-REGISTER_EIGEN_MATRIX(Eigen::Matrix3f)
-REGISTER_EIGEN_MATRIX(Eigen::Matrix4f)
-REGISTER_EIGEN_MATRIX(Eigen::Vector2f)
-REGISTER_EIGEN_MATRIX(Eigen::Vector3f)
-REGISTER_EIGEN_MATRIX(Eigen::Vector4f)
-
-REGISTER_EIGEN_MATRIX(Eigen::Matrix2i)
-REGISTER_EIGEN_MATRIX(Eigen::Matrix3i)
-REGISTER_EIGEN_MATRIX(Eigen::Matrix4i)
-REGISTER_EIGEN_MATRIX(Eigen::Vector2i)
-REGISTER_EIGEN_MATRIX(Eigen::Vector3i)
-REGISTER_EIGEN_MATRIX(Eigen::Vector4i)
 
 } // namespace delog

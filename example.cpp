@@ -114,6 +114,18 @@ void test_eigen()
 	DELOG(mat_vec);
 }
 
+void test_opencv()
+{
+	cv::Vec2f vec2f(1, 5);
+	cv::Vec3i vec3i(4, 20, 33);
+	DELOG(vec2f);
+	DELOG(vec3i);
+
+	float dummy_query_data[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+	cv::Mat mat_32FC2 = cv::Mat(2, 3, CV_32FC2, dummy_query_data);
+	DELOG(mat_32FC2);
+}
+
 int main()
 {
 	//	std::cout << LOG_STDSTRING("SSSSSS", 3) << std::endl;
@@ -293,6 +305,7 @@ int main()
 	test_pair();
 	test_pointers();
 	test_eigen();
+	test_opencv();
 
 	return 0;
 }

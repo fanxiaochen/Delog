@@ -6,9 +6,11 @@ static std::unordered_map<const char_t *, bool> default_basic_types({
     {typeid(char_t).name(), 1},
     {typeid(int_t).name(), 1},
     {typeid(long_t).name(), 1},
+    {typeid(short_t).name(), 1},
     {typeid(uchar_t).name(), 1},
     {typeid(uint_t).name(), 1},
     {typeid(ulong_t).name(), 1},
+    {typeid(ushort_t).name(), 1},
     {typeid(float_t).name(), 1},
     {typeid(double_t).name(), 1},
     {typeid(string_t).name(), 1},
@@ -20,24 +22,28 @@ namespace basics
 static std::unordered_map<const char_t *, string_t> formats_verbose({
     {typeid(char_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%c") + "%s"},
     {typeid(int_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%d") + "%s"},
-    {typeid(long_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%d") + "%s"},
+    {typeid(long_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%ld") + "%s"},
+    {typeid(short_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%d") + "%s"},
     {typeid(uchar_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%c") + "%s"},
-    {typeid(uint_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%d") + "%s"},
-    {typeid(ulong_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%d") + "%s"},
+    {typeid(uint_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%u") + "%s"},
+    {typeid(ulong_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%lu") + "%s"},
+    {typeid(ushort_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%u") + "%s"},
     {typeid(float_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%f") + "%s"},
-    {typeid(double_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%f") + "%s"},
+    {typeid(double_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%lf") + "%s"},
     {typeid(string_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%s") + "%s"},
 });
 
 static std::unordered_map<const char_t *, string_t> formats_simple({
     {typeid(char_t).name(), "%s" + YELLOW("%c") + "%s"},
     {typeid(int_t).name(), "%s" + YELLOW("%d") + "%s"},
-    {typeid(long_t).name(), "%s" + YELLOW("%d") + "%s"},
+    {typeid(long_t).name(), "%s" + YELLOW("%ld") + "%s"},
+    {typeid(short_t).name(), "%s" + YELLOW("%d") + "%s"},
     {typeid(uchar_t).name(), "%s" + YELLOW("%c") + "%s"},
-    {typeid(uint_t).name(), "%s" + YELLOW("%d") + "%s"},
-    {typeid(ulong_t).name(), "%s" + YELLOW("%d") + "%s"},
+    {typeid(uint_t).name(), "%s" + YELLOW("%u") + "%s"},
+    {typeid(ulong_t).name(), "%s" + YELLOW("%lu") + "%s"},
+    {typeid(ushort_t).name(), "%s" + YELLOW("%u") + "%s"},
     {typeid(float_t).name(), "%s" + YELLOW("%f") + "%s"},
-    {typeid(double_t).name(), "%s" + YELLOW("%f") + "%s"},
+    {typeid(double_t).name(), "%s" + YELLOW("%lf") + "%s"},
     {typeid(string_t).name(), "%s" + YELLOW("%s") + "%s"},
 });
 
@@ -97,9 +103,11 @@ private:
 
 REGISTER_BASICS(int_t)
 REGISTER_BASICS(long_t)
+REGISTER_BASICS(short_t)
 REGISTER_BASICS(char_t)
 REGISTER_BASICS(uint_t)
 REGISTER_BASICS(ulong_t)
+REGISTER_BASICS(ushort_t)
 REGISTER_BASICS(uchar_t)
 REGISTER_BASICS(float_t)
 REGISTER_BASICS(double_t)
@@ -173,9 +181,11 @@ private:
 
 REGISTER_POINTERS(int_t)
 REGISTER_POINTERS(long_t)
+REGISTER_POINTERS(short_t)
 REGISTER_POINTERS(char_t)
 REGISTER_POINTERS(uint_t)
 REGISTER_POINTERS(ulong_t)
+REGISTER_POINTERS(ushort_t)
 REGISTER_POINTERS(uchar_t)
 REGISTER_POINTERS(float_t)
 REGISTER_POINTERS(double_t)
