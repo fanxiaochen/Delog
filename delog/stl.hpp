@@ -122,6 +122,7 @@ string_t format_range(const char_t* log_prefix, const char_t* log_suffix,const c
         size_t end = container_args[1];                     
         for (size_t i = start; i <= end; ++ i)              
         {                                                   
+            if (i < 0 || i >= type.size()) continue;
             ss << delog::message("", "", ("var["+std::to_string(i)+"]").c_str(), type[i], type_args); 
             if (i != end) ss << " ";
         }                                                   
@@ -140,7 +141,8 @@ string_t format_range(const char_t* log_prefix, const char_t* log_suffix,const c
         size_t end = container_args[1];                     
         for (size_t i = start; i <= end; ++ i)              
         {                                                   
-            ss << log_prefix << "<--[" << i << "]-->" << log_suffix;                  
+            if (i < 0 || i >= type.size()) continue;
+            ss << log_prefix << "--------[" << i << "]--------" << log_suffix;                  
             ss << log_prefix << "{" << log_suffix;
             ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(i)+"]").c_str(), type[i], type_args); 
             ss << log_prefix << "}" << log_suffix;
@@ -193,7 +195,7 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         for (auto itr = type.begin(); itr != type.end(); ++ itr)
         {
             if (count == length) break;
-            ss << log_prefix << "<--[" << count << "]-->" << log_suffix;                 
+            ss << log_prefix << "--------[" << count << "]--------" << log_suffix;                 
             ss << log_prefix << "{" << log_suffix;
             ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), *itr, type_args);
             ss << log_prefix << "}" << log_suffix;
@@ -248,7 +250,7 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         for (auto itr = type.begin(); itr != type.end(); ++ itr)
         {
             if (count == length) break;
-            ss << log_prefix << "<--[" << count << "]-->" << log_suffix;                 
+            ss << log_prefix << "--------[" << count << "]--------" << log_suffix;                 
             ss << log_prefix << "{" << log_suffix;
             ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), *itr, type_args);
             ss << log_prefix << "}" << log_suffix;
@@ -303,7 +305,7 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         for (auto itr = type.begin(); itr != type.end(); ++ itr)
         {
             if (count == length) break;
-            ss << log_prefix << "<--[" << count << "]-->" << log_suffix;                 
+            ss << log_prefix << "--------[" << count << "]--------" << log_suffix;                 
             ss << log_prefix << "{" << log_suffix;
             ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), *itr, type_args);
             ss << log_prefix << "}" << log_suffix;
@@ -359,7 +361,7 @@ string_t format_stack(const char_t* log_prefix, const char_t* log_suffix,const c
         while (!copied.empty())
         {
             if (count == length) break;
-            ss << log_prefix << "<--[" << count << "]-->" << log_suffix;                 
+            ss << log_prefix << "--------[" << count << "]--------" << log_suffix;                 
             ss << log_prefix << "{" << log_suffix;
             ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), copied.top(), type_args); 
             ss << log_prefix << "}" << log_suffix;
@@ -415,7 +417,7 @@ string_t format_queue(const char_t* log_prefix, const char_t* log_suffix,const c
         while (!copied.empty())
         {
             if (count == length) break;
-            ss << log_prefix << "<--[" << count << "]-->" << log_suffix;                 
+            ss << log_prefix << "--------[" << count << "]--------" << log_suffix;                 
             ss << log_prefix << "{" << log_suffix;
             ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), copied.front(), type_args); 
             ss << log_prefix << "}" << log_suffix;
@@ -440,8 +442,7 @@ ParameterList parameters_to_range(const Type& type, const Parameters& container_
 
     for (size_t i = 0; i < cargs.size(); ++ i) 
     {
-        if (cargs[i] >= 0 && cargs[i] <= type.size()-1)
-            cargs_default.set(i, cargs[i]);
+        cargs_default.set(i, cargs[i]);
     }
 
     return cargs_default;
@@ -455,8 +456,7 @@ ParameterList parameters_to_length(const Type& type, const Parameters& container
 
     for (size_t i = 0; i < cargs.size(); ++ i) 
     {
-        if (cargs[i] >= 0 && cargs[i] <= type.size())
-            cargs_default.set(i, cargs[i]);
+        cargs_default.set(i, cargs[i]);
     }
 
     return cargs_default;

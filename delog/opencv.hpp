@@ -19,6 +19,8 @@ string_t format_vec(const char_t *log_prefix, const char_t *log_suffix, const ch
         size_t end = type_args[1];
         for (size_t i = start; i <= end; ++i)
         {
+            if (i < 0 || i >= N)
+                continue;
             ss << delog::message("", "", ("var[" + std::to_string(i) + "]").c_str(), type[i], {});
             if (i == end)
                 break;
@@ -40,6 +42,8 @@ string_t format_vec(const char_t *log_prefix, const char_t *log_suffix, const ch
         size_t end = type_args[1];
         for (size_t i = start; i <= end; ++i)
         {
+            if (i < 0 || i >= N)
+                continue;
             ss << delog::message("", "", ("var[" + std::to_string(i) + "]").c_str(), type[i], {});
             if (i == end)
                 break;
@@ -125,9 +129,13 @@ string_t format_mat(const char_t *log_prefix, const char_t *log_suffix, const ch
 
     for (size_t i = start_row; i < start_row + block_rows; ++i)
     {
+        if (i < 0 || i >= rows)
+            continue;
         ss << log_prefix;
         for (size_t j = start_col; j < start_col + block_cols; ++j)
         {
+            if (j < 0 || j >= cols)
+                continue;
             ss << access_by_type(i, j) << " ";
         }
         ss << log_suffix;
