@@ -15,10 +15,12 @@ string_t format_vec(const char_t *log_prefix, const char_t *log_suffix, const ch
         std::stringstream ss;
         ss << "[";
         size_t length = N;
-        for (int i = 0; i < length; ++i)
+        size_t start = type_args[0];
+        size_t end = type_args[1];
+        for (size_t i = start; i <= end; ++i)
         {
             ss << delog::message("", "", ("var[" + std::to_string(i) + "]").c_str(), type[i], {});
-            if (i == (length - 1))
+            if (i == end)
                 break;
             else
                 ss << " ";
@@ -34,10 +36,12 @@ string_t format_vec(const char_t *log_prefix, const char_t *log_suffix, const ch
         ss << MAGENTA(type_str) + " " + GREEN(name) + " = ";
         ss << "[";
         size_t length = N;
-        for (int i = 0; i < length; ++i)
+        size_t start = type_args[0];
+        size_t end = type_args[1];
+        for (size_t i = start; i <= end; ++i)
         {
             ss << delog::message("", "", ("var[" + std::to_string(i) + "]").c_str(), type[i], {});
-            if (i == (length - 1))
+            if (i == end)
                 break;
             else
                 ss << " ";
@@ -119,10 +123,10 @@ string_t format_mat(const char_t *log_prefix, const char_t *log_suffix, const ch
 
     ss << log_prefix << string_t("[") << log_suffix;
 
-    for (size_t i = start_row; i < block_rows; ++i)
+    for (size_t i = start_row; i < start_row + block_rows; ++i)
     {
         ss << log_prefix;
-        for (size_t j = start_col; j < block_cols; ++j)
+        for (size_t j = start_col; j < start_col + block_cols; ++j)
         {
             ss << access_by_type(i, j) << " ";
         }
@@ -156,14 +160,14 @@ public:
     string_t generate(const char_t *name, const cv::Vec<Type, N> &value, const Parameters &args = {})
     {
         ParameterList args_list = ParameterList(args);
-        //        ParameterList args_default = {0, 0, value.rows, value.cols};
-        //
-        //        for (size_t i = 0; i < args_list.size(); ++i)
-        //        {
-        //            args_default.set(i, args_list[i]);
-        //        }
-        //return "";
-        return formats::format_vec(log_prefix_.c_str(), log_suffix_.c_str(), name, value, args_list);
+        ParameterList args_default = {0, N - 1};
+
+        for (size_t i = 0; i < args_list.size(); ++i)
+        {
+            args_default.set(i, args_list[i]);
+        }
+
+        return formats::format_vec(log_prefix_.c_str(), log_suffix_.c_str(), name, value, args_default);
     }
 
 private:

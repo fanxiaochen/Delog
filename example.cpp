@@ -109,6 +109,8 @@ void test_eigen()
 	DELOG(vec3);
 	Eigen::Matrix4d mat4 = Eigen::Matrix4d::Identity();
 	DELOG(mat4);
+	DELOG(mat4, {0, 0, 3, 1});
+	DELOG(mat4, {1, 1, 2, 1});
 	//std::cout << vec3 << std::endl;
 	std::vector<Eigen::Matrix3f> mat_vec(3, Eigen::Matrix3f::Identity());
 	DELOG(mat_vec);
@@ -119,11 +121,14 @@ void test_opencv()
 	cv::Vec2f vec2f(1, 5);
 	cv::Vec3i vec3i(4, 20, 33);
 	DELOG(vec2f);
-	DELOG(vec3i);
+	DELOG(vec3i, {4, 1});
 
 	float dummy_query_data[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 	cv::Mat mat_32FC2 = cv::Mat(2, 3, CV_32FC2, dummy_query_data);
 	DELOG(mat_32FC2);
+
+	std::vector<cv::Mat> mat_vec(3, mat_32FC2);
+	DELOG(mat_vec);
 }
 
 int main()

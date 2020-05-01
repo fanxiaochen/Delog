@@ -67,10 +67,6 @@
 #include <tchar.h>
 #endif
 
-#if DELOG_ENABLE_OPENCV
-#include <opencv2/core.hpp>
-#endif
-
 namespace delog
 {
 typedef char char_t;
@@ -333,8 +329,18 @@ struct ParameterList
     ParameterList(Parameters parameters) : v(parameters) {}
 
     size_t size() const { return v.size(); }
-    int_t operator[](size_t index) const { return v[index]; }
-    void set(size_t index, int_t value) { v[index] = value; }
+    int_t operator[](size_t index) const
+    {
+        if (index >= 0 && index < size())
+            return v[index];
+        else
+            return -1;
+    }
+    void set(size_t index, int_t value)
+    {
+        if (index >= 0 && index < size())
+            v[index] = value;
+    }
 };
 
 #if (!defined(DELOG_DISABLE_TYPE_LOG))
