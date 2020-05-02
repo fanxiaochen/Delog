@@ -296,21 +296,26 @@ int main()
 
 	//	DELOG(pair);
 
+	START_TIMER(0, MILLISECOND);
 	test_basis();
 	test_vector();
 	test_list();
 	test_map();
 	test_unordered_map();
+	PAUSE();
 	test_set();
 	test_unordered_set();
+	STOP_TIMER(0);
 	test_stack();
 	test_queue();
 	test_deque();
 	test_array();
+	PAUSE();
 	test_pair();
 	test_pointers();
 	test_eigen();
 	test_opencv();
+	STOP_TIMER(0);
 
 	return 0;
 }

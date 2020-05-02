@@ -1,6 +1,5 @@
 #include "delog/delog.hpp"
 #include <opencv2/core.hpp>
-#include <opencv2/core/matx.hpp>
 
 namespace delog
 {

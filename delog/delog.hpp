@@ -559,12 +559,12 @@ string_t basics_info(const char_t *file, const ulong_t line, const char_t *func)
     return string_t(str);
 }
 
-void console_pause(const char_t *file, const ulong_t line, const char_t *func)
+string_t console_pause(const char_t *file, const ulong_t line, const char_t *func)
 {
-    std::cout << delog::basics_info(file, line, func);
-    std::cout << "[PAUSED] Press ENTER to continue";
-    std::cin.clear();
-    std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
+    std::stringstream ss;
+    ss << delog::basics_info(file, line, func);
+    ss << "[PAUSED] Press ENTER to continue";
+    return ss.str();
 }
 
 #if (defined(DELOG_DISABLE_ALL))
@@ -591,13 +591,6 @@ void console_pause(const char_t *file, const ulong_t line, const char_t *func)
 #define DELOG_ENABLE_TIMER 0
 #endif // (!defined(DELOG_DISABLE_TIMER))
 
-//#if DELOG_ENABLE_LOG
-//#   define DELOG(loggable, ...) \
-//    std::cout << DEFAULT_COLOR("")+(delog::basics_info(__FILE__, __LINE__, __func__) + delog::message(#loggable, loggable, ##__VA_ARGS__))
-//#else
-//#   define DELOG(loggable, ...)
-//#endif // DELOG_ENABLE_LOG
-
 #if DELOG_ENABLE_LOG
 #define DELOG(loggable, ...) \
     std::cout << DEFAULT_COLOR("") + delog::message(delog::basics_info(__FILE__, __LINE__, __func__), delog::string_t("\n"), #loggable, loggable, ##__VA_ARGS__)
@@ -606,7 +599,10 @@ void console_pause(const char_t *file, const ulong_t line, const char_t *func)
 #endif // DELOG_ENABLE_LOG
 
 #if DELOG_ENABLE_PAUSE
-#define PAUSE(...) delog::console_pause(__FILE__, __LINE__, __func__)
+#define PAUSE(...)                                                   \
+    std::cout << delog::console_pause(__FILE__, __LINE__, __func__); \
+    std::cin.clear();                                                \
+    std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n')
 #else
 #define PAUSE(...)
 #endif // DELOG_PAUSE
