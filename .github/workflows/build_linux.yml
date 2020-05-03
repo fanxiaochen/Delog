@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
       # Install CMake.
     - name: get-cmake
       uses: lukka/get-cmake@v3.17.1
