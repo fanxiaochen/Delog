@@ -15,11 +15,17 @@ jobs:
       # Install CMake.
     - name: get-cmake
       uses: lukka/get-cmake@v3.17.1
+
+    - name: Set vcpkg's response file path used as part of cache's key.
+      uses: lukka/set-shell-env@master
+      with:
+        VCPKGRESPONSEFILE: ${{ github.workspace }}/vcpkg_response.txt
+
       # Restore from cache the previously built ports. If "cache miss", then provision vcpkg, install desired ports, finally cache everything for the next run.
     - name: run-vcpkg
       uses: lukka/run-vcpkg@v2.1
       with:
-        # Response file stored in source control, it provides the list of ports and triplet(s).
-        vcpkgArguments: '@${{ github.workspace }}/vcpkg_response.txt'
-        # Location of the vcpkg as submodule of the repository.
+        vcpkgArguments: '@${{ env.VCPKGRESPONSEFILE }}'
         vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        # Ensure the cache key changes any time the content of the response file changes.
+        appendedCacheKey: ${{ hashFiles( env.VCPKGRESPONSEFILE ) }}
