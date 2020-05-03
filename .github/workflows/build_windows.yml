@@ -34,3 +34,19 @@ jobs:
         vcpkgDirectory: '${{ github.workspace }}/vcpkg'
         # Ensure the cache key changes any time the content of the response file changes.
         appendedCacheKey: ${{ hashFiles( env.VCPKGRESPONSEFILE ) }}
+    
+    # Cmake 
+    - name: Run CMake 
+      uses: lukka/run-cmake@v2
+      with:
+        cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
+        useVcpkgToolchainFile: true
+        buildDirectory: '${{ github.workspace }}/build'
+
+    # Run
+    - name: Run exe
+      shell: bash
+      run: |
+        cd build
+        ./example
+      
