@@ -321,6 +321,17 @@ std::map<Color::Type, string_t> Color::map =
 #define WHITE(string) delog::Color::white(string)
 #define DEFAULT_COLOR(string) delog::Color::default_color(string)
 
+#define NULL_STR ""
+#define SPACE_STR " "
+#define LEFT_BRACKET_STR "["
+#define RIGHT_BRACKET_STR "]"
+#define LEFT_BRACE_STR "{"
+#define RIGHT_BRACE_STR "}"
+#define LEFT_PARENTHESIS_STR "("
+#define RIGHT_PARENTHESIS_STR ")"
+#define HYPHEN_STR "-"
+#define COMMA_STR ","
+
 typedef std::initializer_list<int_t> Parameters;
 
 struct ParameterList
@@ -593,15 +604,15 @@ string_t console_pause(const char_t *file, const ulong_t line, const char_t *fun
 
 #if DELOG_ENABLE_LOG
 #define DELOG(loggable, ...) \
-    std::cout << DEFAULT_COLOR("") + delog::message(delog::basics_info(__FILE__, __LINE__, __func__), delog::string_t("\n"), #loggable, loggable, ##__VA_ARGS__)
+    std::cout << delog::message(DEFAULT_COLOR(delog::basics_info(__FILE__, __LINE__, __func__)), DEFAULT_COLOR(delog::string_t("\n")), #loggable, loggable, ##__VA_ARGS__)
 #else
 #define DELOG(loggable, ...)
 #endif // DELOG_ENABLE_LOG
 
 #if DELOG_ENABLE_PAUSE
-#define PAUSE(...)                                                   \
-    std::cout << delog::console_pause(__FILE__, __LINE__, __func__); \
-    std::cin.clear();                                                \
+#define PAUSE(...)                                                                  \
+    std::cout << DEFAULT_COLOR(delog::console_pause(__FILE__, __LINE__, __func__)); \
+    std::cin.clear();                                                               \
     std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n')
 #else
 #define PAUSE(...)
@@ -609,7 +620,7 @@ string_t console_pause(const char_t *file, const ulong_t line, const char_t *fun
 
 #if DELOG_ENABLE_TIMER
 #define START_TIMER(idx, measurement) delog::start_timer(idx, measurement, __FILE__, __func__, __LINE__)
-#define STOP_TIMER(idx) std::cout << delog::stop_timer(idx, __FILE__, __func__, __LINE__)
+#define STOP_TIMER(idx) std::cout << DEFAULT_COLOR(delog::stop_timer(idx, __FILE__, __func__, __LINE__))
 #else
 #define START_TIMER(idx, measurement)
 #define STOP_TIMER(idx)

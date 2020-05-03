@@ -20,31 +20,31 @@ namespace basics
 {
 /// Basic data type
 static std::unordered_map<const char_t *, string_t> formats_verbose({
-    {typeid(char_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%c") + "%s"},
-    {typeid(int_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%d") + "%s"},
-    {typeid(long_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%ld") + "%s"},
-    {typeid(short_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%d") + "%s"},
-    {typeid(uchar_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%c") + "%s"},
-    {typeid(uint_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%u") + "%s"},
-    {typeid(ulong_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%lu") + "%s"},
-    {typeid(ushort_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%u") + "%s"},
-    {typeid(float_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%f") + "%s"},
-    {typeid(double_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%lf") + "%s"},
-    {typeid(string_t).name(), "%s" + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%s") + "%s"},
+    {typeid(char_t).name(), DEFAULT_COLOR("%s") + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%c") + DEFAULT_COLOR("%s")},
+    {typeid(int_t).name(), DEFAULT_COLOR("%s") + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%d") + DEFAULT_COLOR("%s")},
+    {typeid(long_t).name(), DEFAULT_COLOR("%s") + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%ld") + DEFAULT_COLOR("%s")},
+    {typeid(short_t).name(), DEFAULT_COLOR("%s") + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%d") + DEFAULT_COLOR("%s")},
+    {typeid(uchar_t).name(), DEFAULT_COLOR("%s") + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%c") + DEFAULT_COLOR("%s")},
+    {typeid(uint_t).name(), DEFAULT_COLOR("%s") + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%u") + DEFAULT_COLOR("%s")},
+    {typeid(ulong_t).name(), DEFAULT_COLOR("%s") + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%lu") + DEFAULT_COLOR("%s")},
+    {typeid(ushort_t).name(), DEFAULT_COLOR("%s") + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%u") + DEFAULT_COLOR("%s")},
+    {typeid(float_t).name(), DEFAULT_COLOR("%s") + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%f") + DEFAULT_COLOR("%s")},
+    {typeid(double_t).name(), DEFAULT_COLOR("%s") + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%lf") + DEFAULT_COLOR("%s")},
+    {typeid(string_t).name(), DEFAULT_COLOR("%s") + MAGENTA("%s") + " " + GREEN("%s") + " = " + YELLOW("%s") + DEFAULT_COLOR("%s")},
 });
 
 static std::unordered_map<const char_t *, string_t> formats_simple({
-    {typeid(char_t).name(), "%s" + YELLOW("%c") + "%s"},
-    {typeid(int_t).name(), "%s" + YELLOW("%d") + "%s"},
-    {typeid(long_t).name(), "%s" + YELLOW("%ld") + "%s"},
-    {typeid(short_t).name(), "%s" + YELLOW("%d") + "%s"},
-    {typeid(uchar_t).name(), "%s" + YELLOW("%c") + "%s"},
-    {typeid(uint_t).name(), "%s" + YELLOW("%u") + "%s"},
-    {typeid(ulong_t).name(), "%s" + YELLOW("%lu") + "%s"},
-    {typeid(ushort_t).name(), "%s" + YELLOW("%u") + "%s"},
-    {typeid(float_t).name(), "%s" + YELLOW("%f") + "%s"},
-    {typeid(double_t).name(), "%s" + YELLOW("%lf") + "%s"},
-    {typeid(string_t).name(), "%s" + YELLOW("%s") + "%s"},
+    {typeid(char_t).name(), DEFAULT_COLOR("%s") + YELLOW("%c") + DEFAULT_COLOR("%s")},
+    {typeid(int_t).name(), DEFAULT_COLOR("%s") + YELLOW("%d") + DEFAULT_COLOR("%s")},
+    {typeid(long_t).name(), DEFAULT_COLOR("%s") + YELLOW("%ld") + DEFAULT_COLOR("%s")},
+    {typeid(short_t).name(), DEFAULT_COLOR("%s") + YELLOW("%d") + DEFAULT_COLOR("%s")},
+    {typeid(uchar_t).name(), DEFAULT_COLOR("%s") + YELLOW("%c") + DEFAULT_COLOR("%s")},
+    {typeid(uint_t).name(), DEFAULT_COLOR("%s") + YELLOW("%u") + DEFAULT_COLOR("%s")},
+    {typeid(ulong_t).name(), DEFAULT_COLOR("%s") + YELLOW("%lu") + DEFAULT_COLOR("%s")},
+    {typeid(ushort_t).name(), DEFAULT_COLOR("%s") + YELLOW("%u") + DEFAULT_COLOR("%s")},
+    {typeid(float_t).name(), DEFAULT_COLOR("%s") + YELLOW("%f") + DEFAULT_COLOR("%s")},
+    {typeid(double_t).name(), DEFAULT_COLOR("%s") + YELLOW("%lf") + DEFAULT_COLOR("%s")},
+    {typeid(string_t).name(), DEFAULT_COLOR("%s") + YELLOW("%s") + DEFAULT_COLOR("%s")},
 });
 
 class Primitive
