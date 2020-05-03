@@ -12,7 +12,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Install CMake.
     - name: get-cmake
       uses: lukka/get-cmake@v3.17.1
+      # Restore from cache the previously built ports. If "cache miss", then provision vcpkg, install desired ports, finally cache everything for the next run.
     - name: run-vcpkg
       uses: lukka/run-vcpkg@v2.1
+      with:
+        # Response file stored in source control, it provides the list of ports and triplet(s).
+        vcpkgArguments: '@${{ github.workspace }}/vcpkg_response.txt'
+        # Location of the vcpkg as submodule of the repository.
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
