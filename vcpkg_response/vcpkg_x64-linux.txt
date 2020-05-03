@@ -1,4 +1,0 @@
---triplet
-x64-linux
-eigen3
-opencv

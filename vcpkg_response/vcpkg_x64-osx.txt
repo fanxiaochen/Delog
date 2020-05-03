@@ -1,4 +1,0 @@
---triplet
-x64-osx
-eigen3
-opencv

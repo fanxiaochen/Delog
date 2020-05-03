@@ -302,7 +302,7 @@ int main()
 	test_list();
 	test_map();
 	test_unordered_map();
-	PAUSE();
+//	PAUSE();
 	test_set();
 	test_unordered_set();
 	STOP_TIMER(0);
@@ -310,7 +310,7 @@ int main()
 	test_queue();
 	test_deque();
 	test_array();
-	PAUSE();
+//	PAUSE();
 	test_pair();
 	test_pointers();
 	test_eigen();
