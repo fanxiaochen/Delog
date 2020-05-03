@@ -1,4 +1,4 @@
-eigen3
-opencv
 --triplet
 x64-windows
+eigen3
+opencv
