@@ -7,7 +7,7 @@
 Delog is a simple c++ logger for debugging purpose, especially in scientific computing fields. As single-step debugging sometimes is unavailable in complex calculations, in practice printing often plays an important role in debugging process. Delog is trying to print common types of basic c++ structures and third-party libraries in an unified way.
 
 ## Usage
-It's only useful when the printing type is supported in Delog.
+At least C++11 should be used for the project. It's only useful when the printing type is supported in Delog.
 Common usage:
 ```c++
 SupportedType variable;
