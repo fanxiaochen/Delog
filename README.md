@@ -18,7 +18,7 @@ DELOG(variable, {para1, para2...});
 ```
 Every supported type could be printed by basic usage, meanwhile parameter lists could be used by some supported types like stl containers to manipulate the content needed to print. The details of parameters will be covered in next part.
 
-The supported types includes non-container type and container type.
+The supported types include non-container types and container types.
 for non-container type, the usage often looks like:
 ```c++
 NonContainerType variable;
@@ -29,13 +29,14 @@ DELOG(variable, {parameters for NonContainerType}) // correct
 for container type like stl, the usage often looks like:
 ```c++
 Container<Type> variable; // container with type elements
-DELOG(variable) // correct
+DELOG(variable) // correct, default parameters used both by Container and Type
+
 DELOG(variable, {parameters for Container}, {parameters for Type}) // correct
-DELOG(variable, {}, {parameters for Type}) // correct, explict {} needed for Container
+DELOG(variable, {}, {parameters for Type}) // correct, explicit {} needed for Container, default parameters used by Container
 DELOG(variable, {parameters for Container}) // correct, default parameters used by Type
 DELOG(variable, {parameters for Type}) // error
 ```
-
+Currently, `Container<Container>` prototype is not supported.
 
 ## Supported Types
 ### Basic Types
