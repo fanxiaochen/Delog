@@ -65,7 +65,7 @@ string_t format_vec(const char_t *log_prefix, const char_t *log_suffix, const ch
 }
 
 template <typename Type>
-string_t format_vec(const char_t *log_prefix, const char_t *log_suffix, const char_t *name, const cv::Mat &type, const int row, const int col)
+string_t format_vec(const char_t *log_prefix, const char_t *log_suffix, const char_t *name, const cv::Mat &type, size_t row, size_t col)
 {
     std::stringstream ss;
     size_t channels = type.channels();

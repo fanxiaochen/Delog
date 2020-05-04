@@ -7,8 +7,8 @@
 //#define DELOG_DISABLE_TIMER
 //#define DELOG_DISABLE_TYPE_LOG
 
-#define DELOG_ENABLE_EIGEN
-#define DELOG_ENABLE_OPENCV
+//#define DELOG_ENABLE_EIGEN
+//#define DELOG_ENABLE_OPENCV
 
 #include "delog/delog.hpp"
 #include "delog/basics.hpp"

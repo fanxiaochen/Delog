@@ -257,3 +257,10 @@ void test_opencv()
 	DELOG(mat_vec, {0, 0}, {1, 1, 3, 3});
 }
 ```
+## Install
+Delog is a head-only package, just include the repo into your project. An example program is provided and check it for details.
+
+The third-party types are disabled by default. Please add the related pre-defined macros into your project or before include delog.h file.
+
+- Eigen: DELOG_ENABLE_EIGEN
+- OpenCV: DELOG_ENABLE_OPENCV
