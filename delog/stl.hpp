@@ -14,8 +14,8 @@ string_t format_pair(const char_t* log_prefix, const char_t* log_suffix, const c
     auto format_simple = [&]()
     {
         std::stringstream ss;                               
-        ss << "(" << delog::message("", "", "pair.first", type.first, {}) << ","; 
-        ss << delog::message("", "", "pair.second", type.second, {}) << ")"; 
+        ss << LEFT_PARENTHESIS_STR << delog::message(NULL_STR, NULL_STR, "pair.first", type.first, {}) << COMMA_STR; 
+        ss << delog::message(NULL_STR, NULL_STR, "pair.second", type.second, {}) << RIGHT_PARENTHESIS_STR; 
         return ss.str();
     };
 
@@ -24,9 +24,9 @@ string_t format_pair(const char_t* log_prefix, const char_t* log_suffix, const c
         string_t type_str = GET_VARIABLE_TYPE(type);            
         std::stringstream ss;                               
         ss << log_prefix;
-        ss << MAGENTA(type_str) + " " + GREEN(name) + " = ";
-        ss << "(" << delog::message("", "", "pair.first", type.first, {}) << ","; 
-        ss << delog::message("", "", "pair.second", type.second, {}) << ")"; 
+        ss << MAGENTA(type_str) + SPACE_STR + GREEN(name) + SPACE_STR+EQUAL_STR+SPACE_STR;
+        ss << LEFT_PARENTHESIS_STR << delog::message(NULL_STR, NULL_STR, "pair.first", type.first, {}) << COMMA_STR; 
+        ss << delog::message(NULL_STR, NULL_STR, "pair.second", type.second, {}) << RIGHT_PARENTHESIS_STR; 
         ss << log_suffix;
         return ss.str();
     };
@@ -38,13 +38,13 @@ string_t format_pair(const char_t* log_prefix, const char_t* log_suffix, const c
         ss << log_prefix << string_t("Name: ") << GREEN(name) << log_suffix;        
         ss << log_prefix << string_t("Type: ") << MAGENTA(type_str) << log_suffix;         
         ss << log_prefix << string_t("First:") << log_suffix;            
-        ss << log_prefix << "{" << log_suffix; 
+        ss << log_prefix << LEFT_BRACE_STR << log_suffix; 
         ss << delog::message(log_prefix, log_suffix, "pair.first", type.first, {}); 
-        ss << log_prefix << "}" << log_suffix; 
+        ss << log_prefix << RIGHT_BRACE_STR << log_suffix; 
         ss << log_prefix << string_t("Second:") << log_suffix;            
-        ss << log_prefix << "{" << log_suffix; 
+        ss << log_prefix << LEFT_BRACE_STR << log_suffix; 
         ss << delog::message(log_prefix, log_suffix, "pair.second", type.second, type2_args); 
-        ss << log_prefix << "}" << log_suffix; 
+        ss << log_prefix << RIGHT_BRACE_STR << log_suffix; 
         return ss.str();
     };
     
@@ -116,17 +116,17 @@ string_t format_range(const char_t* log_prefix, const char_t* log_suffix,const c
         string_t type_str = GET_VARIABLE_TYPE(type);            
         std::stringstream ss;                               
         ss << log_prefix;
-        ss << MAGENTA(type_str) + " " + GREEN(name) + " = ";
-        ss << "[";
+        ss << MAGENTA(type_str) + SPACE_STR + GREEN(name) + SPACE_STR+EQUAL_STR+SPACE_STR;
+        ss << LEFT_BRACKET_STR;
         size_t start = container_args[0];                   
         size_t end = container_args[1];                     
         for (size_t i = start; i <= end; ++ i)              
         {                                                   
             if (i < 0 || i >= type.size()) continue;
-            ss << delog::message("", "", ("var["+std::to_string(i)+"]").c_str(), type[i], type_args); 
-            if (i != end) ss << " ";
+            ss << delog::message(NULL_STR, NULL_STR, (string_t("var")+LEFT_BRACKET_STR+std::to_string(i)+RIGHT_BRACKET_STR).c_str(), type[i], type_args); 
+            if (i != end) ss << SPACE_STR;
         }                                                   
-        ss << "]" << log_suffix;
+        ss << RIGHT_BRACKET_STR << log_suffix;
         return ss.str();                                    
     };
 
@@ -143,9 +143,9 @@ string_t format_range(const char_t* log_prefix, const char_t* log_suffix,const c
         {                                                   
             if (i < 0 || i >= type.size()) continue;
             ss << log_prefix << "--------[" << i << "]--------" << log_suffix;                  
-            ss << log_prefix << "{" << log_suffix;
-            ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(i)+"]").c_str(), type[i], type_args); 
-            ss << log_prefix << "}" << log_suffix;
+            ss << log_prefix << LEFT_BRACE_STR << log_suffix;
+            ss << delog::message(log_prefix, log_suffix, (string_t("var")+LEFT_BRACKET_STR+std::to_string(i)+RIGHT_BRACKET_STR).c_str(), type[i], type_args); 
+            ss << log_prefix << RIGHT_BRACE_STR << log_suffix;
         }                                                   
         return ss.str();                                    
     };
@@ -164,20 +164,20 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         string_t type_str = GET_VARIABLE_TYPE(type);            
         std::stringstream ss;                               
         ss << log_prefix;
-        ss << MAGENTA(type_str) + " " + GREEN(name) + " = ";
-        ss << "[";
+        ss << MAGENTA(type_str) + SPACE_STR + GREEN(name) + SPACE_STR+EQUAL_STR+SPACE_STR;
+        ss << LEFT_BRACKET_STR;
         size_t length = container_args[0];                   
         auto itr = type.begin();
         size_t count = 0;
         for (auto itr = type.begin(); itr != type.end(); ++ itr)
         {
-            ss << delog::message("", "", ("var["+std::to_string(count)+"]").c_str(), *itr, type_args); 
+            ss << delog::message(NULL_STR, NULL_STR, (string_t("var")+LEFT_BRACKET_STR+std::to_string(count)+RIGHT_BRACKET_STR).c_str(), *itr, type_args); 
             count ++;
             if (count == length) 
                 break;
-            else ss << " ";
+            else ss << SPACE_STR;
         }
-        ss << "]" << log_suffix;
+        ss << RIGHT_BRACKET_STR << log_suffix;
         return ss.str();                                    
     };
 
@@ -196,9 +196,9 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         {
             if (count == length) break;
             ss << log_prefix << "--------[" << count << "]--------" << log_suffix;                 
-            ss << log_prefix << "{" << log_suffix;
-            ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), *itr, type_args);
-            ss << log_prefix << "}" << log_suffix;
+            ss << log_prefix << LEFT_BRACE_STR << log_suffix;
+            ss << delog::message(log_prefix, log_suffix, (string_t("var")+LEFT_BRACKET_STR+std::to_string(count)+RIGHT_BRACKET_STR).c_str(), *itr, type_args);
+            ss << log_prefix << RIGHT_BRACE_STR << log_suffix;
             count ++;
         }
         return ss.str();                                    
@@ -219,20 +219,20 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         string_t type_str = GET_VARIABLE_TYPE(type);            
         std::stringstream ss;                               
         ss << log_prefix;
-        ss << MAGENTA(type_str) + " " + GREEN(name) + " = ";
-        ss << "[";
+        ss << MAGENTA(type_str) + SPACE_STR + GREEN(name) + SPACE_STR+EQUAL_STR+SPACE_STR;
+        ss << LEFT_BRACKET_STR;
         size_t length = container_args[0];                   
         auto itr = type.begin();
         size_t count = 0;
         for (auto itr = type.begin(); itr != type.end(); ++ itr)
         {
-            ss << delog::message("", "", ("var["+std::to_string(count)+"]").c_str(), *itr, type_args); 
+            ss << delog::message(NULL_STR, NULL_STR, (string_t("var")+LEFT_BRACKET_STR+std::to_string(count)+RIGHT_BRACKET_STR).c_str(), *itr, type_args); 
             count ++;
             if (count == length) 
                 break;
-            else ss << " ";
+            else ss << SPACE_STR;
         }
-        ss << "]" << log_suffix;
+        ss << RIGHT_BRACKET_STR << log_suffix;
         return ss.str();                                    
     };
 
@@ -251,9 +251,9 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         {
             if (count == length) break;
             ss << log_prefix << "--------[" << count << "]--------" << log_suffix;                 
-            ss << log_prefix << "{" << log_suffix;
-            ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), *itr, type_args);
-            ss << log_prefix << "}" << log_suffix;
+            ss << log_prefix << LEFT_BRACE_STR << log_suffix;
+            ss << delog::message(log_prefix, log_suffix, (string_t("var")+LEFT_BRACKET_STR+std::to_string(count)+RIGHT_BRACKET_STR).c_str(), *itr, type_args);
+            ss << log_prefix << RIGHT_BRACE_STR << log_suffix;
             count ++;
         }
         return ss.str();                                    
@@ -274,20 +274,20 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         string_t type_str = GET_VARIABLE_TYPE(type);            
         std::stringstream ss;                               
         ss << log_prefix;
-        ss << MAGENTA(type_str) + " " + GREEN(name) + " = ";
-        ss << "[";
+        ss << MAGENTA(type_str) + SPACE_STR + GREEN(name) + SPACE_STR+EQUAL_STR+SPACE_STR;
+        ss << LEFT_BRACKET_STR;
         size_t length = container_args[0];                   
         auto itr = type.begin();
         size_t count = 0;
         for (auto itr = type.begin(); itr != type.end(); ++ itr)
         {
-            ss << delog::message("", "", ("var["+std::to_string(count)+"]").c_str(), *itr, type_args); 
+            ss << delog::message(NULL_STR, NULL_STR, (string_t("var")+LEFT_BRACKET_STR+std::to_string(count)+RIGHT_BRACKET_STR).c_str(), *itr, type_args); 
             count ++;
             if (count == length) 
                 break;
-            else ss << " ";
+            else ss << SPACE_STR;
         }
-        ss << "]" << log_suffix;
+        ss << RIGHT_BRACKET_STR << log_suffix;
         return ss.str();                                    
     };
 
@@ -306,9 +306,9 @@ string_t format_iterator(const char_t* log_prefix, const char_t* log_suffix,cons
         {
             if (count == length) break;
             ss << log_prefix << "--------[" << count << "]--------" << log_suffix;                 
-            ss << log_prefix << "{" << log_suffix;
-            ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), *itr, type_args);
-            ss << log_prefix << "}" << log_suffix;
+            ss << log_prefix << LEFT_BRACE_STR << log_suffix;
+            ss << delog::message(log_prefix, log_suffix, (string_t("var")+LEFT_BRACKET_STR+std::to_string(count)+RIGHT_BRACKET_STR).c_str(), *itr, type_args);
+            ss << log_prefix << RIGHT_BRACE_STR << log_suffix;
             count ++;
         }
         return ss.str();                                    
@@ -329,21 +329,21 @@ string_t format_stack(const char_t* log_prefix, const char_t* log_suffix,const c
         string_t type_str = GET_VARIABLE_TYPE(type);            
         std::stringstream ss;                               
         ss << log_prefix;
-        ss << MAGENTA(type_str) + " " + GREEN(name) + " = ";
-        ss << "[";
+        ss << MAGENTA(type_str) + SPACE_STR + GREEN(name) + SPACE_STR+EQUAL_STR+SPACE_STR;
+        ss << LEFT_BRACKET_STR;
         size_t length = container_args[0];                   
 
         Type copied = type;
         size_t count = 0;
         while (!copied.empty())
         {
-            ss << delog::message("", "", ("var["+std::to_string(count)+"]").c_str(), copied.top(), type_args); 
+            ss << delog::message(NULL_STR, NULL_STR, (string_t("var")+LEFT_BRACKET_STR+std::to_string(count)+RIGHT_BRACKET_STR).c_str(), copied.top(), type_args); 
             copied.pop();
             count ++;
             if (count == length) break;
-            else ss << " ";
+            else ss << SPACE_STR;
         }
-        ss << "]" << log_suffix;
+        ss << RIGHT_BRACKET_STR << log_suffix;
         return ss.str();                                    
     };
 
@@ -362,9 +362,9 @@ string_t format_stack(const char_t* log_prefix, const char_t* log_suffix,const c
         {
             if (count == length) break;
             ss << log_prefix << "--------[" << count << "]--------" << log_suffix;                 
-            ss << log_prefix << "{" << log_suffix;
-            ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), copied.top(), type_args); 
-            ss << log_prefix << "}" << log_suffix;
+            ss << log_prefix << LEFT_BRACE_STR << log_suffix;
+            ss << delog::message(log_prefix, log_suffix, (string_t("var")+LEFT_BRACKET_STR+std::to_string(count)+RIGHT_BRACKET_STR).c_str(), copied.top(), type_args); 
+            ss << log_prefix << RIGHT_BRACE_STR << log_suffix;
             copied.pop();
             count ++;
         }
@@ -385,21 +385,21 @@ string_t format_queue(const char_t* log_prefix, const char_t* log_suffix,const c
         string_t type_str = GET_VARIABLE_TYPE(type);            
         std::stringstream ss;                               
         ss << log_prefix;
-        ss << MAGENTA(type_str) + " " + GREEN(name) + " = ";
-        ss << "[";
+        ss << MAGENTA(type_str) + SPACE_STR + GREEN(name) + SPACE_STR+EQUAL_STR+SPACE_STR;
+        ss << LEFT_BRACKET_STR;
         size_t length = container_args[0];                   
 
         Type copied = type;
         size_t count = 0;
         while (!copied.empty())
         {
-            ss << delog::message("", "", ("var["+std::to_string(count)+"]").c_str(), copied.front(), type_args); 
+            ss << delog::message(NULL_STR, NULL_STR, (string_t("var")+LEFT_BRACKET_STR+std::to_string(count)+RIGHT_BRACKET_STR).c_str(), copied.front(), type_args); 
             copied.pop();
             count ++;
             if (count == length) break;
-            else ss << " ";
+            else ss << SPACE_STR;
         }
-        ss << "]" << log_suffix;
+        ss << RIGHT_BRACKET_STR << log_suffix;
         return ss.str();                                    
     };
 
@@ -418,9 +418,9 @@ string_t format_queue(const char_t* log_prefix, const char_t* log_suffix,const c
         {
             if (count == length) break;
             ss << log_prefix << "--------[" << count << "]--------" << log_suffix;                 
-            ss << log_prefix << "{" << log_suffix;
-            ss << delog::message(log_prefix, log_suffix, ("var["+std::to_string(count)+"]").c_str(), copied.front(), type_args); 
-            ss << log_prefix << "}" << log_suffix;
+            ss << log_prefix << LEFT_BRACE_STR << log_suffix;
+            ss << delog::message(log_prefix, log_suffix, (string_t("var")+LEFT_BRACKET_STR+std::to_string(count)+RIGHT_BRACKET_STR).c_str(), copied.front(), type_args); 
+            ss << log_prefix << RIGHT_BRACE_STR << log_suffix;
             copied.pop();
             count ++;
         }

@@ -331,6 +331,7 @@ std::map<Color::Type, string_t> Color::map =
 #define RIGHT_PARENTHESIS_STR ")"
 #define HYPHEN_STR "-"
 #define COMMA_STR ","
+#define EQUAL_STR "="
 
 typedef std::initializer_list<int_t> Parameters;
 
@@ -377,7 +378,7 @@ string_t GET_VARIABLE_TYPE(const Type &value)
 #if DELOG_ENABLE_TYPE_LOG
     return str;
 #else
-    return "";
+    return NULL_STR;
 #endif
 }
 

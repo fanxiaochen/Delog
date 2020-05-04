@@ -22,22 +22,22 @@ string_t format_matrix(const char_t *log_prefix, const char_t *log_suffix, const
     std::stringstream ss;
     ss << log_prefix << string_t("Name: ") << GREEN(name) << log_suffix;
     ss << log_prefix << string_t("Type: ") << MAGENTA(type_str) << log_suffix;
-    ss << log_prefix << string_t("Shape: ") << "(" << YELLOW(std::to_string(rows)) << "," << YELLOW(std::to_string(cols)) << ")" << log_suffix;
-    ss << log_prefix << string_t("Block: ") << "(" << YELLOW(std::to_string(start_row)) << "," << YELLOW(std::to_string(start_col))
-       << "," << YELLOW(std::to_string(block_rows)) << "," << YELLOW(std::to_string(block_cols)) << ")" << log_suffix;
+    ss << log_prefix << string_t("Shape: ") << LEFT_PARENTHESIS_STR << YELLOW(std::to_string(rows)) << COMMA_STR << YELLOW(std::to_string(cols)) << RIGHT_PARENTHESIS_STR << log_suffix;
+    ss << log_prefix << string_t("Block: ") << LEFT_PARENTHESIS_STR << YELLOW(std::to_string(start_row)) << COMMA_STR << YELLOW(std::to_string(start_col))
+       << COMMA_STR << YELLOW(std::to_string(block_rows)) << COMMA_STR << YELLOW(std::to_string(block_cols)) << RIGHT_PARENTHESIS_STR << log_suffix;
 
-    ss << log_prefix << string_t("[") << log_suffix;
+    ss << log_prefix << string_t(LEFT_BRACKET_STR) << log_suffix;
 
     for (size_t i = start_row; i < start_row + block_rows; ++i)
     {
         ss << log_prefix;
         for (size_t j = start_col; j < start_col + block_cols; ++j)
         {
-            ss << delog::message("", "", "type(i,j)", type(i, j), {}) << " ";
+            ss << delog::message(NULL_STR, NULL_STR, "type(i,j)", type(i, j), {}) << SPACE_STR;
         }
         ss << log_suffix;
     }
-    ss << log_prefix << string_t("]") << log_suffix;
+    ss << log_prefix << string_t(RIGHT_BRACKET_STR) << log_suffix;
 
     return ss.str();
 }
