@@ -163,12 +163,22 @@ public:
         WHITE
     };
 
-    static Type s_default_color;
+    Type s_default_color = Color::Type::CYAN;
 
     // Only available in linux and mac os
-    static std::map<Type, string_t> map;
+    std::map<Type, string_t> map =
+        {
+            {RESET, "\033[0m"},
+            {RED, "\033[31m"},
+            {GREEN, "\033[32m"},
+            {YELLOW, "\033[33m"},
+            {BLUE, "\033[34m"},
+            {MAGENTA, "\033[35m"},
+            {CYAN, "\033[36m"},
+            {WHITE, "\033[37m"},
+    };
 
-    static string_t default_color(string_t str)
+    string_t default_color(string_t str)
     {
 #if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[s_default_color] + str + map[s_default_color];
@@ -185,7 +195,7 @@ public:
 #endif // DELOG_OS_WINDOWS
     }
 
-    static string_t red(string_t str)
+    string_t red(string_t str)
     {
 #if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[RED] + str + map[s_default_color];
@@ -201,7 +211,7 @@ public:
 #endif // DELOG_OS_WINDOWS
     }
 
-    static string_t green(string_t str)
+    string_t green(string_t str)
     {
 #if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[GREEN] + str + map[s_default_color];
@@ -217,7 +227,7 @@ public:
 #endif // DELOG_OS_WINDOWS
     }
 
-    static string_t yellow(string_t str)
+    string_t yellow(string_t str)
     {
 #if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[YELLOW] + str + map[s_default_color];
@@ -233,7 +243,7 @@ public:
 #endif // DELOG_OS_WINDOWS
     }
 
-    static string_t blue(string_t str)
+    string_t blue(string_t str)
     {
 #if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[BLUE] + str + map[s_default_color];
@@ -249,7 +259,7 @@ public:
 #endif // DELOG_OS_WINDOWS
     }
 
-    static string_t magenta(string_t str)
+    string_t magenta(string_t str)
     {
 #if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[MAGENTA] + str + map[s_default_color];
@@ -265,7 +275,7 @@ public:
 #endif // DELOG_OS_WINDOWS
     }
 
-    static string_t cyan(string_t str)
+    string_t cyan(string_t str)
     {
 #if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[CYAN] + str + map[s_default_color];
@@ -281,7 +291,7 @@ public:
 #endif // DELOG_OS_WINDOWS
     }
 
-    static string_t white(string_t str)
+    string_t white(string_t str)
     {
 #if DELOG_OS_LINUX || DELOG_OS_MAC
         string_t colored_str = map[WHITE] + str + map[s_default_color];
@@ -298,28 +308,14 @@ public:
     }
 };
 
-Color::Type Color::s_default_color = Color::Type::CYAN;
-
-std::map<Color::Type, string_t> Color::map =
-    {
-        {RESET, "\033[0m"},
-        {RED, "\033[31m"},
-        {GREEN, "\033[32m"},
-        {YELLOW, "\033[33m"},
-        {BLUE, "\033[34m"},
-        {MAGENTA, "\033[35m"},
-        {CYAN, "\033[36m"},
-        {WHITE, "\033[37m"},
-};
-
-#define RED(string) delog::Color::red(string)
-#define GREEN(string) delog::Color::green(string)
-#define YELLOW(string) delog::Color::yellow(string)
-#define BLUE(string) delog::Color::blue(string)
-#define MAGENTA(string) delog::Color::magenta(string)
-#define CYAN(string) delog::Color::cyan(string)
-#define WHITE(string) delog::Color::white(string)
-#define DEFAULT_COLOR(string) delog::Color::default_color(string)
+#define RED(string) delog::Color().red(string)
+#define GREEN(string) delog::Color().green(string)
+#define YELLOW(string) delog::Color().yellow(string)
+#define BLUE(string) delog::Color().blue(string)
+#define MAGENTA(string) delog::Color().magenta(string)
+#define CYAN(string) delog::Color().cyan(string)
+#define WHITE(string) delog::Color().white(string)
+#define DEFAULT_COLOR(string) delog::Color().default_color(string)
 
 #define NULL_STR ""
 #define SPACE_STR " "
@@ -544,9 +540,9 @@ private:
     std::unordered_map<string_t, std::shared_ptr<Timer>> pool_;
 };
 
-TimerPool timer_pool;
+static TimerPool timer_pool;
 
-void start_timer(size_t index, Timer::Measurement m, const char_t *file, const char_t *func_name, ulong_t line_num)
+inline void start_timer(size_t index, Timer::Measurement m, const char_t *file, const char_t *func_name, ulong_t line_num)
 {
     Timer *new_timer = new Timer(file, func_name, index, m);
     new_timer->set_start_line(line_num);
@@ -554,7 +550,7 @@ void start_timer(size_t index, Timer::Measurement m, const char_t *file, const c
     new_timer->start();
 }
 
-string_t stop_timer(size_t index, const char_t *file, const char_t *func_name, ulong_t line_num)
+inline string_t stop_timer(size_t index, const char_t *file, const char_t *func_name, ulong_t line_num)
 {
     string_t name = Timer::name(file, func_name, index);
     Timer *timer = timer_pool.get(name);
@@ -563,7 +559,7 @@ string_t stop_timer(size_t index, const char_t *file, const char_t *func_name, u
     return record;
 }
 
-string_t basics_info(const char_t *file, const ulong_t line, const char_t *func)
+inline string_t basics_info(const char_t *file, const ulong_t line, const char_t *func)
 {
     char_t str[RECORD_MAX_LENGTH];
     snprintf(str, RECORD_MAX_LENGTH, "[%s][%s][%s:%s:%ld]", Timer::datestamp().c_str(), Timer::timestamp().c_str(),
@@ -571,7 +567,7 @@ string_t basics_info(const char_t *file, const ulong_t line, const char_t *func)
     return string_t(str);
 }
 
-string_t console_pause(const char_t *file, const ulong_t line, const char_t *func)
+inline string_t console_pause(const char_t *file, const ulong_t line, const char_t *func)
 {
     std::stringstream ss;
     ss << delog::basics_info(file, line, func);

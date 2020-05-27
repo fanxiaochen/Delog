@@ -1,3 +1,6 @@
+#ifndef DELOG_EIGEN_HPP
+#define DELOG_EIGEN_HPP
+
 #include "delog/delog.hpp"
 #include <Eigen/Core>
 
@@ -69,18 +72,20 @@ private:
 
 } // namespace eigen
 
-#define REGISTER_EIGEN_MATRIX(Matrix)                                                                                                                                         \
-    template <typename Scalar, int Rows, int Cols, typename... Args>                                                                                                          \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Matrix<Scalar, Rows, Cols> &type, const std::initializer_list<Args> &... args) \
-    {                                                                                                                                                                         \
-        return delog::eigen::Primitive(prefix, suffix).generate(name, type, args...);                                                                                         \
-    }                                                                                                                                                                         \
-    template <typename Scalar, int Rows, int Cols>                                                                                                                            \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Matrix<Scalar, Rows, Cols> &type, const Parameters &args)                      \
-    {                                                                                                                                                                         \
-        return delog::eigen::Primitive(prefix, suffix).generate(name, type, args);                                                                                            \
+#define REGISTER_EIGEN_MATRIX(Matrix)                                                                                                                                                \
+    template <typename Scalar, int Rows, int Cols, typename... Args>                                                                                                                 \
+    inline string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Matrix<Scalar, Rows, Cols> &type, const std::initializer_list<Args> &... args) \
+    {                                                                                                                                                                                \
+        return delog::eigen::Primitive(prefix, suffix).generate(name, type, args...);                                                                                                \
+    }                                                                                                                                                                                \
+    template <typename Scalar, int Rows, int Cols>                                                                                                                                   \
+    inline string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Matrix<Scalar, Rows, Cols> &type, const Parameters &args)                      \
+    {                                                                                                                                                                                \
+        return delog::eigen::Primitive(prefix, suffix).generate(name, type, args);                                                                                                   \
     }
 
 REGISTER_EIGEN_MATRIX(Eigen::Matrix)
 
 } // namespace delog
+
+#endif

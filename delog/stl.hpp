@@ -1,3 +1,6 @@
+#ifndef DELOG_STL_HPP
+#define DELOG_STL_HPP
+
 #include "delog/delog.hpp"
 
 namespace delog
@@ -635,3 +638,5 @@ REGISTER_STL_CONTAINER_TWO_PARAMETER_WITH_N(std::array)
 REGISTER_STL_CONTAINER_TWO_PARAMETER(std::map)
 REGISTER_STL_CONTAINER_TWO_PARAMETER(std::unordered_map)
 }
+
+#endif

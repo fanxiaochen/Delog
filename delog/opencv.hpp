@@ -1,3 +1,6 @@
+#ifndef DELOG_OPENCV_HPP
+#define DELOG_OPENCV_HPP
+
 #include "delog/delog.hpp"
 #include <opencv2/core.hpp>
 
@@ -184,30 +187,32 @@ private:
 
 } // namespace opencv
 
-#define REGISTER_OPENCV_VEC(Vector)                                                                                                                                \
-    template <typename Type, int N, typename... Args>                                                                                                              \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Vector<Type, N> &type, const std::initializer_list<Args> &... args) \
-    {                                                                                                                                                              \
-        return delog::opencv::Primitive(prefix, suffix).generate(name, type, args...);                                                                             \
-    }                                                                                                                                                              \
-    template <typename Type, int N>                                                                                                                                \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Vector<Type, N> &type, const Parameters &args)                      \
-    {                                                                                                                                                              \
-        return delog::opencv::Primitive(prefix, suffix).generate(name, type, args);                                                                                \
+#define REGISTER_OPENCV_VEC(Vector)                                                                                                                                       \
+    template <typename Type, int N, typename... Args>                                                                                                                     \
+    inline string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Vector<Type, N> &type, const std::initializer_list<Args> &... args) \
+    {                                                                                                                                                                     \
+        return delog::opencv::Primitive(prefix, suffix).generate(name, type, args...);                                                                                    \
+    }                                                                                                                                                                     \
+    template <typename Type, int N>                                                                                                                                       \
+    inline string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Vector<Type, N> &type, const Parameters &args)                      \
+    {                                                                                                                                                                     \
+        return delog::opencv::Primitive(prefix, suffix).generate(name, type, args);                                                                                       \
     }
 
-#define REGISTER_OPENCV_MAT(Matrix)                                                                                                                       \
-    template <typename... Args>                                                                                                                           \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Matrix &type, const std::initializer_list<Args> &... args) \
-    {                                                                                                                                                     \
-        return delog::opencv::Primitive(prefix, suffix).generate(name, type, args...);                                                                    \
-    }                                                                                                                                                     \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Matrix &type, const Parameters &args)                      \
-    {                                                                                                                                                     \
-        return delog::opencv::Primitive(prefix, suffix).generate(name, type, args);                                                                       \
+#define REGISTER_OPENCV_MAT(Matrix)                                                                                                                              \
+    template <typename... Args>                                                                                                                                  \
+    inline string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Matrix &type, const std::initializer_list<Args> &... args) \
+    {                                                                                                                                                            \
+        return delog::opencv::Primitive(prefix, suffix).generate(name, type, args...);                                                                           \
+    }                                                                                                                                                            \
+    inline string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Matrix &type, const Parameters &args)                      \
+    {                                                                                                                                                            \
+        return delog::opencv::Primitive(prefix, suffix).generate(name, type, args);                                                                              \
     }
 
 REGISTER_OPENCV_VEC(cv::Vec)
 REGISTER_OPENCV_MAT(cv::Mat)
 
 } // namespace delog
+
+#endif

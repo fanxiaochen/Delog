@@ -1,3 +1,6 @@
+#ifndef DELOG_BASICS_HPP
+#define DELOG_BASICS_HPP
+
 #include "delog/delog.hpp"
 
 namespace delog
@@ -90,15 +93,15 @@ private:
 
 } // namespace basics
 
-#define REGISTER_BASICS(Type)                                                                                                                           \
-    template <typename... Args>                                                                                                                         \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type &type, const std::initializer_list<Args> &... args) \
-    {                                                                                                                                                   \
-        return delog::basics::Primitive(prefix, suffix).generate(name, type, args...);                                                                  \
-    }                                                                                                                                                   \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type &type, const Parameters &args)                      \
-    {                                                                                                                                                   \
-        return delog::basics::Primitive(prefix, suffix).generate(name, type, args);                                                                     \
+#define REGISTER_BASICS(Type)                                                                                                                                  \
+    template <typename... Args>                                                                                                                                \
+    inline string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type &type, const std::initializer_list<Args> &... args) \
+    {                                                                                                                                                          \
+        return delog::basics::Primitive(prefix, suffix).generate(name, type, args...);                                                                         \
+    }                                                                                                                                                          \
+    inline string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type &type, const Parameters &args)                      \
+    {                                                                                                                                                          \
+        return delog::basics::Primitive(prefix, suffix).generate(name, type, args);                                                                            \
     }
 
 REGISTER_BASICS(int_t)
@@ -168,15 +171,15 @@ private:
 
 } // namespace pointer
 
-#define REGISTER_POINTERS(Type)                                                                                                                         \
-    template <typename... Args>                                                                                                                         \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type *type, const std::initializer_list<Args> &... args) \
-    {                                                                                                                                                   \
-        return delog::pointer::Primitive(prefix, suffix).generate(name, type, args...);                                                                 \
-    }                                                                                                                                                   \
-    string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type *type, const Parameters &args)                      \
-    {                                                                                                                                                   \
-        return delog::pointer::Primitive(prefix, suffix).generate(name, type, args);                                                                    \
+#define REGISTER_POINTERS(Type)                                                                                                                                \
+    template <typename... Args>                                                                                                                                \
+    inline string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type *type, const std::initializer_list<Args> &... args) \
+    {                                                                                                                                                          \
+        return delog::pointer::Primitive(prefix, suffix).generate(name, type, args...);                                                                        \
+    }                                                                                                                                                          \
+    inline string_t message(const string_t &prefix, const string_t &suffix, const char_t *name, const Type *type, const Parameters &args)                      \
+    {                                                                                                                                                          \
+        return delog::pointer::Primitive(prefix, suffix).generate(name, type, args);                                                                           \
     }
 
 REGISTER_POINTERS(int_t)
@@ -191,3 +194,5 @@ REGISTER_POINTERS(float_t)
 REGISTER_POINTERS(double_t)
 REGISTER_POINTERS(string_t)
 } // namespace delog
+
+#endif
